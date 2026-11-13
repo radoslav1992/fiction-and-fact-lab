@@ -25,7 +25,7 @@ test('learning apps: Interactive Periodic Table first, canonical https URLs, thi
 });
 
 test('tools: complete entries, each with an activity', () => {
-  assert.equal(toolCount, ['no', 'one', 'two'][tools.length]);
+  assert.equal(toolCount, ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'][tools.length]);
   assert.equal(ToolCount[0], ToolCount[0].toUpperCase());
   assert.deepEqual(tools.map(tool => tool.slug), activities.map(act => act.tool));
   for (const tool of tools) {

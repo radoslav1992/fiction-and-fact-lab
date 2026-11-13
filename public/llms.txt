@@ -1,18 +1,22 @@
 # Fiction & Fact Library
 
-> Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: two interactive tools, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. The site also has Listen, a player for free public-domain audiobooks read by LibriVox volunteers. From the makers of Interactive Periodic Table.
+> Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: four interactive tools, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. The site also has Listen, a player for free public-domain audiobooks read by LibriVox volunteers. From the makers of Interactive Periodic Table.
 
 ## Tools
 
 - [Reading Tools: Free Interactive Practice for Grades 2–8](https://fictionandfactlibrary.com/tools/): Free interactive reading tools for grades 2–8, each with a printable worksheet and a teacher answer key. They run in the browser with no sign-up or ads.
 - [Fact or Opinion Game: Free Practice for Grades 2–8](https://fictionandfactlibrary.com/tools/fact-or-opinion/): Free fact or opinion game for grades 2–8: sort statements, learn the clue words and find the opinion inside a sentence. With fact vs opinion examples.
+- [Main Idea and Details Game: Free Practice, Grades 2–8](https://fictionandfactlibrary.com/tools/main-idea/): Free main idea game for grades 2–8: read a short paragraph, choose the main idea, then sort the supporting details from the sentences that do not belong.
 - [Reading Level Checker: Free Readability & Grade Level Tool](https://fictionandfactlibrary.com/tools/reading-level/): Free reading level checker: paste any text to see its grade level, age range, Flesch Reading Ease and Flesch–Kincaid score. Nothing you type is saved.
+- [Reading Speed Test: Free Words per Minute Test with Quiz](https://fictionandfactlibrary.com/tools/reading-speed/): Free reading speed test for grades 2–8: time yourself on a short passage, see your words per minute, then answer five questions to check you understood.
 
 ## Classroom
 
 - [For Teachers: Free Reading Worksheets & Answer Keys](https://fictionandfactlibrary.com/teachers/): Free reading tools for grades 2–8 with printable one-page worksheets, teacher answer keys and short lesson plans. No logins, no ads, Chromebook-ready.
 - [Fact or Opinion Worksheet: Free Printable, Grades 3–6](https://fictionandfactlibrary.com/tools/fact-or-opinion/activity/): Free printable fact or opinion worksheet for grades 3–6: sort ten statements, find the opinion inside four sentences and write your own. With answer key.
+- [Main Idea Worksheet: Free Printable, Grades 3–6](https://fictionandfactlibrary.com/tools/main-idea/activity/): Free printable main idea worksheet for grades 3–6: find the topic, the main idea and three details in two paragraphs, then write a main idea sentence.
 - [Reading Level Worksheet: Rewrite for a Younger Reader](https://fictionandfactlibrary.com/tools/reading-level/activity/): Free printable reading level worksheet for grades 4–8: students check a passage, record the numbers, rewrite it for a younger reader and check it again.
+- [Fluency Record Sheet: Free Printable for Timed Reading](https://fictionandfactlibrary.com/tools/reading-speed/activity/): Free printable fluency record sheet for grades 3–6: a passage with word counts in the margin, a table for three timed readings and reflection questions.
 
 ## Listen
 
