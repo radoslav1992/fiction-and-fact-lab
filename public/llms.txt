@@ -1,12 +1,13 @@
 # Fiction & Fact Library
 
-> Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: three interactive tools, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. The site also has Listen, a player for free public-domain audiobooks read by LibriVox volunteers. From the makers of Interactive Periodic Table.
+> Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: four interactive tools, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. The site also has Listen, a player for free public-domain audiobooks read by LibriVox volunteers. From the makers of Interactive Periodic Table.
 
 ## Tools
 
 - [Reading Tools: Free Interactive Practice for Grades 2–8](https://fictionandfactlibrary.com/tools/): Free interactive reading tools for grades 2–8, each with a printable worksheet and a teacher answer key. They run in the browser with no sign-up or ads.
 - [Fact or Opinion Game: Free Practice for Grades 2–8](https://fictionandfactlibrary.com/tools/fact-or-opinion/): Free fact or opinion game for grades 2–8: sort statements, learn the clue words and find the opinion inside a sentence. With fact vs opinion examples.
 - [Fiction or Nonfiction Game: Free Practice, Grades 2–8](https://fictionandfactlibrary.com/tools/fiction-or-nonfiction/): Free fiction or nonfiction game for grades 2–8: sort passages and book descriptions, learn the clues and name 13 genres. With examples and a genre guide.
+- [Figurative Language Game: Simile, Metaphor & More](https://fictionandfactlibrary.com/tools/figurative-language/): Free figurative language game for grades 3–8: spot similes, metaphors, personification, hyperbole and idioms. Every answer is explained, with examples.
 - [Reading Level Checker: Free Readability & Grade Level Tool](https://fictionandfactlibrary.com/tools/reading-level/): Free reading level checker: paste any text to see its grade level, age range, Flesch Reading Ease and Flesch–Kincaid score. Nothing you type is saved.
 
 ## Classroom
@@ -14,6 +15,7 @@
 - [For Teachers: Free Reading Worksheets & Answer Keys](https://fictionandfactlibrary.com/teachers/): Free reading tools for grades 2–8 with printable one-page worksheets, teacher answer keys and short lesson plans. No logins, no ads, Chromebook-ready.
 - [Fact or Opinion Worksheet: Free Printable, Grades 3–6](https://fictionandfactlibrary.com/tools/fact-or-opinion/activity/): Free printable fact or opinion worksheet for grades 3–6: sort ten statements, find the opinion inside four sentences and write your own. With answer key.
 - [Fiction or Nonfiction Worksheet: Free Printable](https://fictionandfactlibrary.com/tools/fiction-or-nonfiction/activity/): Free printable fiction or nonfiction worksheet for grades 2–5: sort ten items, name the clue that gave each one away and write your own. With answer key.
+- [Figurative Language Worksheet: Free Printable](https://fictionandfactlibrary.com/tools/figurative-language/activity/): Free printable figurative language worksheet for grades 4–6: label ten sentences, write a simile and a metaphor and explain two idioms. With answer key.
 - [Reading Level Worksheet: Rewrite for a Younger Reader](https://fictionandfactlibrary.com/tools/reading-level/activity/): Free printable reading level worksheet for grades 4–8: students check a passage, record the numbers, rewrite it for a younger reader and check it again.
 
 ## Listen

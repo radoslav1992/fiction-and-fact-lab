@@ -4,8 +4,9 @@
 import { activity as readingLevel, standards as readingStandards } from './activities/reading-level.mjs';
 import { activity as factOrOpinion, standards as factStandards } from './activities/fact-or-opinion.mjs';
 import { activity as fictionOrNonfiction, standards as fictionStandards } from './activities/fiction-or-nonfiction.mjs';
+import { activity as figurativeLanguage, standards as figurativeStandards } from './activities/figurative-language.mjs';
 
 // Common Core ELA standards referenced by the activities, paraphrased.
-export const standards = { ...readingStandards, ...factStandards, ...fictionStandards };
+export const standards = { ...readingStandards, ...factStandards, ...fictionStandards, ...figurativeStandards };
 
-export const activities = [readingLevel, factOrOpinion, fictionOrNonfiction];
+export const activities = [readingLevel, factOrOpinion, fictionOrNonfiction, figurativeLanguage];

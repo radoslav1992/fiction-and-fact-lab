@@ -66,12 +66,11 @@ const ALL = [
   },
   {
     slug: 'figurative-language',
-    live: false,
     name: 'Figurative Language Game',
     section: 'Figurative Language',
     topic: 'Figurative language',
     kind: 'Simile, metaphor and figurative language practice',
-    blurb: 'TODO',
+    blurb: 'Name the figurative language in a sentence: simile, metaphor, personification, hyperbole, idiom, alliteration or onomatopoeia. Three levels for grades 3–8, with the signal words shown after every answer.',
   },
   {
     slug: 'parts-of-speech',

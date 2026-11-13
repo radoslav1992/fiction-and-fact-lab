@@ -1,0 +1,60 @@
+---
+// The Figurative Language Game. The level picker is rendered here; game.ts runs the rounds in the browser.
+import './game.css';
+import { LEVELS, ROUND_LENGTH } from '../../lib/figurative-language.mjs';
+---
+<section class="fl" data-game aria-label="Figurative Language Game">
+  <div class="fl-start" data-screen="start">
+    <h2 id="fl-choose">Choose a level to start</h2>
+    <div class="fl-levels" role="group" aria-labelledby="fl-choose">
+      {LEVELS.map(level => (
+        <button type="button" class="fl-level" data-level={level.id}>
+          <span class="fl-level-name">{level.name}</span>
+          <span class="fl-level-grades">{level.grades} · {level.ages}</span>
+          <span class="fl-level-about">{level.about}</span>
+          <span class="fl-level-best" data-best={level.id}></span>
+        </button>
+      ))}
+    </div>
+    <p class="fl-help">Each round has {ROUND_LENGTH} questions. You get an explanation after every answer. On a keyboard, press the number key shown on a choice, then <kbd>Enter</kbd> for the next question. Your score stays in this browser.</p>
+    <noscript><p class="note">The game needs JavaScript. Turn it on in your browser to play, or use the examples and the printable worksheet below.</p></noscript>
+  </div>
+
+  <div class="fl-play" data-screen="play" hidden>
+    <div class="fl-bar">
+      <strong data-level-name></strong>
+      <span>Question <b data-number>1</b> of {ROUND_LENGTH}</span>
+      <span>Score <b data-score>0</b></span>
+      <span>Streak <b data-streak>0</b></span>
+      <button type="button" class="fl-quit" data-quit>Change level</button>
+    </div>
+    <ol class="fl-dots" data-dots aria-hidden="true">{Array.from({ length: ROUND_LENGTH }, () => <li />)}</ol>
+    <div class="fl-card" data-card tabindex="-1">
+      <p class="fl-prompt" data-prompt></p>
+      <p class="fl-sentence" data-sentence></p>
+    </div>
+    <div class="fl-picks" data-answers></div>
+    <div class="fl-feedback" data-feedback hidden>
+      <p class="fl-verdict" data-verdict></p>
+      <p class="fl-why" data-why></p>
+      <button type="button" class="btn primary" data-next>Next question</button>
+    </div>
+    <p class="visually-hidden" role="status" data-live></p>
+  </div>
+
+  <div class="fl-results" data-screen="results" hidden>
+    <h2 data-results-title tabindex="-1">Your results</h2>
+    <p class="fl-final"><strong class="fl-final-score"><span data-final>0</span> out of {ROUND_LENGTH}</strong> <span>Best streak: <b data-best-streak>0</b> in a row</span></p>
+    <p class="fl-message" data-message></p>
+    <div data-missed></div>
+    <div class="page-actions">
+      <button type="button" class="btn primary" data-again>Play a new round</button>
+      <button type="button" class="btn" data-same>Play this round again</button>
+      <button type="button" class="btn" data-levels>Choose another level</button>
+    </div>
+    <p class="fl-share">For teachers: this was round <b data-round-number></b>. Everyone who opens this link gets the same {ROUND_LENGTH} questions: <a data-round-link href="/tools/figurative-language/"></a></p>
+  </div>
+</section>
+<script>
+  import './game.ts';
+</script>

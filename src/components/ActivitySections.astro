@@ -54,5 +54,13 @@ const { act, answers = false } = Astro.props;
           : <li><span class="sort-blank" aria-hidden="true"></span> {item.text} <span class="sort-why" style="display:flex;align-items:flex-end;gap:6px;margin-top:5px">Clue: <span aria-hidden="true" style="flex:1;border-bottom:1px solid currentColor"></span></span></li>)}
       </ol>
     )}
+    {/* Figurative Language Game: a line under each sentence for the name of the device; the key marks the signal words. */}
+    {section.type === 'figurative-language' && (
+      <ol class:list={['sort-list', { 'key-answers': answers }]}>
+        {section.items.map(item => answers
+          ? <li>{item.pieces.map(piece => piece.mark ? <strong class="circled">{piece.text}</strong> : piece.text)} <span class="sort-why"><strong>{item.answer}.</strong>{` ${item.key}`}</span></li>
+          : <li>{item.text} <span aria-hidden="true" style="display:block;max-width:230px;height:1.7em;border-bottom:1px solid currentColor"></span></li>)}
+      </ol>
+    )}
   </Fragment>
 ))}
