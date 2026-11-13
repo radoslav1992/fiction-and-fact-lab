@@ -224,8 +224,10 @@ td.resources > a:not(.classroom-share) { display: inline-block; padding: 9px 0; 
   .h1-line { display: block; }
   .header { padding: 8px 16px; }
   .wrap { padding: 0 16px; }
-  .main-nav { margin: 0 -8px; gap: 0; }
-  .main-nav a { padding: 8px 9px; font-size: .94rem; }
+  /* One row that never wraps, so the header keeps its height whichever font is showing. */
+  .main-nav { margin: 0 -8px; gap: 0; flex-wrap: nowrap; max-width: calc(100% + 16px); overflow-x: auto; scrollbar-width: none; }
+  .main-nav::-webkit-scrollbar { display: none; }
+  .main-nav a { flex: none; padding: 8px 9px; font-size: .94rem; white-space: nowrap; }
 }
 
 @media (prefers-reduced-motion: reduce) {
