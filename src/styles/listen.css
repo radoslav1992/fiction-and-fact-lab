@@ -36,6 +36,8 @@ a.book-card:hover .book-card__title, a.book-card__title:hover { text-decoration:
 .book-skeleton { border-radius: 4px 12px 12px 4px; border: 1px solid var(--rule); background: var(--card-2); }
 .book-skeleton::before { content: ''; display: block; aspect-ratio: 1 / 1; }
 .book-skeleton::after { content: ''; display: block; height: calc(12px + 5.307rem); } /* 8px gap + title 2.652rem + author 1.38rem + meta 1.275rem + two 2px gaps */
+/* A card on the Continue shelf is taller by its progress bar: 2px gap + 4px margin + 11px bar. */
+.book-skeleton--progress::after { height: calc(29px + 5.307rem); }
 .listen-more { display: flex; justify-content: center; margin-top: 24px; }
 .listen-empty, .listen-error, .listen-loading { margin: 0; padding: 14px 16px; border-radius: 4px 10px 10px 4px; border-left: 5px solid var(--ink); background: var(--hl-soft); max-width: 760px; }
 .listen-loading { background: var(--card-2); }

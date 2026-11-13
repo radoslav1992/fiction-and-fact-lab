@@ -4,6 +4,7 @@
 // like the real ones.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 
 // A stand-in for the browser's local storage and window, set up before store.js is used.
 const memory = new Map();
@@ -59,6 +60,13 @@ test('favorites and progress use the old site’s local-storage keys and shapes'
   store.clearProgress('a');
   assert.deepEqual(store.getAllProgress(), []);
   assert.ok(events.every(event => event.type === 'vab:store-change'));
+});
+
+test('the Continue shelf reads the same key as the store', () => {
+  const component = fs.readFileSync(new URL('../src/components/listen/ContinueShelf.astro', import.meta.url), 'utf8');
+  const source = fs.readFileSync(new URL('../src/scripts/listen/store.js', import.meta.url), 'utf8');
+  assert.ok(source.includes(`const PROGRESS_KEY = '${PROGRESS_KEY}';`) && source.includes(`const FAV_KEY = '${FAV_KEY}';`));
+  assert.ok(component.includes(`localStorage.getItem('${PROGRESS_KEY}')`));
 });
 
 test('data saved by the old site is read as it is', () => {

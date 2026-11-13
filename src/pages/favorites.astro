@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ContinueShelf from '../components/listen/ContinueShelf.astro';
 import '../styles/listen.css';
 ---
 <Layout title="Your Saved Audiobooks" description="Audiobooks you have saved or started on Fiction & Fact Library. The list is kept in this browser only, with no account, and is never sent anywhere." section="Listen" noindex crumbs={[['Listen', '/listen/'], ['Saved books']]}>
@@ -11,10 +12,7 @@ import '../styles/listen.css';
       <p class="lede">Everything you have saved or started is kept here, in this browser. There is no account, and the list is never sent anywhere.</p>
     </div>
 
-    <section class="section listen-shelf" id="continue-section" aria-labelledby="continue-title" hidden>
-      <div class="listen-shelf__head"><h2 id="continue-title">Continue listening</h2></div>
-      <div class="book-grid" id="continue-grid"></div>
-    </section>
+    <ContinueShelf />
 
     <section class="section listen-shelf" aria-labelledby="saved-title">
       <div class="listen-shelf__head">
