@@ -73,15 +73,16 @@
 /* Build your own: the boxes to type in, and the diagram. */
 .pd-build { display: grid; gap: 20px; }
 .pd-build > * { min-width: 0; }
-@media (min-width: 1100px) {
-  .pd-build { grid-template-columns: 320px minmax(0, 1fr); align-items: start; }
+/* Side by side when there is room: the mountain if the column is wide enough, the stacked list if not. */
+@media (min-width: 860px) {
+  .pd-build { grid-template-columns: minmax(280px, 320px) minmax(0, 1fr); align-items: start; }
   /* The diagram stays in view while the boxes scroll. A very tall diagram scrolls inside its own column. */
   .pd-view { position: sticky; top: 4px; max-height: calc(100vh - 8px); overflow-y: auto; margin: -7px; padding: 7px; }
   .pd.is-big .pd-build { grid-template-columns: minmax(0, 1fr); }
   .pd.is-big .pd-form { display: none; }
   .pd.is-big .pd-view { position: static; max-height: none; overflow: visible; margin: 0; padding: 0; }
 }
-@media (max-width: 1099px) { .pd-big { display: none; } }
+@media (max-width: 859px) { .pd-big { display: none; } }
 .pd-form { display: grid; gap: 12px; }
 .pd-field label { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-weight: 700; margin-bottom: 4px; }
 .pd-field label span:not(.pd-num) { font-weight: 400; color: var(--muted); font-size: .95rem; }
@@ -158,7 +159,8 @@
 /* After checking: a right card is highlighted, a wrong one gets a dashed edge. Each has an icon and words. */
 .pd-cards .is-right .pd-card { background: var(--hl-soft); }
 .pd-cards .is-wrong .pd-card { border-style: dashed; border-top-style: solid; background: var(--card); }
-.pd-hand { position: sticky; bottom: 8px; z-index: 2; display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 12px; background: var(--hl); box-shadow: var(--shadow); }
+/* On a narrow screen the cards and the stages are far apart, so the chosen card rides along at the top. */
+.pd-hand { position: sticky; top: 8px; z-index: 2; display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 12px; background: var(--hl); box-shadow: var(--shadow); }
 .pd-hand p { flex: 1; min-width: 0; margin: 0; font-size: .97rem; line-height: 1.35; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
 .pd-hand .btn { flex: none; }
 .pd-sort-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 14px; }
@@ -170,6 +172,7 @@
 .pd-share { margin: 12px 0 0; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
 @media (min-width: 900px) {
   /* Five columns under one long mountain. */
+  .pd-hand { display: none; }
   .pd-board-hill { display: block; width: 100%; height: 120px; margin-bottom: -2px; }
   .pd-board-hill .pd-line { vector-effect: non-scaling-stroke; }
   .pd-zones { grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: stretch; }

@@ -107,13 +107,13 @@ const host = new URL(site.url).hostname;
         <p class="pd-tray-note" data-tray-note hidden>All the cards are on the mountain.</p>
         <button type="button" class="btn small pd-back" data-place="tray" hidden>Put the card back here</button>
       </div>
-      <div class="pd-board">
-        <svg class="pd-board-hill" viewBox="0 0 1000 96" preserveAspectRatio="none" aria-hidden="true"><path class="pd-hill" d="M200,90L500,8L800,90z"/><path class="pd-line" d="M4,90H200L500,8L800,90H996"/></svg>
-        <div class="pd-zones" data-zones></div>
-      </div>
       <div class="pd-hand" data-hand hidden>
         <p><strong>Your card:</strong> <span data-hand-text></span></p>
         <button type="button" class="btn small" data-drop>Put it down</button>
+      </div>
+      <div class="pd-board">
+        <svg class="pd-board-hill" viewBox="0 0 1000 96" preserveAspectRatio="none" aria-hidden="true"><path class="pd-hill" d="M200,90L500,8L800,90z"/><path class="pd-line" d="M4,90H200L500,8L800,90H996"/></svg>
+        <div class="pd-zones" data-zones></div>
       </div>
       <div class="pd-sort-actions">
         <button type="button" class="btn primary" data-check disabled>Check my mountain</button>

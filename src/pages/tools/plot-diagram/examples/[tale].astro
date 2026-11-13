@@ -41,7 +41,7 @@ const resource = {
       </div>
     </div>
 
-    <PlotDiagram diagram={diagramFromTale(tale)} caption={`The plot diagram of ${tale.title}: ${tale.events.length} key events on the five stages of a story mountain.`} />
+    <PlotDiagram diagram={diagramFromTale(tale)} caption={`The plot diagram of ${tale.title}: ${['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'][tale.events.length]} key events on the five stages of a story mountain.`} />
 
     <section class="section prose">
       <h2>{tale.title} in {words} words</h2>
