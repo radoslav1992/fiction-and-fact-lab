@@ -5,10 +5,11 @@ import LearningApps from '../components/LearningApps.astro';
 import Faq from '../components/Faq.astro';
 import { site } from '../lib/site.mjs';
 import { flagship } from '../lib/learning-apps.mjs';
-import { tools } from '../lib/labs.mjs';
+import { tools, toolCount, ToolCount } from '../lib/labs.mjs';
 
 const faq: [string, string][] = [
   ['What is Fiction & Fact Library?', 'A set of free reading tools for students in grades 2 to 8 (ages about 7 to 14) and their teachers. Each tool is something to do, not just something to read, and each comes with a printable worksheet and a teacher answer key.'],
+  ['What can I do here?', `There are ${toolCount} tools. ${tools.map(tool => `${tool.name}: ${tool.blurb}`).join(' ')}`],
   ['Is it free? Do students need to sign up?', 'Everything is free, with no accounts, logins or downloads. The tools run in the browser on Chromebooks, tablets, laptops and phones.'],
   ['Are there ads?', 'No. The site shows no ads of any kind.'],
   ['Does anything a student types get saved or sent anywhere?', 'No. The tools work inside the browser. Text that a student types or pastes is never sent to us, and scores stay on the device.'],
@@ -20,9 +21,10 @@ const faq: [string, string][] = [
       <div>
         <span class="eyebrow">{site.name}</span>
         <h1>Free reading tools for <span class="hl">classrooms</span></h1>
-        <p class="lede">Hands-on reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers. Each one runs in the browser, needs no sign-up and comes with a printable worksheet.</p>
+        <p class="lede">Hands-on reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers. Check how hard a text is to read, or practice telling a fact from an opinion. Each tool runs in the browser, needs no sign-up and comes with a printable worksheet.</p>
         <div class="page-actions">
-          <a class="btn primary" href="/tools/">See the reading tools</a>
+          <a class="btn primary" href="/tools/reading-level/">Check a reading level</a>
+          <a class="btn primary" href="/tools/fact-or-opinion/">Play Fact or Opinion</a>
           <a class="btn" href="/teachers/">For teachers</a>
         </div>
         <p class="muted">From the makers of <a href={flagship.url + '/'}>{flagship.name}</a>.</p>
@@ -31,7 +33,7 @@ const faq: [string, string][] = [
     </section>
 
     <section class="section" aria-labelledby="tools">
-      <span class="eyebrow">Reading tools</span>
+      <span class="eyebrow">{ToolCount} reading tools</span>
       <h2 id="tools">Tools to try</h2>
       <div class="tool-cards">
         {tools.map(tool => (

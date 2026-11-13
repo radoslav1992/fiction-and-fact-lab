@@ -45,7 +45,7 @@ export function libraryCardSvg() {
     <rect x="452" y="330" width="14" height="30" fill="#ffe14f"/>
   </g>
   <style>
-    .library-card text { font-family: 'Literata', 'Literata Fallback', Georgia, serif; font-weight: 600; font-size: 25px; fill: #1d2158; }
+    .library-card text { font-family: 'Literata', 'Literata Georgia', 'Literata Times', Georgia, serif; font-weight: 600; font-size: 25px; fill: #1d2158; }
     .library-card .lc-head { font-family: 'Atkinson Hyperlegible', 'Atkinson Fallback', Arial, sans-serif; font-weight: 700; font-size: 17px; }
     .library-card .lc-small { font-family: 'Atkinson Hyperlegible', 'Atkinson Fallback', Arial, sans-serif; font-weight: 400; font-size: 15px; fill: #4b4f7a; }
     .library-card .lc-tag { font-family: 'Atkinson Hyperlegible', 'Atkinson Fallback', Arial, sans-serif; font-weight: 700; font-size: 14px; }

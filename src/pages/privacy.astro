@@ -6,6 +6,7 @@ const analytics = Boolean(site.analyticsId);
 // Everything the site keeps in the browser's local storage: [key, what it is for, how long].
 const stored: [string, string, string][] = [
   ['cookieConsent', 'Your Accept or Reject choice from the cookie banner (only saved if the banner is shown and you choose).', '180 days'],
+  ['factOpinionBest', 'Your best score for each level of the Fact or Opinion Game, so you can try to beat it.', 'Until you clear your browser data'],
 ];
 ---
 <Layout title="Privacy Policy" description="How Fiction & Fact Library handles your data: no accounts, no ads, no personal details, anonymous statistics, and what stays in your browser." section="" crumbs={[['Privacy policy']]}>
@@ -25,7 +26,7 @@ const stored: [string, string, string][] = [
 
     <h2>Analytics</h2>
     {analytics ? (
-      <p>We use Google Analytics 4 to count visits and see which tools are used, so we can improve them. It records anonymous, aggregated information such as pages viewed, the type of device and browser, the approximate country, and tool events such as “a text was checked”, with its word count and reading level. It never receives names or any text that students type or paste. Google processes this data as described in <a href="https://policies.google.com/privacy">Google’s privacy policy</a>.</p>
+      <p>We use Google Analytics 4 to count visits and see which tools are used, so we can improve them. It records anonymous, aggregated information such as pages viewed, the type of device and browser, the approximate country, and tool events such as “a text was checked” (with its word count and reading level) or “a round was finished” (with the level and the score). It never receives names or any text that students type or paste. Google processes this data as described in <a href="https://policies.google.com/privacy">Google’s privacy policy</a>.</p>
     ) : (
       <p>Fiction & Fact Library does not run any analytics at the moment, so no analytics cookies are set.</p>
     )}

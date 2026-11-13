@@ -10,6 +10,14 @@ export const tools = [
     kind: 'Readability and grade level checker',
     blurb: 'Paste or type a text to see its US grade level, age range and Flesch Reading Ease score, with the long sentences and long words marked so you can see what to change.',
   },
+  {
+    slug: 'fact-or-opinion',
+    name: 'Fact or Opinion Game',
+    section: 'Fact or Opinion',
+    topic: 'Critical reading',
+    kind: 'Fact vs opinion sorting game',
+    blurb: 'Read a statement and decide: fact or opinion? Three levels for grades 2–8, with the clue words explained after every answer and a results screen that shows what to practice.',
+  },
 ];
 
 const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];

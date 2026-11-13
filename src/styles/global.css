@@ -4,13 +4,17 @@
    Light theme only, so pages read well on a classroom projector. */
 
 /* Local fonts sized to the width of the web fonts, so text keeps its line breaks when the web font arrives.
-   The size-adjust values are measured in Chromium against Liberation Sans and Liberation Serif, which have
-   the same widths as Arial and Times New Roman (see README, "Fonts"). */
-@font-face { font-family: 'Atkinson Fallback'; font-weight: 400; src: local('Arial'), local('Liberation Sans'), local('Arimo'); size-adjust: 98.7%; }
+   Each size-adjust is the web font's width divided by the local font's, measured in Chromium on this site's
+   own text (see README, "Fonts"). Atkinson Hyperlegible falls back to Arial. Literata falls back to Georgia,
+   the closer match, and to Times New Roman where there is no Georgia. Chromebooks and Linux have the same
+   widths under other names: Arimo or Liberation Sans, Gelasio, and Tinos or Liberation Serif. */
+@font-face { font-family: 'Atkinson Fallback'; font-weight: 400; src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Arimo'); size-adjust: 98.7%; }
 @font-face { font-family: 'Atkinson Fallback'; font-weight: 400; font-style: italic; src: local('Arial Italic'), local('Arial-ItalicMT'), local('Liberation Sans Italic'), local('Arimo Italic'); size-adjust: 99.6%; }
 @font-face { font-family: 'Atkinson Fallback'; font-weight: 700; src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Arimo Bold'); size-adjust: 100%; }
-@font-face { font-family: 'Literata Fallback'; font-weight: 600; src: local('Times New Roman Bold'), local('TimesNewRomanPS-BoldMT'), local('Liberation Serif Bold'), local('Tinos Bold'); size-adjust: 113.3%; }
-@font-face { font-family: 'Literata Fallback'; font-weight: 700; src: local('Times New Roman Bold'), local('TimesNewRomanPS-BoldMT'), local('Liberation Serif Bold'), local('Tinos Bold'); size-adjust: 116.7%; }
+@font-face { font-family: 'Literata Georgia'; font-weight: 600; src: local('Georgia Bold'), local('Georgia-Bold'), local('Gelasio Bold'), local('Gelasio-Bold'); size-adjust: 95.2%; }
+@font-face { font-family: 'Literata Georgia'; font-weight: 700; src: local('Georgia Bold'), local('Georgia-Bold'), local('Gelasio Bold'), local('Gelasio-Bold'); size-adjust: 97.4%; }
+@font-face { font-family: 'Literata Times'; font-weight: 600; src: local('Times New Roman Bold'), local('TimesNewRomanPS-BoldMT'), local('Liberation Serif Bold'), local('Tinos Bold'); size-adjust: 113.7%; }
+@font-face { font-family: 'Literata Times'; font-weight: 700; src: local('Times New Roman Bold'), local('TimesNewRomanPS-BoldMT'), local('Liberation Serif Bold'), local('Tinos Bold'); size-adjust: 116.6%; }
 
 :root {
   --paper: #f7f1e1;
@@ -30,7 +34,7 @@
   --radius: 12px;
   --shadow: 0 1px 0 var(--rule), 0 10px 26px rgba(29, 33, 88, .08);
   --font-body: 'Atkinson Hyperlegible', 'Atkinson Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Literata', 'Literata Fallback', Georgia, 'Times New Roman', serif;
+  --font-display: 'Literata', 'Literata Georgia', 'Literata Times', Georgia, 'Times New Roman', serif;
   --consent-bg: var(--card);
   --consent-fg: var(--ink);
   --consent-line: var(--rule-strong);
@@ -190,6 +194,15 @@ td.resources > a:not(.classroom-share) { display: inline-block; padding: 9px 0; 
 .answer-key .record-table td { font-variant-numeric: tabular-nums; }
 .key-note { background: var(--hl-soft); border-left: 5px solid var(--ink); border-radius: 4px 10px 10px 4px; padding: 12px 16px; font-size: .95rem; }
 .key-question { font-weight: 700; }
+.sort-list { padding-left: 1.6em; columns: 2 300px; column-gap: 34px; }
+.sort-list li { break-inside: avoid; margin-bottom: 10px; }
+.sort-blank { display: inline-block; width: 34px; height: 1.2em; margin-right: 6px; border-bottom: 1.5px solid var(--ink); vertical-align: bottom; }
+.sort-answer { display: inline-block; min-width: 24px; margin-right: 6px; text-align: center; border-bottom: 1.5px solid var(--ink); }
+.sort-why { display: block; font-size: .92rem; color: var(--muted); }
+.mixed-list { padding-left: 1.6em; }
+.mixed-list li { margin-bottom: 14px; }
+.mixed-list p { margin: 0; }
+.circled { padding: 0 5px; border: 1.5px solid var(--ink); border-radius: 999px; font-weight: 700; }
 .passage { background: var(--card); border: 1px solid var(--rule); border-left: 5px solid var(--hl); border-radius: 4px 10px 10px 4px; padding: 12px 16px; margin: 0 0 1em; }
 .passage p:last-child { margin-bottom: 0; }
 @media (max-width: 700px) { .worksheet-head { display: block; } .name-lines { margin-top: 16px; min-width: 0; } }
@@ -211,6 +224,8 @@ td.resources > a:not(.classroom-share) { display: inline-block; padding: 9px 0; 
 .link-snippet-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: .92rem; }
 
 @media (max-width: 480px) {
+  /* A short title that nearly fills a phone's width breaks at a fixed place, so it cannot re-wrap when the web font loads. */
+  .h1-line { display: block; }
   .header { padding: 8px 16px; }
   .wrap { padding: 0 16px; }
   .main-nav { margin: 0 -8px; gap: 0; }
@@ -248,6 +263,13 @@ td.resources > a:not(.classroom-share) { display: inline-block; padding: 9px 0; 
   th, td { padding: 3px 7px; font-size: 9pt; }
   thead th { background: none; color: #333; font-size: 7.5pt; letter-spacing: .02em; }
   .record-table td, .record-table th { border-color: #999; }
+  .sort-list { columns: 2; margin: 2px 0 4px; }
+  .sort-list li { margin-bottom: 7px; }
+  .key-answers.sort-list li, .key-answers.mixed-list li { margin-bottom: 3px; }
+  .mixed-list { margin: 2px 0 4px; }
+  .mixed-list li { margin-bottom: 9px; }
+  .sort-why { font-size: 8.5pt; color: #222; }
+  .sort-blank, .sort-answer, .circled { border-color: #000; }
   .passage { background: none; border: 1px solid #999; border-left-width: 3px; padding: 5px 9px; margin-bottom: 4px; }
   .worksheet-foot { font-size: 7.5pt; margin-top: 4px; color: #333; }
   .key-answers li { break-inside: avoid; }

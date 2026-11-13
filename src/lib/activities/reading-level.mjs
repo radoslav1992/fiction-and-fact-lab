@@ -64,6 +64,7 @@ export const activity = {
     {
       type: 'questions',
       heading: 'Questions',
+      keyHeading: 'Answers',
       items: [
         {
           q: 'Which sentence in the passage is the longest? How many words does it have?',

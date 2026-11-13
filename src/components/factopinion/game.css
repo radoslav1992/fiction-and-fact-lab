@@ -1,0 +1,92 @@
+/* Fact or Opinion Game. Teal always means fact and pink always means opinion, each with its icon and word. */
+.fo { background: var(--card); border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; padding: 20px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.fo h2 { font-size: 1.4rem; margin: 0 0 12px; }
+.fo h2:focus-visible { outline-offset: 6px; }
+
+/* Level picker */
+.fo-levels { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.fo-level { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 44px; padding: 16px 18px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; box-shadow: 4px 4px 0 var(--hl); }
+.fo-level:hover { background: var(--hl-soft); }
+.fo-level-name { font: 700 1.4rem/1.2 var(--font-display); }
+.fo-level-grades { font-weight: 700; }
+.fo-level-about { color: var(--muted); font-size: .97rem; }
+.fo-level-best { font-size: .92rem; font-weight: 700; min-height: 1.5em; }
+.fo-help { margin: 18px 0 0; color: var(--muted); font-size: .97rem; max-width: 760px; }
+
+/* Playing */
+.fo-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; font-size: .98rem; }
+.fo-bar b { font: 700 1.2rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.fo-quit { margin-left: auto; min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.fo-quit:hover { background: var(--hl-soft); }
+.fo-dots { display: flex; gap: 6px; list-style: none; margin: 10px 0 14px; padding: 0; }
+.fo-dots li { flex: 1; height: 10px; margin: 0; border: 2px solid var(--ink); border-radius: 5px; background: var(--card); }
+.fo-dots .is-current { background: var(--hl); }
+.fo-dots .is-right { background: var(--ink); }
+.fo-dots .is-wrong { background: repeating-linear-gradient(135deg, var(--ink) 0 2px, var(--card) 2px 5px); }
+/* The statement sits on a ruled library card. */
+.fo-card { padding: 18px 20px 20px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; }
+.fo-card:focus-visible { outline-offset: 2px; }
+.fo-prompt { margin: 0 0 8px; font-size: .9rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.fo-statement { margin: 0; font: 600 clamp(1.3rem, 3.6vw, 1.75rem)/1.5 var(--font-display); }
+.fo-answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.fo-answer { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 64px; padding: 10px 12px; border: 3px solid; font: 700 1.25rem/1.2 var(--font-body); cursor: pointer; }
+.fo-answer.fact { background: var(--fact-hl); border-color: var(--fact); color: var(--fact); border-radius: 10px; }
+.fo-answer.opinion { background: var(--opinion-hl); border-color: var(--opinion); color: var(--opinion); border-radius: 26px 26px 26px 6px; }
+.fo-answer:hover:not(:disabled) { box-shadow: 0 0 0 3px var(--hl); }
+.fo-answer-icon { display: inline-flex; }
+.fo-answer-icon svg { width: 26px; height: 26px; }
+.fo-answer kbd { margin-left: 4px; font-size: .8rem; color: var(--ink); }
+.fo-picks { margin-top: 14px; display: flex; gap: 10px; }
+.fo-parts { flex-direction: column; }
+.fo-words { flex-wrap: wrap; gap: 8px; }
+.fo-pick { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink); font: 700 1.08rem/1.35 var(--font-body); text-align: left; cursor: pointer; }
+.fo-words .fo-pick { min-width: 44px; justify-content: center; padding: 8px 12px; }
+.fo-pick:hover:not(:disabled) { background: var(--hl-soft); }
+.fo-pick kbd { flex: none; }
+/* After an answer: the right choice gets a tick, the one you pressed a thick outline. */
+.fo-answer:disabled, .fo-pick:disabled { cursor: default; opacity: .55; }
+.fo-answer.is-answer, .fo-pick.is-answer, .fo-answer.is-chosen, .fo-pick.is-chosen { opacity: 1; }
+.is-answer::after { content: '✓'; margin-left: 4px; font-weight: 700; }
+.fo-pick.is-answer { background: var(--hl); }
+.is-chosen { outline: 3px solid var(--ink); outline-offset: 3px; }
+.fo-words .fo-pick:disabled:not(.is-answer):not(.is-chosen) { opacity: .45; }
+
+/* The answer shown on the statement */
+.fo-seg { padding: 2px 4px; border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.fo-seg.fact { background: var(--fact-hl); box-shadow: inset 0 -3px 0 var(--fact); }
+.fo-seg.opinion { background: var(--opinion-hl); border-bottom: 3px dashed var(--opinion); }
+.fo-seg-label { margin: 0 2px 0 3px; font: 700 .68rem/1 var(--font-body); letter-spacing: .06em; text-transform: uppercase; vertical-align: super; }
+.fo-seg-label.fact { color: var(--fact); }
+.fo-seg-label.opinion { color: var(--opinion); }
+.fo-clue { background: none; color: inherit; font-weight: 700; text-decoration: underline 3px; text-underline-offset: 5px; }
+.fo-feedback { margin-top: 14px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.fo-verdict { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 700 1.35rem/1.2 var(--font-display); }
+.fo-verdict svg { width: 28px; height: 28px; flex: none; }
+.fo-verdict.is-right span { background: linear-gradient(transparent 55%, var(--hl) 55%); }
+.fo-why { margin: 0 0 12px; font-size: 1.08rem; }
+
+/* Results */
+.fo-final { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin: 0 0 10px; font-size: 1.1rem; }
+.fo-final-score { display: inline-block; padding: 4px 18px 6px; border: 4px solid var(--ink); border-radius: 10px; background: var(--hl); font: 700 clamp(1.7rem, 5vw, 2.4rem)/1.2 var(--font-display); transform: rotate(-2deg); }
+.fo-message { font-size: 1.12rem; max-width: 760px; }
+.fo-results h3 { margin: 18px 0 8px; }
+.fo-missed { padding-left: 1.3em; }
+.fo-missed li { margin-bottom: 14px; }
+.fo-missed .fo-statement { font-size: 1.2rem; margin-bottom: 4px; }
+.fo-missed p { margin: 0; }
+.fo-share { margin: 6px 0 0; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
+
+/* Examples and lesson content on the page */
+.fo-define { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.fo-define .card.fact { border-top-color: var(--fact); background: linear-gradient(var(--fact-hl) 0 0) top / 100% 6px no-repeat var(--card); }
+.fo-define .card.opinion { border-top-color: var(--opinion); background: linear-gradient(var(--opinion-hl) 0 0) top / 100% 6px no-repeat var(--card); }
+.fo-define h3 { display: flex; align-items: center; gap: 10px; }
+.fo-examples td:first-child { font: 600 1.05rem/1.5 var(--font-display); min-width: 240px; }
+.fo-examples .fo-seg-label { display: none; }
+
+@media (max-width: 480px) {
+  .fo { padding: 14px 12px; margin: 0 -6px; }
+  .fo-card { padding: 14px; }
+  .fo-answer { font-size: 1.1rem; gap: 6px; }
+  .fo-answer kbd, .fo-pick kbd { display: none; }
+}

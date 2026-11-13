@@ -1,12 +1,28 @@
 ---
 // The body of a classroom activity, shared by the student worksheet and the teacher answer key so the two
 // cannot drift apart: the same sections render blank for students and filled in when `answers` is set.
+import { parts, withClues, explain } from '../lib/fact-opinion.mjs';
 const { act, answers = false } = Astro.props;
 ---
 {act.sections.map(section => (
   <Fragment>
-    <h2>{answers && section.type === 'questions' ? 'Answers' : section.heading}</h2>
+    <h2>{answers ? section.keyHeading ?? section.heading : section.heading}</h2>
     {section.intro && <p class="worksheet-meta">{section.intro}</p>}
+    {section.type === 'text' && section.lines.map(line => <p class="worksheet-meta">{line}</p>)}
+    {section.type === 'sort' && (
+      <ol class:list={['sort-list', { 'key-answers': answers }]}>
+        {section.items.map(item => answers
+          ? <li><strong class="sort-answer">{item.kind === 'fact' ? 'F' : 'O'}</strong> {withClues(item).map(piece => piece.clue ? <strong class="circled">{piece.text}</strong> : piece.text)} <span class="sort-why">{`${item.kind === 'fact' ? 'Fact' : 'Opinion'}. ${item.why}`}</span></li>
+          : <li><span class="sort-blank" aria-hidden="true"></span> {item.text}</li>)}
+      </ol>
+    )}
+    {section.type === 'mixed' && (
+      <ol class:list={['mixed-list', { 'key-answers': answers }]}>
+        {section.items.map(item => answers
+          ? <li><p>{parts(item).map(part => part.kind === 'opinion' ? <u>{withClues(item, part.start, part.start + part.text.length).map(piece => piece.clue ? <strong class="circled">{piece.text}</strong> : piece.text)}</u> : part.text)}</p><p class="sort-why">{explain(item)}</p></li>
+          : <li>{item.text}</li>)}
+      </ol>
+    )}
     {section.type === 'passage' && <blockquote class="passage">{section.text.split('\n\n').map(paragraph => <p>{paragraph}</p>)}</blockquote>}
     {section.type === 'table' && (
       <Fragment>
