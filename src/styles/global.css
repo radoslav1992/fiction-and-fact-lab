@@ -131,6 +131,15 @@ tr:last-child > td, tbody tr:last-child > th { border-bottom: 0; }
 .tool-cards .page-actions { margin: auto 0 0; padding-top: 14px; }
 .tool-cards h3 a, .tool-list h4 a { color: var(--ink); text-decoration: none; }
 .tool-cards h3 a:hover, .tool-list h4 a:hover { text-decoration: underline; }
+/* Plain lists of links to pages of the same kind (fables, plot diagram examples). */
+.link-columns { list-style: none; margin: 0 0 1em; padding: 0; display: grid; gap: 2px 24px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+.link-columns li { margin: 0; }
+.link-columns a, .link-columns span { display: inline-flex; align-items: center; min-height: 40px; font-weight: 700; }
+.link-columns span[aria-current] { color: var(--muted); }
+.story-links { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); }
+.story-links h3 { font-size: 1.25rem; margin: 0 0 .3em; }
+.story-links h3 a { color: var(--ink); }
+.story-links p { margin: 0 0 10px; }
 /* Tools in groups: a heading and a line about the group, then its tools. */
 .tool-group + .tool-group { margin-top: 34px; }
 .section.tool-group { padding: 26px 0; }

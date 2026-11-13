@@ -105,7 +105,7 @@ export const learningApps = [
     "name": "Fiction & Fact Library",
     "subject": "Reading",
     "url": "https://fictionandfactlibrary.com",
-    "description": "Check the reading level of any text, sort facts from opinions, and listen to classic books read aloud.",
+    "description": "Build a plot diagram, sort facts from opinions, tag the parts of speech, and read fables aloud.",
     "mark": "Aa",
     "caption": "read it, check it, question it",
     "color": "#2b3190",
