@@ -101,7 +101,7 @@ Simplifications, all stated on the page as well:
   away. Below 1 it reads "Below grade 1"; above 12, "College" and then "College graduate". Ages are the grade
   plus 5 to the grade plus 6.
 - **Syllables are a heuristic.** They are counted by spelling rules (vowel groups; silent *e*, *-es* and
-  *-ed*; *-le*; *y* as vowel or consonant; vowel pairs that split, as in *gi-ant*) with a list of about 100
+  *-ed*; *-le*; *y* as vowel or consonant; vowel pairs that split, as in *gi-ant*) with a list of about 120
   exceptions. The tests check about 250 words with known counts. Expect some words to be off by one.
 - **Sentences are found by punctuation.** A sentence ends at `.`, `!` or `?` followed by a space, or at a
   blank line; a single line break does not end one. Titles (Mr., Dr.), "e.g." and initials (J. K., U.S.) never

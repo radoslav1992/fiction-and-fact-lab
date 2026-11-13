@@ -68,13 +68,13 @@ test('words: hyphens, apostrophes and numbers', () => {
 
 // Counts as given in standard dictionaries.
 const SYLLABLES = {
-  1: ['a', 'I', 'the', 'cat', 'make', 'time', 'love', 'there', 'where', 'house', 'horse', 'once', 'one', 'are', 'use', 'eye', 'eyes', 'you',
+  1: ['aisle', 'isle', 'a', 'I', 'the', 'cat', 'make', 'time', 'love', 'there', 'where', 'house', 'horse', 'once', 'one', 'are', 'use', 'eye', 'eyes', 'you',
     'jumped', 'walked', 'played', 'called', 'smiled', 'changed', 'tried', 'watched', // -ed
     'makes', 'times', 'lives', 'miles', 'rules', 'shapes', 'clothes', 'goes', 'shoes', // -es
     'blue', 'fruit', 'juice', 'build', 'guide', 'school', 'through', 'thought', 'friend', 'earth', 'heard', // vowel pairs
     'they', 'key', 'type', 'style', 'rhyme', 'myth', // y
     'whole', 'smile', 'square', 'queen', 'tongue', 'league', 'bed', 'red', 'said'],
-  2: ['table', 'little', 'apple', 'people', 'circle', 'purple', 'tables', 'bottles', 'handled', 'settled', // -le
+  2: ['naive', 'acne', 'luncheon', 'cliche', 'table', 'little', 'apple', 'people', 'circle', 'purple', 'tables', 'bottles', 'handled', 'settled', // -le
     'wanted', 'needed', 'started', // -ed after t or d
     'buses', 'boxes', 'watches', 'wishes', 'faces', 'pages', 'houses', // -es after a hissing sound
     'water', 'mother', 'answer', 'about', 'because', 'between', 'country', 'mountain', 'island', 'ancient',
@@ -84,13 +84,13 @@ const SYLLABLES = {
     'ocean', 'equal', 'language', 'question', 'region', 'million', 'onion', 'senior', // vowel pairs said together
     "didn't", "couldn't", "isn't", "doesn't", 'maybe', 'create', 'orange', 'machine', 'measure', 'sentence', 'unique', 'argue', 'value',
     'prism', 'rhythm', 'business', 'evening', 'every', 'Wednesday', 'hundred', 'someone'],
-  3: ['animal', 'another', 'important', 'example', 'together', 'remember', 'beautiful', 'elephant', 'dinosaur', 'butterfly', 'library',
+  3: ['deity', 'reunion', 'coincide', 'sesame', 'finale', 'animal', 'another', 'important', 'example', 'together', 'remember', 'beautiful', 'elephant', 'dinosaur', 'butterfly', 'library',
     'family', 'different', 'favorite', 'syllable', 'syllables', 'triangle', 'bicycle',
     'piano', 'media', 'radio', 'video', 'idea', 'area', 'violin', 'period', 'curious', 'serious', 'various', 'obvious',
     'actual', 'usual', 'studying', 'happier', 'easier', 'happiest', 'opinion', 'delicious', 'tomorrow', 'yesterday', 'everyone',
     'excited', 'decided', 'created', 'recipe', 'museum', 'audience', 'completely', 'excitement', 'somebody', 'wonderful', 'adventure',
     'genuine', 'continue', 'computer', 'banana', 'energy', 'history', 'chlorophyll', 'honeycomb'],
-  4: ['January', 'February', 'usually', 'experiment', 'temperature', 'caterpillar', 'biology', 'geography', 'geometry', 'material',
+  4: ['zoology', 'coordinate', 'anemone', 'epitome', 'January', 'February', 'usually', 'experiment', 'temperature', 'caterpillar', 'biology', 'geography', 'geometry', 'material',
     'variety', 'society', 'experience', 'situation', 'education', 'information', 'community', 'ability', 'especially', 'everybody',
     'continuous', 'apostrophe', 'scientific', 'dictionary', 'dedicated', 'altogether'],
   5: ['photosynthesis', 'readability', 'vocabulary', 'university', 'opportunity', 'electricity', 'unfortunately', 'imagination', 'organization', 'imaginary'],

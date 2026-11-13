@@ -103,13 +103,16 @@ const EXCEPTIONS = {
   people: 2, peoples: 2, leopard: 2, leopards: 2, george: 1, georgia: 2, soldier: 2, soldiers: 2, cashier: 2, priest: 1, priests: 1,
   hundred: 2, hundreds: 2, sacred: 2, hatred: 2, kindred: 2, naked: 2, wicked: 2, crooked: 2, rugged: 2, ragged: 2, jagged: 2,
   someone: 2, anyone: 3, persuade: 2, persuaded: 3, lion: 2, lions: 2, liar: 2, liars: 2,
+  aisle: 1, aisles: 1, isle: 1, isles: 1, luncheon: 2,
   // a final e that is spoken
   recipe: 3, recipes: 3, maybe: 2, cafe: 2, apostrophe: 4, apostrophes: 4, catastrophe: 4, simile: 3, similes: 3, hyperbole: 4, karate: 3,
+  sesame: 3, acne: 2, anemone: 4, epitome: 4, finale: 3, cliche: 2,
   // two vowels side by side that are two syllables
   idea: 3, ideas: 3, area: 3, areas: 3, create: 2, creates: 2, created: 3, creating: 3, creation: 3, creative: 3, creator: 3,
   react: 2, reacts: 2, reaction: 3, reactions: 3, reality: 4, realize: 3, realized: 3, theater: 3, theatre: 3, nuclear: 3, cereal: 3,
   poem: 2, poems: 2, poet: 2, poets: 2, poetry: 3, science: 2, sciences: 3, scientist: 3, scientists: 3, scientific: 4, society: 4,
   cooperate: 4, cooperation: 5, hawaii: 3, chaos: 2, oasis: 3,
+  naive: 2, deity: 3, reunion: 3, zoology: 4, coordinate: 4, coordinates: 4, coincide: 3, coincidence: 4,
   // suffixes that look like a silent e but are not
   element: 3, elements: 3, implement: 3, supplement: 3, complement: 3,
   // abbreviations read as words
