@@ -1,0 +1,201 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Faq from '../../components/Faq.astro';
+import ContinueShelf from '../../components/listen/ContinueShelf.astro';
+import '../../styles/listen.css';
+
+const title = 'Listen: Free Classic Audiobooks Read Aloud Online';
+const description = 'Listen to free public-domain audiobooks online: classic stories, poems and non-fiction read aloud by LibriVox volunteers. No sign-up, nothing to install.';
+// Quick searches. Each sends its words to the same search box.
+const chips: [string, string][] = [
+  ['Fairy tales', 'fairy tales'], ['Adventure', 'adventure'], ['Animals', 'animals'], ['Myths', 'myths'],
+  ['Poetry', 'poetry'], ['Mystery', 'mystery detective'], ['Science fiction', 'science fiction'], ['Sherlock Holmes', 'Sherlock Holmes'],
+];
+const faq: [string, string][] = [
+  ['Where do the audiobooks come from?', 'Every recording was read aloud by a volunteer for LibriVox, a project whose volunteers record books that are in the public domain. The recordings are kept by the Internet Archive, and this page searches the Archive’s LibriVox collection each time you open it.'],
+  ['Are the audiobooks free and legal to listen to?', 'Yes. The books are in the public domain in the United States, and LibriVox volunteers give their recordings to the public domain too, so anyone may listen to them free of charge.'],
+  ['Are all the books suitable for children?', 'No. The collection holds thousands of books written for readers of all ages, many of them more than a hundred years old. We do not choose or check the books one by one. Teachers and parents may want to pick a title first.'],
+  ['Why do the readers sound different from book to book?', 'The readers are volunteers, not actors, and each reads in their own voice and accent. Some books are read by one person and some by a different reader for each chapter.'],
+  ['Does it remember where I stopped?', 'Yes. Your place in each book and your saved books are kept in this browser, on this device. They are not sent to us, and there is no account. If you clear your browser data, they are gone.'],
+  ['Can I read the text while I listen?', 'Often, yes. When the Internet Archive lists the text a recording was read from, usually a Project Gutenberg book, the player page has a “Read the text” link.'],
+];
+---
+<Layout title={title} description={description} section="Listen" crumbs={[['Listen']]}>
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Listen · Audiobooks</span>
+      <h1>Classic books, <span class="hl">read aloud</span></h1>
+      <p class="lede">Listen to thousands of free audiobooks in your browser. They are classic stories, poems and non-fiction books in the public domain, read aloud by volunteers from LibriVox.</p>
+    </div>
+
+    <section class="listen-search" aria-label="Find an audiobook">
+      <form class="listen-form" id="search-form" role="search">
+        <label class="visually-hidden" for="search-input">Search audiobooks by title, author or subject</label>
+        <input id="search-input" type="search" name="q" placeholder="Search by title, author or subject" autocomplete="off" />
+        <button class="btn primary" type="submit">Search</button>
+      </form>
+      <div class="listen-chips" id="chips" role="group" aria-label="Browse by subject">
+        {chips.map(([label, query]) => <button type="button" class="listen-chip" data-q={query}>{label}</button>)}
+      </div>
+    </section>
+
+    <ContinueShelf limit={6}><a class="tap" href="/favorites/">Your saved books →</a></ContinueShelf>
+
+    <!-- Main browsable shelf -->
+    <section class="section listen-shelf" aria-labelledby="shelf-title">
+      <div class="listen-shelf__head">
+        <h2 id="shelf-title">Most loved</h2>
+        <label class="listen-sort">Sort by
+          <select id="sort">
+            <option value="downloads desc">Most popular</option>
+            <option value="avg_rating desc">Highest rated</option>
+            <option value="addeddate desc">Recently added</option>
+            <option value="titleSorter asc">Title A–Z</option>
+          </select>
+        </label>
+      </div>
+      <div class="book-grid" id="grid" aria-live="polite">
+        <noscript><p class="note">The catalogue is loaded by JavaScript from the Internet Archive. Turn JavaScript on to browse and listen.</p><style>.book-skeleton { display: none; }</style></noscript>
+        {/* Placeholders for the first page of books, so the page does not jump when they arrive. */}
+        {Array.from({ length: 24 }, () => <div class="book-skeleton" />)}
+      </div>
+      <div class="listen-more"><button class="btn" id="load-more" type="button" hidden>Load more books</button></div>
+    </section>
+
+    <section class="section prose">
+      <h2>What you are listening to</h2>
+      <p>The recordings come from <a href="https://librivox.org/">LibriVox</a>, where volunteers around the world read books aloud and give the recordings away. Every book is in the public domain in the United States, which usually means it was published long ago, and the recordings are in the public domain too.</p>
+      <p>The audio files are kept by the <a href="https://archive.org/">Internet Archive</a>. This page asks the Archive for its LibriVox collection each time you search, and the sound plays straight from the Archive to your browser. Many of the books were read from texts prepared by <a href="https://www.gutenberg.org/">Project Gutenberg</a>.</p>
+      <h3>Good to know</h3>
+      <ul>
+        <li><strong>It is a big, mixed library.</strong> The collection was not made for children, and we do not check each book. Search for a title or author you know, or try the subject buttons.</li>
+        <li><strong>Old books use old words.</strong> Many of these books are more than a hundred years old. Their language and ideas can be very different from today’s.</li>
+        <li><strong>Your place is saved.</strong> The player remembers the chapter and the minute you stopped at, in this browser only. Press “Add to favorites” on a book to keep it on <a href="/favorites/">your shelf</a>.</li>
+        <li><strong>Keyboard shortcuts in the player.</strong> <kbd>Space</kbd> plays and pauses, <kbd>←</kbd> goes back 15 seconds and <kbd>→</kbd> goes forward 30 seconds.</li>
+      </ul>
+      <h3>Listening and reading together</h3>
+      <p>Hearing a book read aloud lets you enjoy stories that would be hard to read alone. If the player page has a “Read the text” link, open it and follow the words while you listen. To see how hard a page of it is to read, paste a paragraph into the <a href="/tools/reading-level/">Reading Level Checker</a>.</p>
+    </section>
+
+    <Faq items={faq} title="Questions about the audiobooks" />
+  </div>
+</Layout>
+
+<script>
+  import { searchBooks } from '../../scripts/listen/api.js';
+  import { renderGrid, bookCardHTML, progressCardHTML } from '../../scripts/listen/ui.js';
+  import { getAllProgress } from '../../scripts/listen/store.js';
+
+  const grid = document.getElementById('grid')!;
+  const shelfTitle = document.getElementById('shelf-title')!;
+  const sortSel = document.getElementById('sort') as HTMLSelectElement;
+  const loadMore = document.getElementById('load-more') as HTMLButtonElement;
+  const form = document.getElementById('search-form') as HTMLFormElement;
+  const input = document.getElementById('search-input') as HTMLInputElement;
+
+  const state = { query: '', sort: 'downloads desc', page: 1, total: 0, loading: false };
+
+  function skeletons(n: number) {
+    return Array.from({ length: n }, () => '<div class="book-skeleton"></div>').join('');
+  }
+
+  async function load({ reset }: { reset: boolean }) {
+    if (state.loading) return;
+    state.loading = true;
+    loadMore.disabled = true;
+
+    if (reset) {
+      state.page = 1;
+      grid.innerHTML = skeletons(24);
+    } else {
+      loadMore.textContent = 'Loading…';
+    }
+
+    try {
+      const { books, total } = await searchBooks({
+        query: state.query,
+        sort: state.sort,
+        page: state.page,
+        rows: 24,
+      });
+      state.total = total;
+
+      if (reset) {
+        renderGrid(grid, books);
+      } else {
+        grid.insertAdjacentHTML('beforeend', books.map(bookCardHTML).join(''));
+      }
+
+      const shown = state.page * 24;
+      loadMore.hidden = shown >= total || books.length === 0;
+      loadMore.textContent = 'Load more books';
+    } catch (err) {
+      console.error(err);
+      if (reset) {
+        grid.innerHTML =
+          '<p class="listen-error">The library shelf could not be reached. Please check your connection and try again.</p>';
+      }
+    } finally {
+      state.loading = false;
+      loadMore.disabled = false;
+    }
+  }
+
+  function setQuery(q: string) {
+    state.query = q.trim();
+    input.value = state.query;
+    shelfTitle.textContent = state.query ? `Results for “${state.query}”` : 'Most loved';
+    // keep the URL shareable
+    const url = new URL(location.href);
+    if (state.query) url.searchParams.set('q', state.query);
+    else url.searchParams.delete('q');
+    history.replaceState(null, '', url);
+    load({ reset: true });
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    setQuery(input.value);
+  });
+
+  document.getElementById('chips')!.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.listen-chip') as HTMLElement | null;
+    if (btn) {
+      setQuery(btn.dataset.q || '');
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  sortSel.addEventListener('change', () => {
+    state.sort = sortSel.value;
+    load({ reset: true });
+  });
+
+  loadMore.addEventListener('click', () => {
+    state.page += 1;
+    load({ reset: false });
+  });
+
+  // Continue-listening shelf from localStorage
+  function renderContinue() {
+    const progress = getAllProgress().slice(0, 6);
+    const section = document.getElementById('continue-section')!;
+    const cgrid = document.getElementById('continue-grid')!;
+    if (!progress.length) {
+      section.hidden = true;
+      return;
+    }
+    section.hidden = false;
+    cgrid.innerHTML = progress.map(progressCardHTML).join('');
+  }
+
+  // Boot
+  const initialQ = new URL(location.href).searchParams.get('q') || '';
+  if (initialQ) {
+    state.query = initialQ;
+    input.value = initialQ;
+    shelfTitle.textContent = `Results for “${initialQ}”`;
+  }
+  renderContinue();
+  load({ reset: true });
+</script>

@@ -1,0 +1,65 @@
+---
+// The Fact or Opinion Game. The level picker is rendered here; game.ts runs the rounds in the browser.
+import './game.css';
+import { LEVELS, ROUND_LENGTH } from '../../lib/fact-opinion.mjs';
+import { ICON } from '../../lib/fact-opinion-view.mjs';
+---
+<section class="fo" data-game aria-label="Fact or Opinion Game">
+  <div class="fo-start" data-screen="start">
+    <h2 id="fo-choose">Choose a level to start</h2>
+    <div class="fo-levels" role="group" aria-labelledby="fo-choose">
+      {LEVELS.map(level => (
+        <button type="button" class="fo-level" data-level={level.id}>
+          <span class="fo-level-name">{level.name}</span>
+          <span class="fo-level-grades">{level.grades} · {level.ages}</span>
+          <span class="fo-level-about">{level.about}</span>
+          <span class="fo-level-best" data-best={level.id}></span>
+        </button>
+      ))}
+    </div>
+    <p class="fo-help">Each round has {ROUND_LENGTH} statements. You get an explanation after every answer. On a keyboard, press <kbd>F</kbd> for fact and <kbd>O</kbd> for opinion, then <kbd>Enter</kbd> for the next one. Your score stays in this browser.</p>
+    <noscript><p class="note">The game needs JavaScript. Turn it on in your browser to play, or use the examples and the printable worksheet below.</p></noscript>
+  </div>
+
+  <div class="fo-play" data-screen="play" hidden>
+    <div class="fo-bar">
+      <strong data-level-name></strong>
+      <span>Statement <b data-number>1</b> of {ROUND_LENGTH}</span>
+      <span>Score <b data-score>0</b></span>
+      <span>Streak <b data-streak>0</b></span>
+      <button type="button" class="fo-quit" data-quit>Change level</button>
+    </div>
+    <ol class="fo-dots" data-dots aria-hidden="true">{Array.from({ length: ROUND_LENGTH }, () => <li />)}</ol>
+    <div class="fo-card" data-card tabindex="-1">
+      <p class="fo-prompt" data-prompt></p>
+      <p class="fo-statement" data-statement></p>
+    </div>
+    <div class="fo-answers" data-answers="sort">
+      <button type="button" class="fo-answer fact" data-answer="fact"><span class="fo-answer-icon" set:html={ICON.fact} />Fact<kbd aria-hidden="true">F</kbd></button>
+      <button type="button" class="fo-answer opinion" data-answer="opinion"><span class="fo-answer-icon" set:html={ICON.opinion} />Opinion<kbd aria-hidden="true">O</kbd></button>
+    </div>
+    <div class="fo-picks" data-answers="pick" hidden></div>
+    <div class="fo-feedback" data-feedback hidden>
+      <p class="fo-verdict" data-verdict></p>
+      <p class="fo-why" data-why></p>
+      <button type="button" class="btn primary" data-next>Next statement</button>
+    </div>
+    <p class="visually-hidden" role="status" data-live></p>
+  </div>
+
+  <div class="fo-results" data-screen="results" hidden>
+    <h2 data-results-title tabindex="-1">Your results</h2>
+    <p class="fo-final"><strong class="fo-final-score"><span data-final>0</span> out of {ROUND_LENGTH}</strong> <span>Best streak: <b data-best-streak>0</b> in a row</span></p>
+    <p class="fo-message" data-message></p>
+    <div data-missed></div>
+    <div class="page-actions">
+      <button type="button" class="btn primary" data-again>Play a new round</button>
+      <button type="button" class="btn" data-same>Play this round again</button>
+      <button type="button" class="btn" data-levels>Choose another level</button>
+    </div>
+    <p class="fo-share">For teachers: this was round <b data-round-number></b>. Everyone who opens this link gets the same {ROUND_LENGTH} statements: <a data-round-link href="/tools/fact-or-opinion/"></a></p>
+  </div>
+</section>
+<script>
+  import './game.ts';
+</script>

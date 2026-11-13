@@ -1,0 +1,32 @@
+---
+// The Plot Diagram Builder's blocks on its worksheet and answer key (ActivitySections.astro, type "plot-diagram").
+// task "events": the events of one tale in a mixed-up order, to be numbered by stage. The key shows each
+// stage and its reason. task "mountain": a blank story mountain to write on. The key shows what to look for
+// and a finished mountain. Both come from plot-diagram.mjs.
+import './plot-diagram.css';
+import { stageById, emptyDiagram, diagramFromTale } from '../../lib/plot-diagram.mjs';
+import { diagramSvg } from '../../lib/plot-diagram-view.mjs';
+const { section, answers = false } = Astro.props;
+const letter = (i: number) => 'ABCDEFGH'[i];
+---
+{section.task === 'events' && (
+  <ol class="pd-ws-events">
+    {section.cards.map((card, i) => answers
+      ? <li><span class="pd-ws-answer">{stageById(card.stage).number}</span><span class="pd-ws-letter">{letter(i)}.</span><span>{card.text} <span class="sort-why">{stageById(card.stage).name}. {card.why}</span></span></li>
+      : <li><span class="pd-ws-blank" aria-hidden="true"></span><span class="pd-ws-letter">{letter(i)}.</span><span>{card.text}</span></li>)}
+  </ol>
+)}
+{section.task === 'mountain' && (answers
+  ? (
+    <Fragment>
+      <ul class="pd-ws-check">{section.lookFor.map(line => <li>{line}</li>)}</ul>
+      <p class="worksheet-meta">{section.modelNote}</p>
+      <div class="pd-ws-mountain" set:html={diagramSvg({ ...diagramFromTale(section.tale), characters: '', setting: '', problem: '' })} />
+    </Fragment>
+  )
+  : (
+    <Fragment>
+      <p class="pd-ws-title">Title of the story: <span aria-hidden="true"></span></p>
+      <div class="pd-ws-mountain" set:html={diagramSvg(emptyDiagram(), { blank: section.blank })} />
+    </Fragment>
+  ))}

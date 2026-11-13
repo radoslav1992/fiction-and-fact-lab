@@ -1,0 +1,219 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import FictionNonfictionGame from '../../../components/fiction-or-nonfiction/FictionNonfictionGame.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { DEFINITIONS, LEVELS, FEATURES, GENRES, ROUND_LENGTH, ITEMS, itemById, itemsFor, kindOf, clueNames } from '../../../lib/fiction-or-nonfiction.mjs';
+import { tagHtml, revealHtml } from '../../../lib/fiction-or-nonfiction-view.mjs';
+
+const title = 'Fiction or Nonfiction Game: Free Practice, Grades 2–8';
+const description = 'Free fiction or nonfiction game for grades 2–8: sort passages and book descriptions, learn the clues and name 13 genres. With examples and a genre guide.';
+const url = new URL('/tools/fiction-or-nonfiction/', Astro.site).href;
+
+const item = (id: string) => itemById(id);
+const quote = (text: string) => text.replace(/\.$/, '');
+// Everything quoted on this page comes straight from the game's bank.
+const fox = item('a01'), dragon = item('a02'), frog = item('a17');
+const worked = [
+  { heading: 'A story that could happen', entry: item('b01') },
+  { heading: 'A true account that reads like a story', entry: item('b24') },
+  { heading: 'A book description', entry: item('b31') },
+];
+const leo = item('b13'), penguin = item('b25'), diary = item('b15'), hattie = item('c16'), mitchell = item('c27'), captain = item('c30'), poem = item('c22'), wren = item('b09');
+const counts = {
+  fiction: ITEMS.filter(entry => kindOf(entry) === 'fiction').length,
+  nonfiction: ITEMS.filter(entry => kindOf(entry) === 'nonfiction').length,
+  poetry: itemsFor(3, 'poetry').length,
+};
+const genreNames = (kind: string) => GENRES.filter(g => g.kind === kind).map(g => g.name.toLowerCase().replace(' (procedural)', ''));
+const andList = (names: string[]) => `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
+
+const faq: [string, string][] = [
+  ['What is the difference between fiction and nonfiction?', `${DEFINITIONS.fiction} ${DEFINITIONS.nonfiction} To decide, ask one question: did the author make it up, or is it about the real world?`],
+  ['What are some examples of fiction and nonfiction?', `Fiction: “${quote(dragon.text)}.” Dragons are not real, so someone made this up. Nonfiction: “${quote(frog.text)}.” You could check that in a science book. Fairy tales, fantasy novels and mysteries are fiction. Biographies, science books, cookbooks and atlases are nonfiction. The game has ${ITEMS.length} examples in all.`],
+  ['Is a biography fiction or nonfiction?', 'Nonfiction. A biography is the true story of a real person’s life, written by someone else. An autobiography is nonfiction too: it is a true life story written by the person who lived it. A novel about an invented person is fiction, even when it is written like a life story.'],
+  ['Is historical fiction true?', `Only partly, and it is still fiction. The time, the place and the big events are real, but the author invents the main characters, what they say and much of what happens to them. In the game, a girl named Hattie walks the trail to Oregon in 1848. The trail and the year are real history. Hattie is not.`],
+  ['Is poetry fiction?', 'Poetry is not fiction or nonfiction by itself. It is a form: writing set out in lines and stanzas, often with rhythm and rhyme. A poem can tell a made-up story, describe something real or share a feeling. That is why genre charts usually list poetry on its own, and why the game treats it as a genre of its own.'],
+  ['Is realistic fiction true?', 'No. Realistic fiction is a made-up story that could happen. The characters seem like real people and nothing magical takes place, but the author invented them. “Could it happen?” is the wrong question. Ask “Did it happen, and is the author telling it as true?”'],
+  ['Are fables and fairy tales fiction?', 'Yes. Fables, fairy tales, myths and legends are stories. Nobody presents a talking fox or a fairy godmother as fact, so in reading lessons they count as fiction. Many libraries keep these old tales on shelves of their own.'],
+  ['How can you tell if a book is fiction or nonfiction?', 'Look at the whole book. The cover and the back often say “a novel” or “the true story of”. Inside, a table of contents with topic headings, diagrams, photographs with captions, a glossary and an index point to nonfiction. Made-up characters, dialogue and a plot point to fiction. One clue is only a hint, so look for several.'],
+  ['Which grades is the Fiction or Nonfiction Game for?', `Grades 2 to 8, which is ages about 7 to 14. ${LEVELS.map(level => `${level.name} is for ${level.grades.toLowerCase()}`).join(', ')}. Older students who are new to genres can start at Level 2.`],
+  ['Can the whole class play the same round? Are scores saved?', `Yes to the first. When a round ends, the results screen shows a link with the round number in it, and everyone who opens it gets the same ${ROUND_LENGTH} questions in the same order. Your best score for each level is kept in your own browser. It is never sent to us, there is no sign-in and there are no ads.`],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Fiction or Nonfiction Game',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Fiction or Nonfiction" crumbs={[['Fiction or Nonfiction Game']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap fn-page">
+    <div class="page-intro">
+      <span class="eyebrow">Sorting game · Genres</span>
+      <h1><span class="h1-line">Fiction or</span> <span class="h1-line"><span class="hl">Nonfiction</span> Game</span></h1>
+      <p class="lede">Read a passage or a book description and decide which side of the library it belongs on. This free game has three levels for grades 2–8, explains every answer and shows you the clues that give each kind of writing away.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/fiction-or-nonfiction/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <FictionNonfictionGame />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/fiction-or-nonfiction/activity/', name: 'Fiction or Nonfiction Worksheet', text: 'One printable page: sort ten items, name the clue and write a sentence of each kind.' },
+      { href: '/tools/fact-or-opinion/', name: 'Fact or Opinion Game', text: 'Nonfiction is full of facts and opinions. Practice telling them apart.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section">
+      <h2>Fiction vs nonfiction: what is the difference?</h2>
+      <div class="fn-define">
+        <div class="card fiction">
+          <h3><Fragment set:html={tagHtml('fiction')} /></h3>
+          <p><strong>{DEFINITIONS.fiction}</strong></p>
+          <p>A fiction story can be full of magic, or it can seem as real as your own street. Either way, the author invented it.</p>
+          <p class="fn-example" set:html={revealHtml(fox)} />
+        </div>
+        <div class="card nonfiction">
+          <h3><Fragment set:html={tagHtml('nonfiction')} /></h3>
+          <p><strong>{DEFINITIONS.nonfiction}</strong></p>
+          <p>The writer is telling you what is so, and you could check it by looking, measuring or reading another book.</p>
+          <p class="fn-example" set:html={revealHtml(frog)} />
+        </div>
+      </div>
+      <div class="prose">
+        <h3>The question to ask</h3>
+        <p><strong>Did the author make it up, or is it about the real world?</strong> Fiction is not lying, because readers know the story is invented. And the word nonfiction simply means “not fiction”: not made up.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>What to look for in fiction and nonfiction</h2>
+        <p>Each kind of writing leaves clues. One clue is a hint, not proof: a novel can have a map in it, and a history book can quote what people said. Look for several clues, then ask the question above.</p>
+      </div>
+      <div class="table-wrap" style="max-width:920px">
+        <table>
+          <thead><tr><th scope="col">Look at</th><th scope="col"><Fragment set:html={tagHtml('fiction')} /></th><th scope="col"><Fragment set:html={tagHtml('nonfiction')} /></th></tr></thead>
+          <tbody>{FEATURES.map(row => <tr><th scope="row">{row.look}</th><td>{row.fiction}</td><td>{row.nonfiction}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>Worked examples</h2>
+      {worked.map(({ heading, entry }, i) => (
+        <Fragment>
+          <h3>{i + 1}. {heading}</h3>
+          <p class="fn-example" set:html={revealHtml(entry)} />
+          <ul>
+            <li><strong>Clues:</strong> {clueNames(entry)}. The words that give it away are underlined.</li>
+            <li>{entry.why}</li>
+            <li>So it is <Fragment set:html={tagHtml(entry.kind)} />.</li>
+          </ul>
+        </Fragment>
+      ))}
+    </section>
+
+    <section class="section prose">
+      <h2>The tricky cases</h2>
+      <h3>Stories that could really happen</h3>
+      <p>Realistic fiction has no dragons and no talking animals. Everything in it could happen, and that is what makes it tricky. Take this description from the game:</p>
+      <p class="fn-example" set:html={revealHtml(leo)} />
+      <p>{leo.why}</p>
+      <h3>Made-up stories set in real history</h3>
+      <p>Historical fiction puts invented characters into a real time and place.</p>
+      <p class="fn-example" set:html={revealHtml(hattie)} />
+      <p>The year and the trail are real. The girl is not, so the book is fiction.</p>
+      <h3>True accounts told like a story</h3>
+      <p>Nonfiction can have a beginning, a middle and an end. Writers call this narrative nonfiction.</p>
+      <p class="fn-example" set:html={revealHtml(penguin)} />
+      <p>{penguin.why}</p>
+      <h3>Life stories</h3>
+      <p>A biography is the true story of a real person’s life, written by someone else. An autobiography is written by the person who lived it. Both are nonfiction.</p>
+      <p class="fn-example" set:html={revealHtml(mitchell)} />
+      <p>{mitchell.why}</p>
+      <h3>Diaries and letters</h3>
+      <p>A real person’s diary is nonfiction. A diary that an author writes for an invented character is fiction.</p>
+      <p class="fn-example" set:html={revealHtml(diary)} />
+      <p>{diary.why}</p>
+      <h3>“Based on a true story”</h3>
+      <p>A real event can inspire a novel. If the author invents characters, conversations or events, the book is fiction, however true the event behind it. A nonfiction author does not invent.</p>
+      <h3>Poetry</h3>
+      <p>Poetry is a form, not a side of the library. A poem can be about a made-up dragon or about real rain:</p>
+      <p class="fn-example is-poem">{poem.text}</p>
+      <p>{poem.why} The game treats poetry as a genre of its own.</p>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Genre guide: {GENRES.length} kinds of writing</h2>
+        <p>A genre is a kind of writing with its own features. Level 3 of the game asks you to name the genre. Fiction genres: {andList(genreNames('fiction'))}. Nonfiction genres: {andList(genreNames('nonfiction'))}. Poetry can be either. Each example below is a question from the game.</p>
+      </div>
+      <div class="table-wrap fn-genres">
+        <table>
+          <thead><tr><th scope="col">Genre</th><th scope="col">What it is and what to look for</th><th scope="col">Example from the game</th></tr></thead>
+          <tbody>
+            {GENRES.map(g => {
+              const example = itemById(g.example);
+              return (
+                <tr>
+                  <th scope="row">{g.name}<br />{g.kind === 'either' ? <span class="muted">Either</span> : <Fragment set:html={tagHtml(g.kind)} />}</th>
+                  <td>{g.about} <strong>Look for:</strong> {g.look}</td>
+                  <td class:list={{ 'is-poem': example.text.includes('\n') }}>{example.text}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="note prose" style="margin-top:18px">Genres overlap. A fairy tale is a kind of fantasy, a mystery set today is also realistic fiction, and school standards often use “informational text” as a wide name that takes in biographies and how-to texts. The game never asks you to choose between two genres that both fit.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>Common mistakes</h2>
+      <ul>
+        <li><strong>“It could happen, so it is nonfiction.”</strong> Plenty of fiction could happen. In the game, “{quote(wren.text.split('. ')[0])}” describes a story that is realistic and still made up.</li>
+        <li><strong>“It has facts in it, so it is nonfiction.”</strong> A novel can be full of true details about farms, ships or ancient Egypt. If the characters and events are invented, it is fiction.</li>
+        <li><strong>“It tells a story, so it is fiction.”</strong> Biographies, autobiographies and true accounts of real events are told in order, like stories, and they are nonfiction.</li>
+        <li><strong>“Nonfiction means not true.”</strong> It is the other way around. Nonfiction means not fiction: not made up.</li>
+        <li><strong>“It is about animals, so it is nonfiction.”</strong> A book about how beavers build dams is nonfiction. A book about a beaver who opens a hat shop is fiction.</li>
+        <li><strong>“It says ‘I’, so it is an autobiography.”</strong> Many novels are told by an invented character who says “I”. Look for a sign that the life story is true. In the game, “{captain.marks[1]}” is the giveaway.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>How the game works</h2>
+      <ul>
+        {LEVELS.map(level => <li><strong>{level.name} ({level.grades.toLowerCase()}, {level.ages}).</strong> {level.about}</li>)}
+      </ul>
+      <p>Every round has {ROUND_LENGTH} questions, picked at random from the level’s bank with a mix of fiction and nonfiction. A Level 3 round uses ten different genres. Each right answer is one point, and the streak counts right answers in a row. At the end you see the ones you missed, with the reason for each.</p>
+      <p>The bank has {ITEMS.length} items: {counts.fiction} fiction, {counts.nonfiction} nonfiction and {counts.poetry} poems or descriptions of poetry. All of them were written for this site. The book titles and the characters in the stories are invented, and the fables and fairy tales are old tales retold in new words. The two people in the biography passages, Maria Mitchell and Wilson Bentley, were real and lived in the 1800s.</p>
+      <h3>What a short passage cannot tell you</h3>
+      <p>A few sentences from a real book are often not enough to sort it. “I was born in a small town” could open a novel or an autobiography. So every item in the game carries its own clues, and where the difference lies in what the author did, the item says so: “{hattie.marks[1]}”. With a real book you have more to go on: the cover, the description on the back, the author’s note and where the library shelves it.</p>
+      <p class="note">The facts in the nonfiction items are plain ones from school science and nature, chosen because they do not change. If you think one is wrong, please <a href={`mailto:${site.contactEmail}`}>tell us</a>.</p>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/fiction-or-nonfiction/activity/">fiction or nonfiction worksheet</a> takes about 15 minutes and prints on one page. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+      <LinkSnippet url={url} name="Fiction or Nonfiction Game" />
+    </section>
+  </div>
+</Layout>

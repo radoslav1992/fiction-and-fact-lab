@@ -1,0 +1,81 @@
+/* Figurative Language Game. The choices are plain ink buttons; after an answer the signal words in the
+   sentence get the highlighter, and the right choice gets a tick. */
+.fl { background: var(--card); border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; padding: 20px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.fl h2 { font-size: 1.4rem; margin: 0 0 12px; }
+.fl h2:focus-visible { outline-offset: 6px; }
+
+/* Level picker */
+.fl-levels { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.fl-level { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 44px; padding: 16px 18px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; box-shadow: 4px 4px 0 var(--hl); }
+.fl-level:hover { background: var(--hl-soft); }
+.fl-level-name { font: 700 1.4rem/1.2 var(--font-display); }
+.fl-level-grades { font-weight: 700; }
+.fl-level-about { color: var(--muted); font-size: .97rem; }
+.fl-level-best { font-size: .92rem; font-weight: 700; min-height: 1.5em; }
+.fl-help { margin: 18px 0 0; color: var(--muted); font-size: .97rem; max-width: 760px; }
+
+/* Playing */
+.fl-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; font-size: .98rem; }
+.fl-bar b { font: 700 1.2rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.fl-quit { margin-left: auto; min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.fl-quit:hover { background: var(--hl-soft); }
+.fl-dots { display: flex; gap: 6px; list-style: none; margin: 10px 0 14px; padding: 0; }
+.fl-dots li { flex: 1; height: 10px; margin: 0; border: 2px solid var(--ink); border-radius: 5px; background: var(--card); }
+.fl-dots .is-current { background: var(--hl); }
+.fl-dots .is-right { background: var(--ink); }
+.fl-dots .is-wrong { background: repeating-linear-gradient(135deg, var(--ink) 0 2px, var(--card) 2px 5px); }
+/* The sentence sits on a ruled library card. */
+.fl-card { padding: 18px 20px 20px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; }
+.fl-card:focus-visible { outline-offset: 2px; }
+.fl-prompt { margin: 0 0 8px; font-size: .9rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.fl-sentence { margin: 0; font: 600 clamp(1.3rem, 3.6vw, 1.75rem)/1.5 var(--font-display); }
+.fl-picks { margin-top: 14px; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+.fl-picks.is-meaning { grid-template-columns: 1fr; }
+.fl-pick { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink); font: 700 1.08rem/1.3 var(--font-body); text-align: left; cursor: pointer; }
+.fl-pick:hover:not(:disabled) { background: var(--hl-soft); }
+.fl-pick kbd { flex: none; }
+/* After an answer: the right choice gets a tick, the one you pressed a thick outline. */
+.fl-pick:disabled { cursor: default; opacity: .55; }
+.fl-pick.is-answer, .fl-pick.is-chosen { opacity: 1; }
+.fl-pick.is-answer { background: var(--hl); }
+.fl-pick.is-answer::after { content: '✓'; margin-left: auto; padding-left: 4px; font-weight: 700; }
+.fl-pick.is-chosen { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+/* The answer shown on the sentence: the signal words under the highlighter, in bold. */
+.fl-mark { padding: 0 .12em; border-radius: 3px; background: linear-gradient(transparent 8%, var(--hl) 8% 92%, transparent 92%); color: inherit; font-weight: 700; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.fl-feedback { margin-top: 14px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.fl-verdict { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 700 1.35rem/1.2 var(--font-display); }
+.fl-verdict svg { width: 28px; height: 28px; flex: none; }
+.fl-verdict.is-right span { background: linear-gradient(transparent 55%, var(--hl) 55%); }
+.fl-why { margin: 0 0 12px; font-size: 1.08rem; max-width: 46rem; }
+
+/* Results */
+.fl-final { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin: 0 0 10px; font-size: 1.1rem; }
+.fl-final-score { display: inline-block; padding: 4px 18px 6px; border: 4px solid var(--ink); border-radius: 10px; background: var(--hl); font: 700 clamp(1.7rem, 5vw, 2.4rem)/1.2 var(--font-display); transform: rotate(-2deg); }
+.fl-message { font-size: 1.12rem; max-width: 760px; }
+.fl-results h3 { margin: 18px 0 8px; }
+.fl-missed { padding-left: 1.3em; max-width: 46rem; }
+.fl-missed li { margin-bottom: 14px; }
+.fl-missed .fl-sentence { font-size: 1.2rem; margin-bottom: 4px; }
+.fl-missed p { margin: 0; }
+.fl-share { margin: 6px 0 0; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
+
+/* Examples and lesson content on the page */
+.fl-devices { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.fl-devices h3 { font-size: 1.3rem; font-weight: 700; margin: 0 0 .4em; }
+.fl-devices ul { margin: 0; padding-left: 0; list-style: none; }
+.fl-devices li, .fl-example { font: 600 1.08rem/1.5 var(--font-display); }
+.fl-devices li { margin: 0 0 6px; padding-left: 14px; border-left: 4px solid var(--hl); }
+.fl-pair { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); max-width: 860px; }
+.fl-tell td:last-child { font: 600 1.02rem/1.5 var(--font-display); min-width: 230px; }
+
+@media (max-width: 480px) {
+  .fl { padding: 14px 12px; margin: 0 -6px; }
+  .fl-card { padding: 14px; }
+  .fl-pick kbd { display: none; }
+  /* Two columns of names, so all seven kinds fit on a phone screen with the sentence. */
+  .fl-picks.is-device { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .fl-picks.is-device .fl-pick { padding: 8px 10px; font-size: .95rem; }
+  /* After an answer, a phone shows only the choice you made and the right one, so the explanation fits on screen. */
+  .fl-pick:disabled:not(.is-answer):not(.is-chosen) { display: none; }
+}

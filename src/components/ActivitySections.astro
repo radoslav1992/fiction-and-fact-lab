@@ -1,0 +1,120 @@
+---
+// The body of a classroom activity, shared by the student worksheet and the teacher answer key so the two
+// cannot drift apart: the same sections render blank for students and filled in when `answers` is set.
+import { parts, withClues, explain } from '../lib/fact-opinion.mjs';
+import ContextCluesSheet from './context-clues/Worksheet.astro';
+import CauseEffectSheet from './cause-and-effect/Worksheet.astro';
+import PlotWorksheet from './plot-diagram/PlotWorksheet.astro';
+import PartsOfSpeechWorksheet from './parts-of-speech/Worksheet.astro';
+import WordBuilderWorksheet from './word-builder/Worksheet.astro';
+const { act, answers = false } = Astro.props;
+---
+{act.sections.map(section => (
+  <Fragment>
+    <h2>{answers ? section.keyHeading ?? section.heading : section.heading}</h2>
+    {section.intro && <p class="worksheet-meta">{section.intro}</p>}
+    {section.type === 'text' && section.lines.map(line => <p class="worksheet-meta">{line}</p>)}
+    {section.type === 'sort' && (
+      <ol class:list={['sort-list', { 'key-answers': answers }]}>
+        {section.items.map(item => answers
+          ? <li><strong class="sort-answer">{item.kind === 'fact' ? 'F' : 'O'}</strong> {withClues(item).map(piece => piece.clue ? <strong class="circled">{piece.text}</strong> : piece.text)} <span class="sort-why">{`${item.kind === 'fact' ? 'Fact' : 'Opinion'}. ${item.why}`}</span></li>
+          : <li><span class="sort-blank" aria-hidden="true"></span> {item.text}</li>)}
+      </ol>
+    )}
+    {section.type === 'mixed' && (
+      <ol class:list={['mixed-list', { 'key-answers': answers }]}>
+        {section.items.map(item => answers
+          ? <li><p>{parts(item).map(part => part.kind === 'opinion' ? <u>{withClues(item, part.start, part.start + part.text.length).map(piece => piece.clue ? <strong class="circled">{piece.text}</strong> : piece.text)}</u> : part.text)}</p><p class="sort-why">{explain(item)}</p></li>
+          : <li>{item.text}</li>)}
+      </ol>
+    )}
+    {section.type === 'passage' && <blockquote class="passage">{section.text.split('\n\n').map(paragraph => <p>{paragraph}</p>)}</blockquote>}
+    {section.type === 'table' && (
+      <Fragment>
+        {answers && section.keyNote && <p class="worksheet-meta">{section.keyNote}</p>}
+        <div class="table-wrap">
+          <table class="record-table">
+            <thead><tr><th scope="col">{section.rowHeader}</th>{section.columns.map(col => <th scope="col">{col}</th>)}</tr></thead>
+            <tbody>
+              {section.rows.map(row => (
+                <tr><th scope="row">{row.label}</th>{section.columns.map(col => answers && row.values ? <td>{row.values[col]}</td> : <td class="blank" />)}</tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Fragment>
+    )}
+    {section.type === 'questions' && (
+      <ol class:list={['questions', { 'key-answers': answers }]} start={section.start ?? 1}>
+        {section.items.map(item => answers
+          ? <li><p class="key-question">{item.q}</p><p>{item.a}</p></li>
+          : <li><p>{item.q}</p><div class="write-lines" aria-hidden="true">{Array.from({ length: item.lines }, () => <span />)}</div></li>)}
+      </ol>
+    )}
+    {section.type === 'context-clues' && <ContextCluesSheet section={section} answers={answers} />}
+    {section.type === 'cause-and-effect' && <CauseEffectSheet section={section} answers={answers} />}
+    {section.type === 'plot-diagram' && <PlotWorksheet section={section} answers={answers} />}
+    {/* Parts of Speech Game: sentences to mark, and words to sort into a table. */}
+    {section.type.startsWith('pos-') && <PartsOfSpeechWorksheet section={section} answers={answers} />}
+    {/* Prefix and Suffix Word Builder: words to break up, words to build, prefixes to match. */}
+    {section.type.startsWith('wb-') && <WordBuilderWorksheet section={section} answers={answers} />}
+    {/* Reading Speed Test: a passage printed line by line, with a running word count in the margin. */}
+    {section.type === 'reading-speed' && (
+      <div class="fluency-lines">
+        {section.lines.map(line => <p class:list={[{ 'fluency-new': line.first }]}><span>{line.text}</span><span class="fluency-count">{line.count}</span></p>)}
+      </div>
+    )}
+    {/* Main Idea and Details Game: a paragraph with its questions. The key underlines the main idea and
+        strikes out the sentence that does not belong. */}
+    {section.type === 'main-idea' && (
+      <Fragment>
+        <blockquote class="passage"><p>{section.sentences.map(sentence => answers && sentence.role === 'main' ? <><u>{sentence.text}</u>{' '}</> : answers && sentence.role === 'extra' ? <><s>{sentence.text}</s>{' '}</> : <>{sentence.text}{' '}</>)}</p></blockquote>
+        <ol class:list={['questions', { 'key-answers': answers }]} start={section.start ?? 1}>
+          {section.items.map(item => answers
+            ? <li><p class="key-question">{item.q}</p><p>{item.a}</p></li>
+            : <li><p>{item.q}</p><div class="write-lines" aria-hidden="true">{Array.from({ length: item.lines }, () => <span />)}</div></li>)}
+        </ol>
+      </Fragment>
+    )}
+    {/* Fables Read-Along: a pointer to the other fables for students; for teachers, the right letters for every printed fable page. */}
+    {section.type === 'fables-letters' && (answers
+      ? <Fragment>
+          <p class="worksheet-meta">{section.keyNote}</p>
+          <ul class="key-answers" style="columns:2 250px;column-gap:28px;margin:0;padding-left:1.2em;font-size:.9em">
+            {section.items.map(item => <li style="break-inside:avoid;margin-bottom:1px">{item.title}: <strong>{item.letters.join(' ')}</strong></li>)}
+          </ul>
+        </Fragment>
+      : section.lines.map(line => <p class="worksheet-meta">{line}</p>))}
+    {/* Fiction or Nonfiction Game: a line for F or N before each item and a line for the clue under it. */}
+    {section.type === 'fiction-or-nonfiction' && (
+      <ol class:list={['sort-list', { 'key-answers': answers }]}>
+        {section.items.map(item => answers
+          ? <li><strong class="sort-answer">{item.letter}</strong> {item.text} <span class="sort-why">{item.key}</span></li>
+          : <li><span class="sort-blank" aria-hidden="true"></span> {item.text} <span class="sort-why" style="display:flex;align-items:flex-end;gap:6px;margin-top:5px">Clue: <span aria-hidden="true" style="flex:1;border-bottom:1px solid currentColor"></span></span></li>)}
+      </ol>
+    )}
+    {/* Figurative Language Game: a line under each sentence for the name of the device; the key marks the signal words. */}
+    {section.type === 'figurative-language' && (
+      <ol class:list={['sort-list', { 'key-answers': answers }]}>
+        {section.items.map(item => answers
+          ? <li>{item.pieces.map(piece => piece.mark ? <strong class="circled">{piece.text}</strong> : piece.text)} <span class="sort-why"><strong>{item.answer}.</strong>{` ${item.key}`}</span></li>
+          : <li>{item.text} <span aria-hidden="true" style="display:block;max-width:230px;height:1.7em;border-bottom:1px solid currentColor"></span></li>)}
+      </ol>
+    )}
+  </Fragment>
+))}
+
+<style>
+  /* Reading Speed Test: the fluency record sheet's passage. */
+  .fluency-lines { margin: 0 0 1em; padding: 12px 16px; border: 1px solid var(--rule); border-left: 5px solid var(--hl); border-radius: 4px 10px 10px 4px; background: var(--card); font-size: 1.08rem; }
+  /* The number sits level with the end of its line, also where a narrow screen wraps the line. */
+  .fluency-lines p { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin: 0; line-height: 1.9; }
+  .fluency-lines p.fluency-new:not(:first-child) { margin-top: .55em; }
+  .fluency-count { flex: none; width: 5ch; padding-left: 10px; border-left: 1px solid var(--rule-strong); text-align: right; font-size: .88em; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+  @media print {
+    .fluency-lines { margin-bottom: 4px; padding: 5px 9px; border: 1px solid #999; border-left-width: 3px; background: none; font-size: 11pt; }
+    .fluency-lines p { margin: 0; line-height: 1.7; color: #000; }
+    .fluency-lines p.fluency-new:not(:first-child) { margin-top: 4px; }
+    .fluency-count { color: #333; border-color: #999; }
+  }
+</style>

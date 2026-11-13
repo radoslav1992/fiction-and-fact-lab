@@ -1,0 +1,188 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ContextCluesGame from '../../../components/context-clues/ContextCluesGame.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { DEFINITION, CLUE_TYPES, LEVELS, ROUND_LENGTH, ITEMS, itemById, itemsFor, clueType, clueNote, meaningSentence } from '../../../lib/context-clues.mjs';
+import { sentenceHtml, revealHtml, typeTagHtml } from '../../../lib/context-clues-view.mjs';
+
+const title = 'Context Clues Game: Free Practice for Grades 2–8';
+const description = 'Free context clues game for grades 2–8: work out what a word means from definition, synonym, antonym, example and inference clues. With examples.';
+const url = new URL('/tools/context-clues/', Astro.site).href;
+
+// Everything quoted on this page comes straight from the game's sentence bank.
+const item = (id: string) => itemById(id);
+const quote = (text: string) => text.replace(/\.$/, '');
+const list = (words: string[]) => words.map(word => `“${word}”`).join(', ');
+const signalsOf = type => [...type.signals, ...(type.marks ?? [])];
+const first = item('a05'), worked = item('c15'), rough = item('b26'), bare = item('b01'), contrast = item('b20'), gap = item('a01');
+// The worked example's guess, tried in place of the word, and a sentence with a gap where its word was.
+const guess = 'not keen';
+const tested = worked.text.replace(worked.word, guess);
+const gapped = gap.text.slice(0, gap.text.indexOf(gap.word)) + '___';
+const capital = (text: string) => text[0].toUpperCase() + text.slice(1);
+const typesAt = (level: number) => LEVELS[level - 1].types.map(id => clueType(id).name.toLowerCase());
+const counts = LEVELS.map(level => itemsFor(level.id).length);
+
+const faq: [string, string][] = [
+  ['What are context clues?', `${DEFINITION} Writers often explain a hard word as they go: with a definition, a similar word, an opposite word or some examples. A reader who notices the clue can keep reading without stopping.`],
+  ['What are the 5 types of context clues?', `Definition, synonym, antonym (or contrast), example and inference. ${CLUE_TYPES.map(type => `${type.name}: ${type.what}`).join(' ')}`],
+  ['What is an example of a context clue?', `In “${quote(first.text)},” the second sentence tells you what the word means. ${meaningSentence(first)} In “${quote(contrast.text)},” the word “${contrast.signal}” tells you that ${contrast.word} is the opposite of ${contrast.clues[0]}. There are two examples of every type on this page, and ${ITEMS.length} sentences in the game.`],
+  ['What are the signal words for context clues?', `For a definition: ${list(clueType('definition').signals.slice(0, 4))}, and punctuation such as commas, dashes and parentheses. For a synonym: ${list(clueType('synonym').signals.slice(0, 4))}. For an antonym or contrast: ${list(clueType('antonym').signals.slice(0, 5))}. For examples: ${list(clueType('example').signals)}. An inference clue has no signal word.`],
+  ['What is the difference between a definition clue and a synonym clue?', `A definition clue stops to tell you the meaning right beside the word, as in “${quote(item('a02').text)}.” A synonym clue does not stop. It just uses a word with a similar meaning a little later, as in “${quote(item('a18').text)}.”`],
+  ['How do I use context clues to find the meaning of a word?', 'Use four steps. Read on to the end of the sentence and the one after it. Hunt for the clue: a signal word, punctuation, a similar word, an opposite or examples. Make a guess in your own words. Then test it: put your meaning in place of the word and read the sentence again.'],
+  ['Do context clues always work?', 'No. Some sentences give no clue at all, and a clue often gives only a rough meaning. If your meaning does not fit when you test it, or the word matters for understanding the text, check a dictionary. Then choose the dictionary meaning that fits the sentence.'],
+  ['Which grades is the Context Clues Game for?', `Grades 2 to 8, which is ages about 7 to 14. ${LEVELS.map(level => `${level.name} is for ${level.grades.toLowerCase()}`).join(', ')}. Older students who are new to the idea can start at Level 1.`],
+  ['Is there a context clues worksheet?', 'Yes. The free printable context clues worksheet has eight sentences to work on, a part on naming the type of clue and a short writing task, all on one page. The answer key is on the For teachers page.'],
+  ['Can the whole class play the same round? Are scores saved?', `Yes, the class can share a round. When a round ends, the results screen shows a link with the round number in it, and everyone who opens it gets the same ${ROUND_LENGTH} sentences. No sign-in is needed. Your best score for each level is kept in your own browser and is never sent to us.`],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Context Clues Game',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Context Clues" crumbs={[['Context Clues Game']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Vocabulary game · Word meanings</span>
+      <h1><span class="h1-line">Context <span class="hl">Clues</span></span> <span class="h1-line">Game</span></h1>
+      <p class="lede">Read a sentence with one harder word in it and work out what the word means from the words around it. This free game has three levels for grades 2–8 and shows you the clue after every answer.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/context-clues/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <ContextCluesGame />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/context-clues/activity/', name: 'Context Clues Worksheet', text: 'One printable page: eight sentences, the type of clue, and two sentences of your own.' },
+      { href: '/tools/cause-and-effect/', name: 'Cause and Effect Game', text: 'Find why things happen, with signal words such as “because” and “so”.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section prose">
+      <h2>What are context clues?</h2>
+      <p><strong>{DEFINITION}</strong> “Context” means the words and sentences around a word.</p>
+      <p>Writers often help you with a hard word. They explain it, use a similar word nearby, set it against its opposite, or give examples. If you notice the help, you can keep reading without stopping to look the word up.</p>
+      <p class="cc-example" set:html={revealHtml(first)} />
+      <p>You may not know “{first.word}”. Read on, and the next sentence tells you: {meaningSentence(first)} That sentence is the context clue.</p>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>The five types of context clues</h2>
+        <p>Clues come in five main types. Four of them often carry a signal word or a punctuation mark that tells you a clue is coming.</p>
+      </div>
+      <div class="table-wrap" style="max-width:920px">
+        <table>
+          <thead><tr><th scope="col">Type of clue</th><th scope="col">What the sentence does</th><th scope="col">Signal words and marks</th></tr></thead>
+          <tbody>{CLUE_TYPES.map(type => <tr><th scope="row">{type.name}</th><td>{type.what}</td><td>{signalsOf(type).length ? signalsOf(type).join(', ') : 'None. Use the whole sentence.'}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <p>In the examples below, the word to work out is on yellow, the clue has a solid underline and the signal word has a dotted underline. Every example is a sentence from the game.</p>
+        {CLUE_TYPES.map((type, i) => (
+          <Fragment>
+            <h3>{i + 1}. {type.name} clues</h3>
+            <p>{type.what} {type.look}</p>
+            {type.examples.map(item).map(example => (
+              <Fragment>
+                <p class="cc-example" set:html={revealHtml(example)} />
+                <p>{meaningSentence(example)} {clueNote(example)}</p>
+              </Fragment>
+            ))}
+          </Fragment>
+        ))}
+        <h3>Definition or synonym?</h3>
+        <p>These two are easy to mix up. In a definition clue the meaning sits right beside the word, set apart by commas, dashes, parentheses or words such as “or” and “which means”. In a synonym clue the sentence carries on, and a similar word turns up later, often with “too”, “as well” or “just as”.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Four steps for a word you do not know</h2>
+      </div>
+      <ol class="cc-steps">
+        <li><strong>Read on.</strong> Do not stop at the word. Finish the sentence, and read the one before it and the one after it.</li>
+        <li><strong>Hunt for the clue.</strong> Look for a signal word, punctuation that sets a meaning apart, a similar word, an opposite or a list of examples.</li>
+        <li><strong>Make a guess.</strong> Say what you think the word means, in your own words.</li>
+        <li><strong>Test it.</strong> Put your meaning in place of the word and read the sentence again. If it makes sense, keep reading.</li>
+      </ol>
+      <div class="prose">
+        <h3>The four steps on one sentence</h3>
+        <p class="cc-example" set:html={sentenceHtml(worked)} />
+        <ol>
+          <li><strong>Read on.</strong> The word “{worked.word}” is the last word, so read the whole sentence again from the start.</li>
+          <li><strong>Hunt for the clue.</strong> The word “{worked.signal}” signals a contrast. Mia was “{worked.clues[0]}”, and her brother was the other way.</li>
+          <li><strong>Make a guess.</strong> The opposite of {worked.clues[0]} is something like “{guess}”.</li>
+          <li><strong>Test it.</strong> “{tested}” It makes sense. {meaningSentence(worked)}</li>
+        </ol>
+        <p class="cc-example" set:html={revealHtml(worked)} />
+        <p><Fragment set:html={typeTagHtml(worked.type)} /> {clueNote(worked)}</p>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>When context clues are not enough</h2>
+      <p>Context clues are a first tool, not the only one. Here is what they cannot do.</p>
+      <h3>Some sentences give no clue</h3>
+      <p>“{bare.text.split(',')[0]}.” If that were the whole sentence, nothing in it would tell you what the word means. In the game the sentence goes on: “{quote(bare.text)}.” Real books are not always so helpful.</p>
+      <h3>A clue gives a rough meaning</h3>
+      <p>From “{quote(rough.text)},” you can tell that {rough.word} are things to drink. You cannot tell whether soup counts. A rough meaning is usually enough to keep reading, but not always enough to use the word yourself.</p>
+      <h3>A sentence can fit more than one meaning</h3>
+      <p>“The old bridge was rickety.” Old, wooden, narrow and shaky would all fit. Only one is right. That is why step 4 matters: if several meanings pass the test, the sentence has not told you enough.</p>
+      <h3>Words with more than one meaning</h3>
+      <p>A bat can be an animal or a stick for hitting a ball. Context tells you which meaning is in use. It does not tell you the other meanings.</p>
+      <h3>So when should I check a dictionary?</h3>
+      <ul>
+        <li>When there is no clue, or your meaning does not fit when you test it.</li>
+        <li>When the word is important for understanding the whole text.</li>
+        <li>When you want to use the word in your own writing.</li>
+      </ul>
+      <p>A dictionary and context work together. A dictionary may list several meanings, and the context tells you which one fits.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>Common mistakes</h2>
+      <ul>
+        <li><strong>Stopping at the hard word.</strong> The clue is often after the word, sometimes in the next sentence. Read on first.</li>
+        <li><strong>Choosing a meaning that only fits the sentence.</strong> “{capital(gap.wrong[2])}” fits “{gapped}” The clue, “{gap.signal} {gap.clues[0]}”, rules it out. A good answer fits the clue, not just the gap.</li>
+        <li><strong>Missing a contrast word.</strong> After “but”, “unlike” or “however”, the meaning turns around. The word you know is the opposite of the word you do not.</li>
+        <li><strong>Taking an example for the meaning.</strong> In “{quote(rough.text)},” lemonade is one example. The meaning is what all the examples share.</li>
+        <li><strong>Skipping the test.</strong> Putting your meaning back into the sentence takes five seconds and catches most wrong guesses.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>How the game works</h2>
+      <ul>
+        {LEVELS.map((level, i) => <li><strong>{level.name} ({level.grades.toLowerCase()}, {level.ages}).</strong> {level.about} It has {counts[i]} sentences with {typesAt(level.id).join(', ')} clues.</li>)}
+      </ul>
+      <p>Every round has {ROUND_LENGTH} sentences, picked at random from the level’s bank with a mix of clue types. There are three kinds of question: choose the meaning from four, tap a word that is part of the clue, and name the type of clue. Each right answer is one point, and the streak counts right answers in a row. After every answer you see the meaning, the clue, the type of clue and the word in one more sentence.</p>
+      <p class="note">All {ITEMS.length} sentences were written for this site, and each one holds its own clue. If you think a meaning or a clue is wrong, please <a href={`mailto:${site.contactEmail}`}>tell us</a>.</p>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/context-clues/activity/">context clues worksheet</a> takes about 20 minutes and prints on one page. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+      <LinkSnippet url={url} name="Context Clues Game" />
+    </section>
+  </div>
+</Layout>

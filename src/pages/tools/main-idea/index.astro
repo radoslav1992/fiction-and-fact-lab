@@ -1,0 +1,212 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import MainIdeaGame from '../../../components/main-idea/MainIdeaGame.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import {
+  DEFINITIONS, LEVELS, CATEGORIES, PARAGRAPHS, OPTION_KINDS, ROUND_LENGTH, ROUND_POINTS, SORT_SUPPORTS,
+  paragraphById, paragraphsFor, supportingSentences, statedSentence, explainMain, whyNot,
+} from '../../../lib/main-idea.mjs';
+import { paragraphHtml, kindTagHtml } from '../../../lib/main-idea-view.mjs';
+
+const title = 'Main Idea and Details Game: Free Practice, Grades 2–8';
+const description = 'Free main idea game for grades 2–8: read a short paragraph, choose the main idea, then sort the supporting details from the sentences that do not belong.';
+const url = new URL('/tools/main-idea/', Astro.site).href;
+
+// Examples on the page, straight from the game's paragraph bank.
+const camels = paragraphById('a01');     // main idea in the first sentence
+const owls = paragraphById('b01');       // main idea in the last sentence
+const thunder = paragraphById('b05');    // main idea in the middle
+const sounds = paragraphById('c11');     // main idea implied
+const rivers = paragraphById('b12');     // the four kinds of option
+const quote = (text: string) => text.replace(/\.$/, '');
+const lower = (text: string) => text[0].toLowerCase() + text.slice(1);
+const optionOrder = ['detail', 'broad', 'off', 'main'] as const;
+
+const faq: [string, string][] = [
+  ['What is the main idea of a paragraph?', `${DEFINITIONS.mainIdea} In a paragraph about camels, the main idea might be “${quote(camels.options.main)}.” Every other sentence in the paragraph gives a detail that supports it.`],
+  ['What is the difference between the topic and the main idea?', `The topic is what the paragraph is about, and you can say it in a word or two: ${camels.topic}. The main idea is what the paragraph says about that topic, and it takes a whole sentence: “${quote(camels.options.main)}.” A quick check: a topic is not a sentence, and a main idea always is.`],
+  ['What are supporting details?', `${DEFINITIONS.detail} In the camel paragraph, “${quote(supportingSentences(camels)[0])}” is a supporting detail. It is one piece of evidence for the main idea, not the main idea itself.`],
+  ['Where is the main idea usually found?', 'Look at the first sentence first: writers who are explaining something often begin with the main idea. A sentence that states the main idea is called a topic sentence. It can also come last, as a summing up, or in the middle. Sometimes no sentence states the main idea at all, and the reader has to work it out from the details.'],
+  ['How do you find the main idea when it is not stated?', 'Find the topic first. Then ask what each sentence says about the topic, and look for what all the sentences have in common. Put that into one sentence of your own, and test it: does it fit every sentence in the paragraph? That is an implied main idea, and Level 3 of the game practices it.'],
+  ['What do “too broad” and “too narrow” mean?', `A statement is too narrow when it covers only one detail, such as “${quote(rivers.options.detail)}” for a paragraph about how a river changes on its way to the sea. It is too broad when it covers far more than the paragraph does, such as “${quote(rivers.options.broad)}.” The main idea fits the paragraph exactly: every sentence belongs under it, and it claims nothing more.`],
+  ['Is the main idea the same as the theme?', 'No. The main idea is what a text is mostly about, and it is used most for informational writing. A theme is the message or lesson of a story, such as “a small friend can be a great help.” A story has a plot you can summarize and a theme you can discuss; an informational paragraph has a main idea and details.'],
+  ['Is there a main idea worksheet?', 'Yes. The free printable main idea and details worksheet has two paragraphs to work on and a set of details to turn into a main idea sentence, all on one page. The answer key is on the For teachers page.'],
+  ['Can the whole class play the same round?', `Yes. When a round ends, the results screen shows a link with the round number in it. Everyone who opens that link gets the same ${ROUND_LENGTH} paragraphs with the answers in the same order, so scores can be compared fairly.`],
+  ['Which grades is the Main Idea and Details Game for? Are scores saved?', `Grades 2 to 8, which is ages about 7 to 14. ${LEVELS.map(level => `${level.name} is for ${level.grades.toLowerCase()}`).join(', ')}. No sign-in is needed. Your best score for each level is kept in your own browser and is never sent to us.`],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Main Idea and Details Game',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Main Idea" crumbs={[['Main Idea and Details Game']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Comprehension game · Main idea and supporting details</span>
+      <h1><span class="h1-line"><span class="hl">Main Idea</span> and</span> <span class="h1-line">Details Game</span></h1>
+      <p class="lede">Read a short paragraph, choose its main idea, then sort the sentences that support it from the ones that do not belong. This free game has three levels for grades 2–8 and tells you why each wrong answer is wrong: a detail, too broad or off topic.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/main-idea/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <MainIdeaGame />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/main-idea/activity/', name: 'Main Idea and Details Worksheet', text: 'One printable page: two paragraphs to take apart and one main idea to write.' },
+      { href: '/tools/fact-or-opinion/', name: 'Fact or Opinion Game', text: 'Sort statements into facts and opinions and learn the clue words.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section">
+      <h2>Topic, main idea and details</h2>
+      <div class="mi-define">
+        <div class="card">
+          <h3>Topic</h3>
+          <p><strong>{DEFINITIONS.topic}</strong></p>
+          <p>Ask: what is this about?</p>
+        </div>
+        <div class="card">
+          <h3>Main idea</h3>
+          <p><strong>{DEFINITIONS.mainIdea}</strong></p>
+          <p>Ask: what does the paragraph say about the topic?</p>
+        </div>
+        <div class="card">
+          <h3>Supporting details</h3>
+          <p><strong>{DEFINITIONS.detail}</strong></p>
+          <p>Ask: how does the paragraph show that the main idea is true?</p>
+        </div>
+      </div>
+      <div class="prose">
+        <h3>A worked example</h3>
+        <p>Here is a Level 1 paragraph from the game.</p>
+        <div class="mi-example"><p class="mi-paragraph" set:html={paragraphHtml(camels, true)} /></div>
+        <ul>
+          <li><strong>Topic:</strong> {camels.topic}. That is one word, and it is not a sentence.</li>
+          <li><strong>Main idea:</strong> “{quote(statedSentence(camels))}.” It is the highlighted sentence, and it tells you what the paragraph says about camels.</li>
+          <li><strong>Supporting details:</strong> the other {supportingSentences(camels).length} sentences. Wide feet, long eyelashes, a nose that closes, a hump of fat and going without water are all ways in which a camel’s body suits the desert.</li>
+        </ul>
+        <p>A good test of a main idea is to read it and then read each detail after the word “because” or “for example”. {quote(camels.options.main)}: for example, {lower(supportingSentences(camels)[0])}</p>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>Where the main idea is usually found</h2>
+      <p>Writers put the main idea in different places. The game’s three levels follow the same order as this list, from easiest to hardest to spot.</p>
+      <h3>In the first sentence</h3>
+      <p>This is the first place to look. A writer who is explaining something often says what the paragraph will show, then shows it. The camel paragraph above works this way, and so does every Level 1 paragraph.</p>
+      <h3>In the last sentence</h3>
+      <p>Here the details come first and the main idea sums them up. Words such as “so”, “in this way” and “everything” often mark the summing up.</p>
+      <div class="mi-example"><p class="mi-paragraph" set:html={paragraphHtml(owls, true)} /></div>
+      <h3>In the middle</h3>
+      <p>Sometimes a paragraph opens with an example or a puzzle, states its main idea, and then explains it.</p>
+      <div class="mi-example"><p class="mi-paragraph" set:html={paragraphHtml(thunder, true)} /></div>
+      <h3>Nowhere: the main idea is implied</h3>
+      <p>Some paragraphs never state their main idea. Every sentence is a detail, and the reader has to see what the details add up to. Level 3 is made of paragraphs like this one:</p>
+      <div class="mi-example">
+        <p class="mi-paragraph" set:html={paragraphHtml(sounds, true)} />
+        <p class="mi-example-note">Nothing is highlighted, because no sentence states the main idea.</p>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>How to find an implied main idea</h2>
+      <p>Use the paragraph about the guitar string, the throat, the drum and the bell.</p>
+      <ol>
+        <li><strong>Name the topic.</strong> What is every sentence about? Here it is {sounds.topic}.</li>
+        <li><strong>List what each sentence says about the topic.</strong> The string shivers. The throat buzzes. The drum skin trembles. When the bell cannot shake, the note stops.</li>
+        <li><strong>Find what the details have in common.</strong> Each time there is a sound, something is moving quickly to and fro.</li>
+        <li><strong>Say it in one sentence of your own.</strong> “{quote(sounds.options.main)}.”</li>
+        <li><strong>Test it against every sentence.</strong> Does it fit the string, the throat, the drum and the bell? It does, so it is the main idea.</li>
+      </ol>
+      <p>The paragraph never uses the word “vibrates”. An implied main idea is a sentence you have to build, so your words may differ from someone else’s and still be right.</p>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>The trap: too broad and too narrow</h2>
+        <p>The wrong answers in the game are never false. Each one is a true statement that fails to be the main idea in one of three ways. Here are the four choices for a Level 2 paragraph:</p>
+        <div class="mi-example"><p class="mi-paragraph" set:html={paragraphHtml(rivers, true)} /></div>
+      </div>
+      <div class="table-wrap mi-optionlist" style="max-width:900px">
+        <table>
+          <thead><tr><th scope="col">Choice</th><th scope="col">What it is</th><th scope="col">Why</th></tr></thead>
+          <tbody>
+            {optionOrder.map(kind => (
+              <tr>
+                <td>{rivers.options[kind]}</td>
+                <td><Fragment set:html={kindTagHtml(kind)} /></td>
+                <td>{kind === 'main' ? explainMain(rivers) : whyNot(rivers, kind).replace(/^[^.]+\. /, '')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <h3>Two questions that catch the trap</h3>
+        <ol>
+          <li><strong>Does it cover every sentence?</strong> If it only matches one sentence, it is a detail, and it is too narrow.</li>
+          <li><strong>Does the paragraph cover all of it?</strong> If it would take a whole book to show it, it is too broad.</li>
+        </ol>
+        <p>The main idea is the choice that passes both tests. It is the right size for the paragraph.</p>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>Details that support, and sentences that do not belong</h2>
+      <p>In the second step of each question, the game shows the main idea with four or five sentences under it. Most are details from the paragraph. One or two do not belong: they are true, and they may even be about the same topic, but they do nothing to show the main idea.</p>
+      <p>Take the main idea “{quote(camels.options.main)}.”</p>
+      <ul>
+        <li>“{quote(supportingSentences(camels)[1])}.” <strong>Supports.</strong> It is one way in which a camel’s body suits the desert.</li>
+        <li>“{quote(camels.extras[0])}.” <strong>Does not belong.</strong> It is about camels, but the name of a baby camel tells you nothing about living in a desert.</li>
+        <li>“{quote(camels.extras[1])}.” <strong>Does not belong.</strong> It is not about camels at all.</li>
+      </ul>
+      <p>Being on the topic is not enough. A sentence belongs only if it helps to show the main idea.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>Common mistakes</h2>
+      <ul>
+        <li><strong>Giving the topic when asked for the main idea.</strong> “Camels” is a topic. A main idea is a full sentence that says something about camels.</li>
+        <li><strong>Choosing the most interesting detail.</strong> A surprising fact stands out, but it is still one detail. Check that your choice covers the other sentences too.</li>
+        <li><strong>Always choosing the first sentence.</strong> It is often the main idea, but not always. Level 2 is there to break the habit.</li>
+        <li><strong>Choosing a statement because it is true.</strong> In this game every choice is true. The question is which one the whole paragraph is about.</li>
+        <li><strong>Keeping a sentence because it is on the topic.</strong> A sentence can be about the topic and still not support the main idea.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>How the game works</h2>
+      <ul>
+        {LEVELS.map(level => <li><strong>{level.name} ({level.grades.toLowerCase()}, {level.ages}).</strong> {level.about}</li>)}
+      </ul>
+      <p>Every round has {ROUND_LENGTH} paragraphs, picked at random from the {paragraphsFor(1).length} in the level’s bank. For each paragraph you choose the main idea from four statements, and each wrong one is then labelled: {OPTION_KINDS.detail.short.toLowerCase()}, {OPTION_KINDS.broad.short.toLowerCase()} or {OPTION_KINDS.off.short.toLowerCase()}. Then you sort {SORT_SUPPORTS} details from the paragraph and one or two sentences that do not belong. A right main idea is one point, and sorting every sentence correctly is one point, so a round is out of {ROUND_POINTS}.</p>
+      <p>The {PARAGRAPHS.length} paragraphs were written for this site. They cover {CATEGORIES.slice(0, -1).join(', ').toLowerCase()} and {CATEGORIES.at(-1).toLowerCase()}.</p>
+      <p class="note">These paragraphs were written to have one clear main idea each. Real books and articles are messier: a paragraph may have two ideas, or exist only to link two others. And an implied main idea can be worded in many ways, so in class a sentence that differs from the game’s can still be a good answer. The facts are plain ones from school science, nature and geography. If you think one is wrong, please <a href={`mailto:${site.contactEmail}`}>tell us</a>.</p>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/main-idea/activity/">main idea and details worksheet</a> takes about 20 minutes and prints on one page. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+      <LinkSnippet url={url} name="Main Idea and Details Game" />
+    </section>
+  </div>
+</Layout>

@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { site } from '../lib/site.mjs';
+
+const analytics = Boolean(site.analyticsId);
+// Everything the site keeps in the browser's local storage: [key, what it is for, how long].
+const stored: [string, string, string][] = [
+  ['cookieConsent', 'Your Accept or Reject choice from the cookie banner (only saved if the banner is shown and you choose).', '180 days'],
+  ['factOpinionBest', 'Your best score for each level of the Fact or Opinion Game, so you can try to beat it.', 'Until you clear your browser data'],
+  ['plotDiagramDraft', 'The plot diagram you are working on in the Plot Diagram Builder: the words you typed in its boxes, so a reload does not lose them.', 'Until you press Clear or clear your browser data'],
+  ['plotDiagramBest', 'Your best score for each story in the Plot Diagram Builder’s practice mode.', 'Until you clear your browser data'],
+  ['mainIdeaBest', 'Your best score for each level of the Main Idea and Details Game, so you can try to beat it.', 'Until you clear your browser data'],
+  ['readingSpeedResults', 'Your last 20 results in the Reading Speed Test (the passage, the words per minute and the number of questions right), so you can see your progress.', 'Until you press “Clear the list” or clear your browser data'],
+  ['contextCluesBest', 'Your best score for each level of the Context Clues Game.', 'Until you clear your browser data'],
+  ['causeEffectBest', 'Your best score for each level of the Cause and Effect Game.', 'Until you clear your browser data'],
+  ['partsOfSpeechBest', 'Your best score for each level of the Parts of Speech Game.', 'Until you clear your browser data'],
+  ['wordBuilderBest', 'Your best score for each level of the Word Builder’s Challenge mode.', 'Until you clear your browser data'],
+  ['wordBuilderFound', 'The words you have built in the Word Builder, so it can show how many you have found.', 'Until you clear your browser data'],
+  ['fablesSpeed', 'The reading speed you chose in the Fables Read-Along.', 'Until you clear your browser data'],
+  ['fablesVoice', 'The voice you chose in the Fables Read-Along.', 'Until you clear your browser data'],
+  ['fablesBest', 'Your best score on the questions for each fable.', 'Until you clear your browser data'],
+  ['fictionNonfictionBest', 'Your best score for each level of the Fiction or Nonfiction Game, so you can try to beat it.', 'Until you clear your browser data'],
+  ['figurativeLanguageBest', 'Your best score for each level of the Figurative Language Game, so you can try to beat it.', 'Until you clear your browser data'],
+  ['vintage_audiobooks.favorites.v1', 'Audiobooks you saved with “Add to favorites” on the Listen pages: each book’s title, author and cover address.', 'Until you remove them or clear your browser data'],
+  ['vintage_audiobooks.progress.v1', 'The chapter and the second you stopped at in each audiobook you have played, so you can carry on later.', 'Until you clear your browser data'],
+];
+---
+<Layout title="Privacy Policy" description="How Fiction & Fact Library handles your data: no accounts, no ads, no personal details, anonymous statistics, and what stays in your browser." section="" crumbs={[['Privacy policy']]}>
+  <div class="wrap prose">
+    <div class="page-intro">
+      <span class="eyebrow">Privacy</span>
+      <h1>Privacy policy</h1>
+      <p class="lede">Fiction & Fact Library is built for students. We don’t have accounts, we never ask for names or email addresses, we show no ads, and the tools save nothing about who you are.</p>
+      <p class="muted">Last updated November 13, 2026.</p>
+    </div>
+
+    <h2>No accounts, no personal details</h2>
+    <p>You can use every tool, worksheet and answer key without signing up. The tools run in your browser: what you type, paste or answer is not sent to us. Text you put into the Reading Level Checker is analyzed on your own device and is gone when you close or reload the page.</p>
+
+    <h2>No ads</h2>
+    <p>The site shows no ads and uses no advertising cookies.</p>
+
+    <h2>Analytics</h2>
+    {analytics ? (
+      <p>We use Google Analytics 4 to count visits and see which tools are used, so we can improve them. It records anonymous, aggregated information such as pages viewed, the type of device and browser, the approximate country, and tool events such as “a text was checked” (with its word count and reading level) or “a round was finished” (with the level and the score). It never receives names or any text that students type or paste. Google processes this data as described in <a href="https://policies.google.com/privacy">Google’s privacy policy</a>.</p>
+    ) : (
+      <p>Fiction & Fact Library does not run any analytics at the moment, so no analytics cookies are set.</p>
+    )}
+
+    <h2>Cookie choices</h2>
+    {analytics ? (
+      <p>Visitors in the European Economic Area, the United Kingdom and Switzerland see a small banner and choose Accept or Reject before any analytics cookies are used. Your choice is remembered for 180 days, and you can change it any time with <strong>Cookie settings</strong> at the bottom of every page. Elsewhere, anonymous statistics are on by default.</p>
+    ) : (
+      <p>Because the site currently uses no analytics, it sets no cookies and shows no cookie banner.</p>
+    )}
+
+    <h2>What is stored in your browser</h2>
+    <p>The site may keep a few small values in your browser’s local storage. They stay on your device and are never sent to us.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Key</th><th scope="col">What it is for</th><th scope="col">How long</th></tr></thead>
+        <tbody>
+          {stored.map(([key, purpose, time]) => <tr><td><code>{key}</code></td><td>{purpose}</td><td>{time}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Audiobooks from other sites</h2>
+    <p>The <a href="/listen/">Listen</a> pages do not hold any audiobooks themselves. Your browser fetches the list of books, the cover pictures and the sound directly from the <a href="https://archive.org/">Internet Archive</a>, and a short note about the author from <a href="https://www.wikipedia.org/">Wikipedia</a>. Those sites receive your IP address and the name of the book or search, as they would if you visited them, and their own privacy policies apply. The address of a Listen page includes the search words or the book’s identifier, so our anonymous statistics see those too.</p>
+
+    <h2>Fonts and hosting</h2>
+    <p>The site is served by Cloudflare, which processes standard request data (such as IP addresses) to deliver and protect the site. Text is set in fonts loaded from Google Fonts, which receives your IP address when the fonts are downloaded.</p>
+
+    <h2>Children</h2>
+    <p>The tools are designed for students aged about 7 to 14 and do not collect personal information from anyone. Teachers can use them in class without collecting any student data.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about privacy: <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+  </div>
+</Layout>

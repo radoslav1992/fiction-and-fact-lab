@@ -1,0 +1,218 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ReadingLevelChecker from '../../../components/reading/ReadingLevelChecker.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import {
+  analyze, fleschKincaidGrade, fleschReadingEase, gradeLabel, ageRange, easeLabel,
+  LONG_SENTENCE_WORDS, LONG_WORD_SYLLABLES, MIN_WORDS, SMOG_SENTENCES, SILENT_WPM, ALOUD_WPM,
+} from '../../../lib/readability.mjs';
+import { fmt, FORMULAS } from '../../../lib/readability-view.mjs';
+import { SAMPLES, sampleById } from '../../../lib/reading-samples.mjs';
+
+const title = 'Reading Level Checker: Free Readability & Grade Level Tool';
+const description = 'Free reading level checker: paste any text to see its grade level, age range, Flesch Reading Ease and Flesch–Kincaid score. Nothing you type is saved.';
+const url = new URL('/tools/reading-level/', Astro.site).href;
+
+// Worked example: the first three sentences of the honey sample, counted by the model.
+const exampleText = sampleById('honey').text.split('. ').slice(0, 3).join('. ') + '.';
+const ex = analyze(exampleText);
+const exWps = ex.counts.wordsPerSentence;
+const exSpw = ex.counts.syllablesPerWord;
+const exGrade = fleschKincaidGrade(ex.counts.words, ex.counts.sentences, ex.counts.syllables);
+const exEase = fleschReadingEase(ex.counts.words, ex.counts.sentences, ex.counts.syllables);
+
+// The same idea written two ways, to show what the formulas react to.
+const hard = analyze('The precipitation continued throughout the afternoon, which unfortunately necessitated the cancellation of the tournament.');
+const easy = analyze('It rained all afternoon. Sadly, the game was called off.');
+
+const sampleLevels = SAMPLES.map(sample => ({ ...sample, analysis: analyze(sample.text) }));
+// Flesch's own table for his Reading Ease score: [lowest score in the band, the band as text, school level].
+const easeBands: [number, string, string][] = [
+  [90, '90 to 100', 'Grade 5'], [80, '80 to 90', 'Grade 6'], [70, '70 to 80', 'Grade 7'], [60, '60 to 70', 'Grades 8–9'],
+  [50, '50 to 60', 'Grades 10–12'], [30, '30 to 50', 'College'], [0, '0 to 30', 'College graduate'],
+];
+const gradeRows = [2, 4, 6, 8, 10, 12];
+
+const faq: [string, string][] = [
+  ['How do I check the reading level of a text?', `Paste or type the text into the box at the top of this page. The reading level checker shows the US grade level, the age range and the Flesch Reading Ease score straight away, and updates as you type. For a steady result, use at least ${MIN_WORDS} words.`],
+  ['Is this a Flesch–Kincaid calculator?', 'Yes. The Flesch–Kincaid Grade Level and the Flesch Reading Ease score are both in the “Formula by formula” table, next to Gunning Fog, SMOG, Coleman–Liau and the Automated Readability Index. The grade at the top is the middle value of the five grade formulas.'],
+  ['Why do the formulas give different grades?', 'Each one measures something slightly different. Flesch–Kincaid counts syllables, Coleman–Liau and the Automated Readability Index count letters, and Gunning Fog and SMOG count only words of three or more syllables. They were also tuned on different sets of texts. A spread of two or three grades between them is normal, which is why this readability checker shows the middle value.'],
+  ['How accurate is the grade level?', 'Treat it as an estimate, good to within a grade or two. The formulas only measure sentence length and word length, and this checker counts syllables with spelling rules, which are right for most words but not all. A grade level cannot tell you whether the ideas are hard or whether the words are familiar to your readers.'],
+  ['What reading level should I aim for?', 'Match your readers. For a class, aim at or a little below the grade the students are in, so that the ideas are the hard part and the sentences are not. Grade levels here are US grades; add five or six to a grade to get the usual age.'],
+  ['How much text do I need?', `About ${MIN_WORDS} words or more. With less text, one long sentence or one long word can change the result a lot, and the page shows a notice. SMOG was designed for samples of ${SMOG_SENTENCES} sentences, so its grade is an estimate for anything shorter.`],
+  ['Does it give the reading measures printed on book covers?', 'No. Some reading measures are proprietary: they belong to companies, and the way they are worked out is not fully published. This grade level checker reports only published formulas that anyone can calculate, and it shows each formula so you can check the arithmetic.'],
+  ['Is my text saved or sent anywhere?', 'No. The checking happens inside your browser. The text is not sent to us or to anyone else, and it is gone when you close or reload the page.'],
+  ['Does it work for languages other than English?', 'No. The formulas and the syllable rules were made for English. Text in another language or another alphabet will get numbers, but they will not mean much, and the page shows a notice when most of the text is not in the Latin alphabet.'],
+  ['Can I use the Reading Level Checker in class?', 'Yes. It is free, with no sign-up and no ads, and it runs on school Chromebooks. The printable worksheet has students check a passage, rewrite it for a younger reader and check it again. Teachers can find the answer key on the For teachers page.'],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Reading Level Checker',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Reading Level" crumbs={[['Reading Level Checker']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Readability checker · Reading and writing</span>
+      <h1><span class="h1-line">Reading Level</span> <span class="h1-line"><span class="hl">Checker</span></span></h1>
+      <p class="lede">Paste or type any text to see how hard it is to read. This free readability checker gives the US grade level, the age range and the Flesch Reading Ease score, shows the numbers behind them, and marks the long sentences and long words so you can see what to change.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/reading-level/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <ReadingLevelChecker />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/reading-level/activity/', name: 'Rewrite It for a Younger Reader', text: 'A one-page worksheet: check a passage, rewrite it, check it again.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section prose">
+      <h2>What a reading level means</h2>
+      <p>A reading level is an estimate of how much schooling a reader needs to read a text comfortably. This grade level checker reports it as a US school grade. “{gradeLabel(6)}” means that a typical student in sixth grade, about {ageRange(6).replace('ages ', '')} years old, should be able to read the text without much trouble.</p>
+      <p>The grade is a guide, not a rule. A keen reader in grade 4 may enjoy a grade 7 text about a favorite subject, and an adult may still find a grade 7 text hard if the subject is new.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">US grade</th>{gradeRows.map(g => <th scope="col">{gradeLabel(g)}</th>)}</tr></thead>
+          <tbody><tr><th scope="row">Usual age</th>{gradeRows.map(g => <td>{ageRange(g).replace('ages ', '')}</td>)}</tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>How the formulas work</h2>
+        <p>Readability formulas do not read. They count. Every formula on this page is built from two measurements, and each one turns them into a number with its own published constants.</p>
+      </div>
+      <div class="compare">
+        <div class="card">
+          <h3>1. How long are the sentences?</h3>
+          <p>Count the words, count the sentences and divide. Long sentences ask the reader to hold more in mind before the full stop arrives. The checker marks every sentence with more than {LONG_SENTENCE_WORDS} words.</p>
+        </div>
+        <div class="card">
+          <h3>2. How long are the words?</h3>
+          <p>Some formulas count syllables per word, some count letters per word, and some count only the long words: the ones with {LONG_WORD_SYLLABLES} or more syllables, such as <em>butterfly</em> or <em>temperature</em>. Longer words are, on average, less common.</p>
+        </div>
+      </div>
+      <div class="prose">
+        <h3>The six formulas</h3>
+        <ul>
+          <li><strong>Flesch Reading Ease</strong> (Rudolf Flesch, 1948) gives a score, usually between 0 and 100. Higher is easier.<br />{FORMULAS.find(f => f.key === 'readingEase').formula}</li>
+          <li><strong>Flesch–Kincaid Grade Level</strong> (1975) uses the same two averages to give a US grade.<br />{FORMULAS.find(f => f.key === 'fleschKincaid').formula}</li>
+          <li><strong>Gunning Fog Index</strong> (Robert Gunning, 1952) uses sentence length and the percentage of long words.<br />{FORMULAS.find(f => f.key === 'gunningFog').formula}</li>
+          <li><strong>SMOG Grade</strong> (G. Harry McLaughlin, 1969) counts the long words in 30 sentences.<br />{FORMULAS.find(f => f.key === 'smog').formula}</li>
+          <li><strong>Coleman–Liau Index</strong> (1975) counts letters, not syllables, so a computer can work it out without knowing how words sound.<br />{FORMULAS.find(f => f.key === 'colemanLiau').formula}</li>
+          <li><strong>Automated Readability Index</strong> (1967) also counts letters per word, with words per sentence.<br />{FORMULAS.find(f => f.key === 'ari').formula}</li>
+        </ul>
+        <p>The reading level at the top of the checker is the <strong>middle value</strong> (the median) of the five grade formulas. One formula giving an odd answer cannot pull it far.</p>
+        <h3>What the Flesch Reading Ease score means</h3>
+      </div>
+      <div class="table-wrap" style="max-width:760px">
+        <table>
+          <thead><tr><th scope="col">Score</th><th scope="col">Label</th><th scope="col">Flesch’s school level</th></tr></thead>
+          <tbody>{easeBands.map(([low, band, level]) => <tr><td class="nowrap">{band}</td><td>{easeLabel(low)}</td><td>{level}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>A worked example</h2>
+      <p>Take these three sentences from the sample “How Bees Make Honey”:</p>
+      <blockquote class="passage"><p>{exampleText}</p></blockquote>
+      <ol>
+        <li>Count: <strong>{ex.counts.words} words</strong>, <strong>{ex.counts.sentences} sentences</strong> and <strong>{ex.counts.syllables} syllables</strong>.</li>
+        <li>Words per sentence: {ex.counts.words} ÷ {ex.counts.sentences} = <strong>{fmt(exWps, 2)}</strong>.</li>
+        <li>Syllables per word: {ex.counts.syllables} ÷ {ex.counts.words} = <strong>{fmt(exSpw, 2)}</strong>.</li>
+        <li>Flesch–Kincaid Grade Level: 0.39 × {fmt(exWps, 2)} + 11.8 × {fmt(exSpw, 2)} − 15.59 = <strong>{fmt(exGrade)}</strong>, which rounds to {gradeLabel(exGrade).toLowerCase()}.</li>
+        <li>Flesch Reading Ease: 206.835 − 1.015 × {fmt(exWps, 2)} − 84.6 × {fmt(exSpw, 2)} = <strong>{fmt(exEase)}</strong>, which Flesch called “{easeLabel(exEase).toLowerCase()}”.</li>
+      </ol>
+      <p class="note">Three sentences are far too few for a steady result. They are used here only to keep the arithmetic short. Paste them into the checker and you will see the same numbers, with a notice that the text is short.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>How to make a text easier or harder to read</h2>
+      <p>Because the formulas count sentence length and word length, those are the two things to change. Here is one idea written twice:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">Text</th><th scope="col">Words per sentence</th><th scope="col">Syllables per word</th><th scope="col">Flesch–Kincaid grade</th></tr></thead>
+          <tbody>
+            <tr><td>The precipitation continued throughout the afternoon, which unfortunately necessitated the cancellation of the tournament.</td><td>{fmt(hard.counts.wordsPerSentence)}</td><td>{fmt(hard.counts.syllablesPerWord, 2)}</td><td>{fmt(hard.scores.fleschKincaid)}</td></tr>
+            <tr><td>It rained all afternoon. Sadly, the game was called off.</td><td>{fmt(easy.counts.wordsPerSentence)}</td><td>{fmt(easy.counts.syllablesPerWord, 2)}</td><td>{fmt(easy.scores.fleschKincaid)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>To make a text easier</h3>
+      <ul class="checklist">
+        <li>Split long sentences. One idea per sentence is a good rule.</li>
+        <li>Swap a long word for a short one that means the same: <em>use</em> for <em>utilize</em>, <em>help</em> for <em>assistance</em>.</li>
+        <li>Keep the long words you really need, such as science words, and explain them once.</li>
+        <li>Check again. Did the grade move? Did you lose any facts?</li>
+      </ul>
+      <h3>To make a text richer</h3>
+      <ul class="checklist">
+        <li>Join two short sentences when the ideas belong together, using <em>because</em>, <em>although</em> or <em>which</em>.</li>
+        <li>Choose the exact word, even when it is longer: <em>scurried</em> for <em>ran</em>, <em>enormous</em> for <em>big</em>.</li>
+        <li>Stop when it sounds right. A higher grade is not a better text.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>Common mistakes</h2>
+      <ul>
+        <li><strong>Chopping every sentence short.</strong> A page of five-word sentences checks as easy but reads like a list. Mix short and medium sentences.</li>
+        <li><strong>Writing for the score.</strong> Removing a needed word like <em>photosynthesis</em> lowers the grade and makes the text less clear. Explain the word instead.</li>
+        <li><strong>Checking a tiny sample.</strong> One sentence is not enough. Use at least {MIN_WORDS} words.</li>
+        <li><strong>Leaving out the full stops.</strong> The checker finds sentences by their end marks. A paragraph with no periods counts as one enormous sentence.</li>
+        <li><strong>Treating the grade as exact.</strong> Grade 6.2 and grade 6.8 are the same level. Look at whole grades, and expect the formulas to disagree a little.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>What this checker cannot tell you</h2>
+      <ul>
+        <li><strong>It measures length, not meaning.</strong> The formulas count sentence length and word length. They know nothing about ideas, how common a word is, or what your readers already know. “Less is more” is three one-syllable words and a hard idea.</li>
+        <li><strong>Syllables are estimated.</strong> The checker counts syllables with spelling rules and a short list of exceptions. That works for most English words, but some will be off by one.</li>
+        <li><strong>Sentences are found by punctuation.</strong> A sentence ends at a period, question mark or exclamation mark followed by a space, or at a blank line. Titles such as “Mr.” and initials such as “U.S.” do not end a sentence. Unusual punctuation can fool it.</li>
+        <li><strong>Numbers are read aloud.</strong> A number written in digits counts as one word. Its syllables are counted the way it is usually said, and it is never counted as a long word.</li>
+        <li><strong>Reading times are rough.</strong> They assume {SILENT_WPM} words a minute for silent reading and {ALOUD_WPM} words a minute for reading aloud. Real readers are faster or slower.</li>
+        <li><strong>Gunning Fog is simplified.</strong> Gunning’s own rules skip names and some word endings when counting long words. This checker counts every word of {LONG_WORD_SYLLABLES} or more syllables.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>About the sample texts</h2>
+      <p>The sample texts were written for this site, each at a different level, so you can see how the numbers change. The one exception is the Gettysburg Address, the speech Abraham Lincoln gave in 1863, which is in the public domain. It is shown in the wording of the “Bliss copy”, the last version Lincoln wrote out by hand.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">Sample</th><th scope="col">What it is</th><th scope="col">Words</th><th scope="col">Reading level</th><th scope="col">Flesch Reading Ease</th></tr></thead>
+          <tbody>{sampleLevels.map(sample => <tr><th scope="row">{sample.label}</th><td>{sample.kind}</td><td>{sample.analysis.counts.words}</td><td class="nowrap">{gradeLabel(sample.analysis.grade)}</td><td>{fmt(sample.analysis.scores.readingEase)} ({easeLabel(sample.analysis.scores.readingEase).toLowerCase()})</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/reading-level/activity/">printable worksheet</a> takes about 20 minutes. Students check a passage, rewrite it for a younger reader and check it again. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+      <LinkSnippet url={url} name="Reading Level Checker" />
+    </section>
+  </div>
+</Layout>

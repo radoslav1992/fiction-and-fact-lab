@@ -1,0 +1,95 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContinueShelf from '../components/listen/ContinueShelf.astro';
+import '../styles/listen.css';
+---
+<Layout title="Your Saved Audiobooks" description="Audiobooks you have saved or started on Fiction & Fact Library. The list is kept in this browser only, with no account, and is never sent anywhere." section="Listen" noindex crumbs={[['Listen', '/listen/'], ['Saved books']]}>
+  <div class="wrap listen-app">
+    <div class="page-intro">
+      <div class="breadcrumb"><a href="/listen/">Listen</a> / Saved books</div>
+      <span class="eyebrow">Your shelf</span>
+      <h1>Your saved audiobooks</h1>
+      <p class="lede">Everything you have saved or started is kept here, in this browser. There is no account, and the list is never sent anywhere.</p>
+    </div>
+
+    <ContinueShelf />
+
+    <section class="section listen-shelf" aria-labelledby="saved-title">
+      <div class="listen-shelf__head">
+        <h2 id="saved-title">Saved books</h2>
+        <button class="btn" id="clear-favs" type="button" hidden>Clear all</button>
+      </div>
+      <noscript><p class="note">Your saved books are shown by JavaScript. Turn JavaScript on to see them.</p></noscript>
+      <div class="book-grid" id="fav-grid">
+        <p class="listen-empty">No saved books yet. Browse the <a href="/listen/">audiobooks</a> and press “Add to favorites”.</p>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  import { progressCardHTML, esc, bookUrl, FALLBACK_COVER } from '../scripts/listen/ui.js';
+  import { getFavorites, removeFavorite, getAllProgress, onStoreChange } from '../scripts/listen/store.js';
+
+  const favGrid = document.getElementById('fav-grid')!;
+  const contSection = document.getElementById('continue-section')!;
+  const contGrid = document.getElementById('continue-grid')!;
+  const clearBtn = document.getElementById('clear-favs')!;
+
+  // What the shelf says when it is empty: the same message the page is served with.
+  const EMPTY = favGrid.innerHTML;
+
+  function favCardHTML(b) {
+    return `
+      <div class="book-card">
+        <a class="book-card__frame" href="${bookUrl(b.id)}" aria-label="${esc(b.title)}">
+          <img class="book-card__cover" loading="lazy" src="${esc(b.cover)}" width="180" height="180" alt="Cover of ${esc(b.title)}"
+               onerror="this.onerror=null;this.src='${FALLBACK_COVER}'" />
+        </a>
+        <div class="book-card__body">
+          <a class="book-card__title" href="${bookUrl(b.id)}">${esc(b.title)}</a>
+          <span class="book-card__author">${esc(b.author)}</span>
+          <button class="book-card__remove" type="button" data-remove="${esc(b.id)}">Remove<span class="visually-hidden"> ${esc(b.title)}</span></button>
+        </div>
+      </div>`;
+  }
+
+  function render() {
+    const favs = getFavorites();
+    if (!favs.length) {
+      favGrid.innerHTML = EMPTY;
+      clearBtn.hidden = true;
+    } else {
+      favGrid.innerHTML = favs.map(favCardHTML).join('');
+      clearBtn.hidden = false;
+    }
+
+    const progress = getAllProgress();
+    if (progress.length) {
+      contSection.hidden = false;
+      contGrid.innerHTML = progress.map(progressCardHTML).join('');
+    } else {
+      contSection.hidden = true;
+    }
+  }
+
+  favGrid.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('[data-remove]') as HTMLElement | null;
+    if (btn) {
+      e.preventDefault();
+      removeFavorite(btn.dataset.remove);
+      render();
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    if (confirm('Remove all saved favorites? Your listening progress will be kept.')) {
+      getFavorites().forEach((b) => removeFavorite(b.id));
+      render();
+    }
+  });
+
+  // re-render if another tab changes the store
+  onStoreChange(render);
+  render();
+</script>

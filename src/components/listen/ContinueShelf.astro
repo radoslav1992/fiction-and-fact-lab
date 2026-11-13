@@ -1,0 +1,21 @@
+---
+// The "Continue listening" shelf, shown only when this browser has saved listening progress.
+// The small inline script runs while the page is being read, before it is first drawn: it opens the shelf and
+// puts in one placeholder per book, so nothing below moves when the page's own script draws the cards.
+// It reads the same local-storage key as src/scripts/listen/store.js (tests/listen.test.mjs checks that).
+interface Props { limit?: number }
+const { limit = 0 } = Astro.props;
+---
+<section class="section listen-shelf" id="continue-section" aria-labelledby="continue-title" hidden>
+  <div class="listen-shelf__head"><h2 id="continue-title">Continue listening</h2><slot /></div>
+  <div class="book-grid" id="continue-grid"></div>
+</section>
+<script is:inline define:vars={{ limit }}>
+  try {
+    var saved = Object.keys(JSON.parse(localStorage.getItem('vintage_audiobooks.progress.v1') || '{}')).length;
+    if (saved) {
+      document.getElementById('continue-section').hidden = false;
+      document.getElementById('continue-grid').innerHTML = new Array((limit ? Math.min(saved, limit) : saved) + 1).join('<div class="book-skeleton book-skeleton--progress"></div>');
+    }
+  } catch (e) {}
+</script>

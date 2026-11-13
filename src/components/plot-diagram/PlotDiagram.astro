@@ -1,0 +1,11 @@
+---
+// A finished story mountain on a page, drawn on the server: the wide SVG, and for narrow screens a small
+// mountain with the five stages stacked under it. `diagram` is { title, author, stages, … } (plot-diagram.mjs).
+import './plot-diagram.css';
+import { diagramHtml } from '../../lib/plot-diagram-view.mjs';
+const { diagram, caption } = Astro.props;
+---
+<figure class="pd-sheet">
+  <div class="pd-figure" set:html={diagramHtml(diagram)} />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

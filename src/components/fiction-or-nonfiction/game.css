@@ -1,0 +1,107 @@
+/* Fiction or Nonfiction Game. Violet always means fiction and teal always means nonfiction (the site's color
+   for facts), each with its icon and word. */
+.fn-page { --fiction: #5a2a82; --fiction-hl: #eadcf8; --nonfiction: var(--fact); --nonfiction-hl: var(--fact-hl); }
+.fn { background: var(--card); border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; padding: 20px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.fn h2 { font-size: 1.4rem; margin: 0 0 12px; }
+.fn h2:focus-visible { outline-offset: 6px; }
+
+/* Level picker */
+.fn-levels { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.fn-level { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 44px; padding: 16px 18px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; box-shadow: 4px 4px 0 var(--hl); }
+.fn-level:hover { background: var(--hl-soft); }
+.fn-level-name { font: 700 1.4rem/1.2 var(--font-display); }
+.fn-level-grades { font-weight: 700; }
+.fn-level-about { color: var(--muted); font-size: .97rem; }
+.fn-level-best { font-size: .92rem; font-weight: 700; min-height: 1.5em; }
+.fn-help { margin: 18px 0 0; color: var(--muted); font-size: .97rem; max-width: 760px; }
+
+/* Playing */
+.fn-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; font-size: .98rem; }
+.fn-bar b { font: 700 1.2rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.fn-quit { margin-left: auto; min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.fn-quit:hover { background: var(--hl-soft); }
+.fn-dots { display: flex; gap: 6px; list-style: none; margin: 10px 0 14px; padding: 0; }
+.fn-dots li { flex: 1; height: 10px; margin: 0; border: 2px solid var(--ink); border-radius: 5px; background: var(--card); }
+.fn-dots .is-current { background: var(--hl); }
+.fn-dots .is-right { background: var(--ink); }
+.fn-dots .is-wrong { background: repeating-linear-gradient(135deg, var(--ink) 0 2px, var(--card) 2px 5px); }
+/* The text sits on a ruled library card. */
+.fn-card { padding: 18px 20px 20px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; }
+.fn-card:focus-visible { outline-offset: 2px; }
+.fn-prompt { margin: 0 0 8px; font-size: .9rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.fn-text { margin: 0; font: 600 clamp(1.25rem, 3.4vw, 1.6rem)/1.5 var(--font-display); }
+/* Passages and poems are set as reading text, with a line length that is easy to follow. */
+.fn-text.is-long { max-width: 46rem; font: 400 clamp(1.08rem, 2.6vw, 1.2rem)/1.65 var(--font-body); }
+.fn-text.is-poem { white-space: pre-line; }
+.fn-answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.fn-answer { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 64px; padding: 10px 12px; border: 3px solid; font: 700 1.25rem/1.2 var(--font-body); cursor: pointer; }
+.fn-answer.fiction { background: var(--fiction-hl); border-color: var(--fiction); color: var(--fiction); border-radius: 26px 26px 26px 6px; }
+.fn-answer.nonfiction { background: var(--nonfiction-hl); border-color: var(--nonfiction); color: var(--nonfiction); border-radius: 10px; }
+.fn-answer:hover:not(:disabled) { box-shadow: 0 0 0 3px var(--hl); }
+.fn-answer-icon { display: inline-flex; }
+.fn-answer-icon svg { width: 26px; height: 26px; }
+.fn-answer kbd { margin-left: 4px; font-size: .8rem; color: var(--ink); }
+.fn-picks { margin-top: 14px; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
+.fn-pick { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink); font: 700 1.08rem/1.3 var(--font-body); text-align: left; cursor: pointer; }
+.fn-pick:hover:not(:disabled) { background: var(--hl-soft); }
+.fn-pick kbd { flex: none; }
+/* After an answer: the right choice gets a tick, the one you pressed a thick outline. */
+.fn-answer:disabled, .fn-pick:disabled { cursor: default; opacity: .55; }
+.fn-answer.is-answer, .fn-pick.is-answer, .fn-answer.is-chosen, .fn-pick.is-chosen { opacity: 1; }
+.fn .is-answer::after { content: '✓'; margin-left: auto; padding-left: 4px; font-weight: 700; }
+.fn-answer.is-answer::after { margin-left: 4px; padding-left: 0; }
+.fn-pick.is-answer { background: var(--hl); }
+.fn .is-chosen { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+/* The answer shown on the text: a tint for the kind, and the giveaway words underlined. */
+.fn-seg { padding: 2px 4px; border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.fn-seg.fiction { background: var(--fiction-hl); }
+.fn-seg.nonfiction { background: var(--nonfiction-hl); }
+.fn-seg.either { background: var(--hl-soft); }
+.fn-mark { background: none; color: inherit; font-weight: 700; text-decoration: underline 3px; text-underline-offset: 5px; }
+.fn-seg.fiction .fn-mark { text-decoration-style: dashed; text-decoration-color: var(--fiction); }
+.fn-seg.nonfiction .fn-mark { text-decoration-color: var(--nonfiction); }
+.fn-feedback { margin-top: 14px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.fn-verdict { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 700 1.35rem/1.2 var(--font-display); }
+.fn-verdict svg { width: 28px; height: 28px; flex: none; }
+.fn-verdict.is-right span { background: linear-gradient(transparent 55%, var(--hl) 55%); }
+.fn-why { margin: 0 0 12px; font-size: 1.08rem; max-width: 46rem; }
+
+/* Results */
+.fn-final { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin: 0 0 10px; font-size: 1.1rem; }
+.fn-final-score { display: inline-block; padding: 4px 18px 6px; border: 4px solid var(--ink); border-radius: 10px; background: var(--hl); font: 700 clamp(1.7rem, 5vw, 2.4rem)/1.2 var(--font-display); transform: rotate(-2deg); }
+.fn-message { font-size: 1.12rem; max-width: 760px; }
+.fn-results h3 { margin: 18px 0 8px; }
+.fn-missed { padding-left: 1.3em; max-width: 46rem; }
+.fn-missed li { margin-bottom: 14px; }
+.fn-missed .fn-text { font-size: 1.1rem; margin-bottom: 4px; }
+.fn-missed p { margin: 0; }
+.fn-share { margin: 6px 0 0; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
+
+/* Labels, examples and lesson content on the page */
+.fn-tag { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px 2px 8px; font-weight: 700; font-size: .92rem; line-height: 1.5; white-space: nowrap; }
+.fn-tag svg { flex: none; }
+.fn-tag.fiction { background: var(--fiction-hl); color: var(--fiction); box-shadow: inset 0 0 0 1.5px var(--fiction); border-radius: 14px 14px 14px 3px; }
+.fn-tag.nonfiction { background: var(--nonfiction-hl); color: var(--nonfiction); box-shadow: inset 0 0 0 1.5px var(--nonfiction); border-radius: 6px; }
+.fn-define { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.fn-define .card.fiction { border-top-color: var(--fiction); background: linear-gradient(var(--fiction-hl) 0 0) top / 100% 6px no-repeat var(--card); }
+.fn-define .card.nonfiction { border-top-color: var(--nonfiction); background: linear-gradient(var(--nonfiction-hl) 0 0) top / 100% 6px no-repeat var(--card); }
+.fn-define h3 { display: flex; align-items: center; gap: 10px; }
+.fn-example { margin: 0 0 1em; padding: 12px 16px; border: 1px solid var(--rule); border-left: 5px solid var(--hl); border-radius: 4px 10px 10px 4px; background: var(--card); }
+.fn-example.is-poem { white-space: pre-line; }
+.fn-genres td:nth-child(3) { min-width: 300px; }
+.fn-genres .is-poem { white-space: pre-line; }
+.fn-genres th[scope='row'] { white-space: nowrap; }
+.fn-genres .fn-tag { margin-top: 6px; }
+
+@media (max-width: 480px) {
+  .fn { padding: 14px 12px; margin: 0 -6px; }
+  .fn-card { padding: 14px; }
+  .fn-answer { font-size: 1.1rem; gap: 6px; }
+  .fn-answer kbd, .fn-pick kbd { display: none; }
+  /* Two columns of genres, so the choices fit on a phone screen with the passage. */
+  .fn-picks { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .fn-pick { padding: 8px 10px; font-size: .95rem; }
+  /* After an answer, a phone shows only the genre you chose and the right one, so the explanation fits on screen. */
+  .fn-pick:disabled:not(.is-answer):not(.is-chosen) { display: none; }
+}

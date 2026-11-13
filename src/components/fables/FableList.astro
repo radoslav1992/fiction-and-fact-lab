@@ -1,0 +1,20 @@
+---
+// The ten fables as cards, rendered on the server. hub.ts adds the best quiz score this browser has kept.
+import './fables.css';
+import { FABLES, fablePath, wordCount, minutesLabel } from '../../lib/fables.mjs';
+---
+<ol class="fb-list">
+  {FABLES.map(fable => (
+    <li class="card">
+      <span class="eyebrow">Fable {fable.number} · {fable.theme}</span>
+      <h3><a href={fablePath(fable)}>{fable.title}</a></h3>
+      <p>{fable.summary}</p>
+      <p class="fb-list-meta">{wordCount(fable)} words · {minutesLabel(fable)} read aloud</p>
+      <p class="fb-list-best" data-fable-best={fable.slug}></p>
+      <p class="page-actions"><a class="btn primary" href={fablePath(fable)}>Read and listen<span class="visually-hidden">: {fable.title}</span></a></p>
+    </li>
+  ))}
+</ol>
+<script>
+  import './hub.ts';
+</script>

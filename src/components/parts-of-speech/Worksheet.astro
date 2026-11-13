@@ -1,0 +1,33 @@
+---
+// The Parts of Speech worksheet's own section types, used by ActivitySections.astro for both the student
+// worksheet and the answer key:
+//   pos-mark: sentences to underline and circle in. The key shows the marks.
+//   pos-sort: a box of words and an empty table. The key fills the table in.
+import './worksheet.css';
+import { markLine } from '../../lib/activities/parts-of-speech.mjs';
+const { section, answers = false } = Astro.props;
+---
+{section.type === 'pos-mark' && section.groups.map(group => (
+  <Fragment>
+    <p class="worksheet-meta pos-ws-intro">{group.intro}</p>
+    <ol class:list={['pos-ws-mark', { 'key-answers': answers }]} start={group.start}>
+      {group.items.map(sentence => answers
+        ? <li><span class="pos-ws-sentence">{sentence.words.map((word, i) => <Fragment>{i > 0 && ' '}{word.tag === group.underline ? <u>{word.text}</u> : word.tag === group.circle ? <strong class="circled">{word.text}</strong> : word.text}{word.after}</Fragment>)}</span> <span class="sort-why">{markLine(group, sentence)}</span></li>
+        : <li><span class="pos-ws-sentence">{sentence.text}</span></li>)}
+    </ol>
+  </Fragment>
+))}
+{section.type === 'pos-sort' && (
+  <Fragment>
+    <p class="pos-ws-bank">{section.bank.map(word => <span>{word}</span>)}</p>
+    {answers && <p class="worksheet-meta">{section.keyNote}</p>}
+    <div class="table-wrap">
+      <table class="record-table pos-ws-table">
+        <thead><tr>{section.columns.map(column => <th scope="col">{column.name}</th>)}</tr></thead>
+        <tbody>
+          {section.columns[0].words.map((_, row) => <tr>{section.columns.map(column => answers ? <td>{column.words[row]}</td> : <td class="blank" />)}</tr>)}
+        </tbody>
+      </table>
+    </div>
+  </Fragment>
+)}

@@ -1,0 +1,199 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import FactOpinionGame from '../../../components/factopinion/FactOpinionGame.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { DEFINITIONS, LEVELS, CLUE_WORDS, ROUND_LENGTH, STATEMENTS, statementById, statementsFor, explain, parts } from '../../../lib/fact-opinion.mjs';
+import { tagHtml, revealHtml } from '../../../lib/fact-opinion-view.mjs';
+
+const title = 'Fact or Opinion Game: Free Practice for Grades 2–8';
+const description = 'Free fact or opinion game for grades 2–8: sort statements, learn the clue words and find the opinion inside a sentence. With fact vs opinion examples.';
+const url = new URL('/tools/fact-or-opinion/', Astro.site).href;
+
+const item = (id: string) => statementById(id);
+// Examples shown on the page, straight from the game's statement bank.
+const examples = ['a01', 'a17', 'a26', 'b03', 'b18', 'b22', 'c05', 'c10', 'c23'].map(item);
+const howToTell = statement => explain(statement).replace(/^This is (?:a fact|an opinion)\. /, '');
+const spider = item('a04'), recess = item('b18'), week = item('c05'), octopus = item('b03'), sadly = item('c23');
+const weekParts = parts(week);
+const quote = (text: string) => text.replace(/\.$/, '');
+const counts = { facts: STATEMENTS.filter(s => s.kind === 'fact').length, opinions: STATEMENTS.filter(s => s.kind === 'opinion').length, mixed: statementsFor(3).length };
+
+const faq: [string, string][] = [
+  ['What is the difference between a fact and an opinion?', `${DEFINITIONS.fact} ${DEFINITIONS.opinion} To decide, ask two questions. Can I check it? Could someone disagree?`],
+  ['What are some fact and opinion examples?', `Facts: “${quote(item('a01').text)}” and “${quote(item('b07').text)}.” You can check both. Opinions: “${quote(item('a17').text)}” and “${quote(item('b18').text)}.” Someone else could disagree with both. There are more fact and opinion examples in the table on this page, and ${STATEMENTS.length} in the game.`],
+  ['Which clue words signal an opinion?', 'Words that compare or judge, such as best, worst, better, beautiful and boring. Words that say what people ought to do, such as should. Words such as too and not enough. And phrases such as I think, I believe and in my opinion. A clue word is a hint, not proof: always ask whether the statement could be checked.'],
+  ['Can a sentence be a fact and an opinion at the same time?', `Yes. A sentence can state a fact and add an opinion to it. In “${quote(week.text)},” the first part can be checked and the second part is a judgment. Level 3 of the game is all about sentences like this.`],
+  ['Is a false statement an opinion?', 'No. A statement that can be checked and turns out to be wrong, such as “A spider has six legs,” is a false statement, or a mistake. An opinion is different: it cannot be shown to be true or false, because it is a view. Every fact in this game is true.'],
+  ['Is fact vs opinion always clear?', 'Not always. Predictions, such as “It will rain tomorrow,” cannot be checked yet. Some statements mix both. And a careful judgment backed by evidence is more than a plain opinion, even though people can still disagree with it. The game sticks to clear cases so the idea is easy to learn.'],
+  ['Which grades is the Fact or Opinion Game for?', `Grades 2 to 8, which is ages about 7 to 14. ${LEVELS.map(level => `${level.name} is for ${level.grades.toLowerCase()}`).join(', ')}. Older students who are new to the idea can start at Level 1.`],
+  ['Is there a fact or opinion worksheet?', 'Yes. The free printable fact or opinion worksheet has ten statements to sort, four mixed sentences and a short writing task, all on one page. The answer key is on the For teachers page.'],
+  ['Can the whole class play the same round?', `Yes. When a round ends, the results screen shows a link with the round number in it. Everyone who opens that link gets the same ${ROUND_LENGTH} statements in the same order, so scores can be compared fairly.`],
+  ['Are scores saved? Do students need to sign in?', 'No sign-in is needed. Your best score for each level is kept in your own browser so you can try to beat it. It is never sent to us, and there are no ads.'],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Fact or Opinion Game',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Fact or Opinion" crumbs={[['Fact or Opinion Game']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Sorting game · Critical reading</span>
+      <h1><span class="h1-line">Fact or <span class="hl">Opinion</span></span> <span class="h1-line">Game</span></h1>
+      <p class="lede">Read a statement and decide whether it is a fact or an opinion. This free game has three levels for grades 2–8, explains every answer and shows you the clue words that give opinions away.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/fact-or-opinion/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <FactOpinionGame />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/fact-or-opinion/activity/', name: 'Fact or Opinion Worksheet', text: 'One printable page: sort ten statements and find four hidden opinions.' },
+      { href: '/tools/reading-level/', name: 'Reading Level Checker', text: 'Paste any text to see its grade level and what makes it hard to read.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section">
+      <h2>Fact vs opinion: what is the difference?</h2>
+      <div class="fo-define">
+        <div class="card fact">
+          <h3><Fragment set:html={tagHtml('fact')} /></h3>
+          <p><strong>{DEFINITIONS.fact}</strong></p>
+          <p>You could count, measure, test it or look it up, and everyone who checks gets the same answer.</p>
+          <p class="fo-statement" set:html={revealHtml(spider)} />
+        </div>
+        <div class="card opinion">
+          <h3><Fragment set:html={tagHtml('opinion')} /></h3>
+          <p><strong>{DEFINITIONS.opinion}</strong></p>
+          <p>It tells you how a person sees something. It can be a good opinion, with good reasons, and still be an opinion.</p>
+          <p class="fo-statement" set:html={revealHtml(item('a17'))} />
+        </div>
+      </div>
+      <div class="prose">
+        <h3>Two questions to ask</h3>
+        <ol>
+          <li><strong>Can I check it?</strong> If you can count it, measure it, test it or look it up, it may be a fact.</li>
+          <li><strong>Could someone disagree?</strong> If two people could look at the same thing and still disagree, it is an opinion.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Clue words that signal an opinion</h2>
+        <p>Opinions often carry a clue word. When you see one, slow down and ask the two questions. A clue word is a hint, not proof.</p>
+      </div>
+      <div class="table-wrap" style="max-width:860px">
+        <table>
+          <thead><tr><th scope="col">What the words do</th><th scope="col">Clue words</th><th scope="col">Example from the game</th></tr></thead>
+          <tbody>{CLUE_WORDS.map(group => <tr><th scope="row">{group.job}</th><td>{group.words.join(', ')}</td><td>{group.example}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>Worked examples</h2>
+      <h3>1. “{quote(spider.text)}”</h3>
+      <ul>
+        <li><strong>Can I check it?</strong> Yes. {spider.why}</li>
+        <li><strong>Could someone disagree?</strong> Not after counting.</li>
+        <li>So it is a <Fragment set:html={tagHtml('fact')} />.</li>
+      </ul>
+      <h3>2. “{quote(recess.text)}”</h3>
+      <ul>
+        <li><strong>Can I check it?</strong> Only part of it. You can time a recess, but you cannot measure “too short”.</li>
+        <li><strong>Could someone disagree?</strong> Yes. {recess.why.split('. ').slice(1).join('. ')}</li>
+        <li>The clue word is “{recess.clues[0]}”. So it is an <Fragment set:html={tagHtml('opinion')} />, even with a number in it.</li>
+      </ul>
+      <h3>3. “{quote(week.text)}”</h3>
+      <ul>
+        <li>Split the sentence at “and”.</li>
+        <li>“{weekParts[0].text.replace(/[\s,]+(and )?$/, '')}” can be checked on a calendar: <Fragment set:html={tagHtml('fact')} />.</li>
+        <li>“{week.opinion}” has the clue word “{week.clues[0]}”, and people could disagree: <Fragment set:html={tagHtml('opinion')} />.</li>
+        <li>Shown the way the game shows it: <span class="fo-statement" style="font-size:1.1rem" set:html={revealHtml(week)} /></li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Fact and opinion examples</h2>
+        <p>These examples come from the game. It has {STATEMENTS.length} statements in all: {counts.facts} facts, {counts.opinions} opinions and {counts.mixed} sentences that mix the two.</p>
+      </div>
+      <div class="table-wrap fo-examples">
+        <table>
+          <thead><tr><th scope="col">Statement</th><th scope="col">Fact or opinion?</th><th scope="col">How you can tell</th></tr></thead>
+          <tbody>
+            {examples.map(statement => (
+              <tr>
+                <td set:html={revealHtml(statement)} />
+                <td>{statement.kind === 'mixed' ? <><Fragment set:html={tagHtml('fact')} /> <Fragment set:html={tagHtml('opinion')} /></> : <Fragment set:html={tagHtml(statement.kind)} />}</td>
+                <td>{howToTell(statement)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>The tricky cases</h2>
+      <h3>Opinions with numbers or real things in them</h3>
+      <p>A number does not make a sentence a fact. In “{quote(item('b22').text)},” the 20 is just part of what the writer wants. The clue word is “should”. In the same way, “{quote(item('b19').text)}” names a real ocean, but nobody can measure which ocean is the most beautiful.</p>
+      <h3>Facts that sound surprising, and facts you do not like</h3>
+      <p>A fact does not have to be expected or pleasant. “{quote(octopus.text)}” sounds made up, but it has been checked. If you wish something were not true, it is still a fact.</p>
+      <h3>Statements that are simply wrong</h3>
+      <p>“A spider has six legs” can be checked, and the check shows it is wrong. That makes it a false statement, a mistake. It is not an opinion, because counting settles it. In this game, every statement called a fact is true.</p>
+      <h3>Predictions</h3>
+      <p>“It will rain tomorrow” cannot be checked today. It is a prediction: a statement about the future. Tomorrow you will be able to check whether it came true.</p>
+      <h3>“Everyone knows …”</h3>
+      <p>Phrases such as “everyone knows”, “obviously” and “it is a fact that” do not turn an opinion into a fact. “Everyone knows cats are better than dogs” is still an opinion: the word “better” gives it away, and plenty of people disagree.</p>
+      <h3>One small word</h3>
+      <p>Sometimes a single word carries the opinion. In “{quote(sadly.text)},” the mammoths dying out is a fact. The word “{sadly.opinion}” tells you how the writer feels about it.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>Common mistakes</h2>
+      <ul>
+        <li><strong>“It has a number, so it is a fact.”</strong> Check what the number is doing. “Two hours of homework is too much” has a number and is an opinion.</li>
+        <li><strong>“I agree with it, so it is a fact.”</strong> You can agree with an opinion. It is still an opinion.</li>
+        <li><strong>“Opinions are bad.”</strong> Opinions matter. Reviews, speeches and letters are full of them. The skill is knowing which is which, and asking what facts support an opinion.</li>
+        <li><strong>“It is printed, so it is a fact.”</strong> Books, websites and adverts all contain opinions. Ask the two questions wherever you read.</li>
+        <li><strong>Missing the opinion inside a longer sentence.</strong> Read to the end. The fact often comes first and the opinion is added after “and”, “but” or “which”.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>How the game works</h2>
+      <ul>
+        {LEVELS.map(level => <li><strong>{level.name} ({level.grades.toLowerCase()}, {level.ages}).</strong> {level.about}</li>)}
+      </ul>
+      <p>Every round has {ROUND_LENGTH} statements, picked at random from the level’s bank with a mix of facts and opinions. Each right answer is one point, and the streak counts right answers in a row. At the end you see the ones you missed, with the reason for each.</p>
+      <p class="note">The facts in the game are plain ones from school science, nature, geography, math and everyday life, chosen because they do not change. If you think one is wrong, please <a href={`mailto:${site.contactEmail}`}>tell us</a>.</p>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/fact-or-opinion/activity/">fact or opinion worksheet</a> takes about 15 minutes and prints on one page. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+      <LinkSnippet url={url} name="Fact or Opinion Game" />
+    </section>
+  </div>
+</Layout>
