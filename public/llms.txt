@@ -1,17 +1,25 @@
 # Fiction & Fact Library
 
-> Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: two interactive tools, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. The site also has Listen, a player for free public-domain audiobooks read by LibriVox volunteers. From the makers of Interactive Periodic Table.
+> Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: three interactive tools, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. The site also has Listen, a player for free public-domain audiobooks read by LibriVox volunteers. From the makers of Interactive Periodic Table.
 
 ## Tools
 
 - [Reading Tools: Free Interactive Practice for Grades 2–8](https://fictionandfactlibrary.com/tools/): Free interactive reading tools for grades 2–8, each with a printable worksheet and a teacher answer key. They run in the browser with no sign-up or ads.
 - [Fact or Opinion Game: Free Practice for Grades 2–8](https://fictionandfactlibrary.com/tools/fact-or-opinion/): Free fact or opinion game for grades 2–8: sort statements, learn the clue words and find the opinion inside a sentence. With fact vs opinion examples.
+- [Plot Diagram Builder: Free Story Mountain Maker](https://fictionandfactlibrary.com/tools/plot-diagram/): Free plot diagram maker: build a story mountain for any story, with exposition, rising action, climax, falling action and resolution. Print it or share it.
 - [Reading Level Checker: Free Readability & Grade Level Tool](https://fictionandfactlibrary.com/tools/reading-level/): Free reading level checker: paste any text to see its grade level, age range, Flesch Reading Ease and Flesch–Kincaid score. Nothing you type is saved.
+- [Plot Diagram of Cinderella: Story Mountain Example](https://fictionandfactlibrary.com/tools/plot-diagram/examples/cinderella/): See the plot diagram of Cinderella: its exposition, rising action, climax, falling action and resolution on a story mountain, with each event explained.
+- [Plot Diagram of Goldilocks and the Three Bears: Story Mountain](https://fictionandfactlibrary.com/tools/plot-diagram/examples/goldilocks-and-the-three-bears/): Plot diagram of Goldilocks and the Three Bears: exposition, rising action, climax, falling action and resolution on a story mountain, each explained.
+- [Plot Diagram of Jack and the Beanstalk: Story Mountain Example](https://fictionandfactlibrary.com/tools/plot-diagram/examples/jack-and-the-beanstalk/): Plot diagram of Jack and the Beanstalk: exposition, rising action, climax, falling action and resolution on a story mountain, each explained.
+- [Plot Diagram of Little Red Riding Hood: Story Mountain Example](https://fictionandfactlibrary.com/tools/plot-diagram/examples/little-red-riding-hood/): Plot diagram of Little Red Riding Hood: exposition, rising action, climax, falling action and resolution on a story mountain, each explained.
+- [Plot Diagram of The Three Little Pigs: Story Mountain Example](https://fictionandfactlibrary.com/tools/plot-diagram/examples/three-little-pigs/): Plot diagram of The Three Little Pigs: the exposition, rising action, climax, falling action and resolution on a story mountain, with each event explained.
+- [Plot Diagram of The Tortoise and the Hare: Story Mountain Example](https://fictionandfactlibrary.com/tools/plot-diagram/examples/tortoise-and-the-hare/): Plot diagram of The Tortoise and the Hare: exposition, rising action, climax, falling action and resolution on a story mountain, each explained.
 
 ## Classroom
 
 - [For Teachers: Free Reading Worksheets & Answer Keys](https://fictionandfactlibrary.com/teachers/): Free reading tools for grades 2–8 with printable one-page worksheets, teacher answer keys and short lesson plans. No logins, no ads, Chromebook-ready.
 - [Fact or Opinion Worksheet: Free Printable, Grades 3–6](https://fictionandfactlibrary.com/tools/fact-or-opinion/activity/): Free printable fact or opinion worksheet for grades 3–6: sort ten statements, find the opinion inside four sentences and write your own. With answer key.
+- [Story Mountain Worksheet: Blank Plot Diagram to Print](https://fictionandfactlibrary.com/tools/plot-diagram/activity/): Free printable plot diagram worksheet for grades 3–6: place the events of a fable on a story mountain, then fill in a blank mountain for your own story.
 - [Reading Level Worksheet: Rewrite for a Younger Reader](https://fictionandfactlibrary.com/tools/reading-level/activity/): Free printable reading level worksheet for grades 4–8: students check a passage, record the numbers, rewrite it for a younger reader and check it again.
 
 ## Listen
