@@ -1,0 +1,54 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ActivitySections from '../../../components/ActivitySections.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import { activities, standards } from '../../../lib/activities.mjs';
+import { tools } from '../../../lib/labs.mjs';
+import { site } from '../../../lib/site.mjs';
+
+export function getStaticPaths() {
+  return activities.map(act => ({ params: { slug: act.tool }, props: { act } }));
+}
+const { act } = Astro.props;
+const tool = tools.find(item => item.slug === act.tool);
+const path = `/tools/${act.tool}/activity/`;
+const url = new URL(path, Astro.site).href;
+const host = new URL(site.url).hostname;
+const resource = {
+  '@context': 'https://schema.org',
+  '@type': 'LearningResource',
+  name: act.title,
+  description: act.goal,
+  url,
+  learningResourceType: 'Worksheet',
+  educationalLevel: act.grade,
+  timeRequired: `PT${act.minutes}M`,
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalAlignment: act.standards.map(code => ({ '@type': 'AlignmentObject', alignmentType: 'educationalSubject', educationalFramework: 'Common Core State Standards', targetName: code })),
+};
+---
+<Layout title={act.pageTitle} description={act.pageDescription} section={tool.section} crumbs={[[act.toolName, `/tools/${act.tool}/`], ['Worksheet']]}>
+  <article class="worksheet">
+    <div class="breadcrumb no-print"><a href={`/tools/${act.tool}/`}>{act.toolName}</a> / Worksheet</div>
+    <header class="worksheet-head">
+      <div>
+        <span class="eyebrow">Student worksheet · {act.grade} · about {act.minutes} minutes</span>
+        <h1>{act.title}</h1>
+      </div>
+      <div class="name-lines" aria-hidden="true"><span>Name</span><span>Class</span><span>Date</span></div>
+    </header>
+    <p class="worksheet-goal"><strong>Goal:</strong> {act.goal}</p>
+    <p class="worksheet-meta">Open the tool at <strong>{host}/tools/{act.tool}/</strong> · Connects to Common Core {act.standards.join(', ')}</p>
+    <div class="page-actions no-print">
+      <button class="btn primary" type="button" data-print>Print worksheet</button>
+      <a class="btn" href={`/tools/${act.tool}/`}>Open the {act.toolName}</a>
+      <ClassroomShare url={url} />
+    </div>
+    <h2>What to do</h2>
+    <ol class="steps">{act.steps.map(step => <li>{step}</li>)}</ol>
+    <ActivitySections act={act} />
+    <p class="worksheet-foot">Free from {site.name} · {host}<span class="no-print"> · {act.standards.map(code => `${code}: ${standards[code]}`).join(' ')}</span></p>
+  </article>
+  <script type="application/ld+json" set:html={JSON.stringify(resource)} />
+</Layout>

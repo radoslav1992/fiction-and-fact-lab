@@ -1,0 +1,54 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { tools } from '../../lib/labs.mjs';
+import { activities } from '../../lib/activities.mjs';
+
+const title = 'Reading Tools: Free Interactive Practice for Grades 2–8';
+const description = 'Free interactive reading tools for grades 2–8, each with a printable worksheet and a teacher answer key. They run in the browser with no sign-up or ads.';
+const url = new URL('/tools/', Astro.site).href;
+const activityFor = slug => activities.find(act => act.tool === slug);
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: title,
+  url,
+  itemListElement: tools.map((tool, i) => ({ '@type': 'ListItem', position: i + 1, name: tool.name, url: new URL(`/tools/${tool.slug}/`, Astro.site).href })),
+};
+---
+<Layout title={title} description={description} section="Tools" crumbs={[['Tools']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(itemList)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">All tools</span>
+      <h1>Reading tools for grades 2–8</h1>
+      <p class="lede">Free tools for reading and English lessons. Each one is something students do, with feedback as they go, and each comes with a one-page worksheet and an answer key.</p>
+    </div>
+
+    <section class="section tool-cards" aria-label="Tools">
+      {tools.map(tool => {
+        const act = activityFor(tool.slug);
+        return (
+          <article class="card">
+            <span class="eyebrow">{tool.kind}</span>
+            <h2><a href={`/tools/${tool.slug}/`}>{tool.name}</a></h2>
+            <p>{tool.blurb}</p>
+            {act && <p class="muted tool-meta">{act.grade} · {act.minutes}-minute classroom activity · Common Core {act.standards.join(', ')}</p>}
+            <p class="page-actions"><a class="btn primary" href={`/tools/${tool.slug}/`}>Open the tool<span class="visually-hidden">: {tool.name}</span></a>{act && <a class="btn" href={`/tools/${tool.slug}/activity/`}>Worksheet<span class="visually-hidden">: {act.title}</span></a>}</p>
+          </article>
+        );
+      })}
+    </section>
+
+    <section class="section prose">
+      <h2>For teachers</h2>
+      <p>Every tool runs in the browser on Chromebooks and tablets, with no accounts and no ads. The <a href="/teachers/">teacher page</a> has the worksheets, the answer keys, a short lesson plan for each tool and the standards they connect to.</p>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .tool-cards h2 { margin: 0 0 8px; font-size: 1.5rem; }
+  .tool-cards h2 a { color: inherit; text-decoration: none; }
+  .tool-cards h2 a:hover { text-decoration: underline; }
+  .tool-meta { font-size: .94rem; }
+</style>

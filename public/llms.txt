@@ -1,0 +1,21 @@
+# Fiction & Fact Library
+
+> Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: no interactive tools, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. From the makers of Interactive Periodic Table.
+
+## Tools
+
+- [Reading Tools: Free Interactive Practice for Grades 2–8](https://fictionandfactlibrary.com/tools/): Free interactive reading tools for grades 2–8, each with a printable worksheet and a teacher answer key. They run in the browser with no sign-up and no ads.
+
+## Classroom
+
+- [For Teachers: Free Reading Worksheets & Answer Keys](https://fictionandfactlibrary.com/teachers/): Free reading tools for grades 2–8 with printable one-page worksheets, teacher answer keys and short lesson plans. No logins, no ads, Chromebook-ready.
+
+## About
+
+- [About Fiction & Fact Library](https://fictionandfactlibrary.com/about/): Fiction & Fact Library makes free reading tools for students in grades 2–8 and their teachers, with no sign-up and no ads. Here is who makes it and how.
+- [Privacy Policy](https://fictionandfactlibrary.com/privacy/): How Fiction & Fact Library handles your data: no accounts, no ads, no personal details, anonymous statistics with a cookie choice, and what stays in your browser.
+- Contact: info@fictionandfactlibrary.com
+
+## Optional
+
+- [Interactive Periodic Table](https://interactiveperiodictable.net/), [Physics Lab](https://thephysicslab.org/), [Biology Lab](https://thebiologylab.org/), [Astronomy Lab](https://theastronomylab.com/), [Geometry Lab](https://geometrylab.net/), [KidsCode](https://kidscode.dev/), [Earth Science Lab](https://earthsciencelab.org/), [Cell by Cell](https://cellbycell.app/): Sister learning apps from the same makers.

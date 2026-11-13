@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LibraryCard from '../components/LibraryCard.astro';
+import LearningApps from '../components/LearningApps.astro';
+import Faq from '../components/Faq.astro';
+import { site } from '../lib/site.mjs';
+import { flagship } from '../lib/learning-apps.mjs';
+import { tools } from '../lib/labs.mjs';
+
+const faq: [string, string][] = [
+  ['What is Fiction & Fact Library?', 'A set of free reading tools for students in grades 2 to 8 (ages about 7 to 14) and their teachers. Each tool is something to do, not just something to read, and each comes with a printable worksheet and a teacher answer key.'],
+  ['Is it free? Do students need to sign up?', 'Everything is free, with no accounts, logins or downloads. The tools run in the browser on Chromebooks, tablets, laptops and phones.'],
+  ['Are there ads?', 'No. The site shows no ads of any kind.'],
+  ['Does anything a student types get saved or sent anywhere?', 'No. The tools work inside the browser. Text that a student types or pastes is never sent to us, and scores stay on the device.'],
+];
+---
+<Layout title={site.defaultTitle} description={site.defaultDescription} section="Home">
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">{site.name}</span>
+        <h1>Free reading tools for <span class="hl">classrooms</span></h1>
+        <p class="lede">Hands-on reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers. Each one runs in the browser, needs no sign-up and comes with a printable worksheet.</p>
+        <div class="page-actions">
+          <a class="btn primary" href="/tools/">See the reading tools</a>
+          <a class="btn" href="/teachers/">For teachers</a>
+        </div>
+        <p class="muted">From the makers of <a href={flagship.url + '/'}>{flagship.name}</a>.</p>
+      </div>
+      <LibraryCard />
+    </section>
+
+    <section class="section" aria-labelledby="tools">
+      <span class="eyebrow">Reading tools</span>
+      <h2 id="tools">Tools to try</h2>
+      <div class="tool-cards">
+        {tools.map(tool => (
+          <div class="card">
+            <span class="eyebrow">{tool.kind}</span>
+            <h3>{tool.name}</h3>
+            <p>{tool.blurb}</p>
+            <p class="page-actions"><a class="btn primary" href={`/tools/${tool.slug}/`}>Open the tool<span class="visually-hidden">: {tool.name}</span></a> <a class="btn" href={`/tools/${tool.slug}/activity/`}>Worksheet<span class="visually-hidden">: {tool.name}</span></a></p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="why">
+      <span class="eyebrow">For teachers</span>
+      <h2 id="why">Made for a class period</h2>
+      <div class="why-grid">
+        <div class="card"><h3>One page, ready to print</h3><p class="muted">Every tool has a one-page student worksheet and a teacher answer key.</p></div>
+        <div class="card"><h3>No logins, Chromebook-ready</h3><p class="muted">Nothing to install and no accounts. Share a tool to Google Classroom in one click.</p></div>
+        <div class="card"><h3>No ads</h3><p class="muted">There are no ads anywhere on the site, for students or for teachers.</p></div>
+        <div class="card"><h3>Private by design</h3><p class="muted">What students type stays in their browser. We never ask for a name or an email address.</p></div>
+      </div>
+      <p style="margin-top:18px"><a href="/teachers/">See the classroom activities and standards →</a></p>
+    </section>
+
+    <Faq items={faq} />
+    <LearningApps />
+  </div>
+</Layout>

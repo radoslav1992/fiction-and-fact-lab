@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { site } from '../lib/site.mjs';
+import { flagship } from '../lib/learning-apps.mjs';
+import { tools } from '../lib/labs.mjs';
+---
+<Layout title="About Fiction & Fact Library" description="Fiction & Fact Library makes free reading tools for students in grades 2–8 and their teachers, with no sign-up and no ads. Here is who makes it and how." section="About" crumbs={[['About']]}>
+  <div class="wrap prose">
+    <div class="page-intro">
+      <span class="eyebrow">About</span>
+      <h1>About Fiction & Fact Library</h1>
+      <p class="lede">{site.tagline} Fiction & Fact Library is a small collection of reading and English tools for students aged about 7 to 14 (grades 2–8) and the teachers who teach them.</p>
+    </div>
+    <h2>What we make</h2>
+    <p>Each tool is something a student does, with feedback as they go, paired with a short lesson, a printable one-page worksheet and a teacher answer key.</p>
+    <ul>
+      {tools.map(tool => <li><a href={`/tools/${tool.slug}/`}>{tool.name}</a>: {tool.blurb}</li>)}
+    </ul>
+    <h2>How the tools work</h2>
+    <p>The tools run in your browser. Nothing you type is sent to us, and there is nothing to install. Where a tool gives a number, the page says how the number is worked out and what it cannot tell you. Worksheets and answer keys are generated from the same data the tools use, and automated tests check that they match.</p>
+    <h2>No ads, no accounts</h2>
+    <p>The site is free and shows no ads. There are no accounts, and we never ask for a name or an email address. The <a href="/privacy/">privacy policy</a> lists the little that is stored in your browser.</p>
+    <h2>Who makes it</h2>
+    <p>Fiction & Fact Library comes from the makers of <a href={flagship.url + '/'}>{flagship.name}</a>, and sits alongside free learning apps for science, math, coding and spreadsheets, linked at the bottom of every page.</p>
+    <h2>Accessibility</h2>
+    <p>The tools work with a keyboard and on a touch screen, use labels and icons as well as color, and respect your device’s reduced-motion setting. Text is set in Atkinson Hyperlegible, a typeface designed to be easy to tell letters apart. If something does not work for you or your students, please tell us.</p>
+    <h2>Contact</h2>
+    <p>Questions, corrections and classroom stories are welcome at <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+  </div>
+</Layout>

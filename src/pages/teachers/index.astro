@@ -1,0 +1,108 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Faq from '../../components/Faq.astro';
+import ClassroomShare from '../../components/ClassroomShare.astro';
+import { activities, standards } from '../../lib/activities.mjs';
+import { site } from '../../lib/site.mjs';
+
+const toolUrl = (act: { tool: string }) => new URL(`/tools/${act.tool}/`, Astro.site).href;
+const tracking = site.analyticsId
+  ? 'The site uses Google Analytics for anonymous, aggregated usage statistics, and asks for consent first where the law requires it.'
+  : 'The site currently runs no analytics.';
+const standardCodes = [...new Set(activities.flatMap(act => act.standards))];
+const usedBy = (code: string) => activities.filter(act => act.standards.includes(code)).map(act => act.toolName).join(' and ');
+
+const faq: [string, string][] = [
+  ['Is Fiction & Fact Library free for classrooms?', 'Yes. Every tool, student worksheet and answer key is free, with no sign-up and no limit on the number of students.'],
+  ['Do students need accounts or logins?', 'No. Students open a link and start. Nothing is saved to an account, and worksheets are completed on paper or in your own Classroom assignment.'],
+  ['Does it work on Chromebooks and tablets?', 'Yes. The tools run in any modern browser, including Chrome on school Chromebooks and Safari on iPads, with nothing to install. JavaScript must be enabled. Every control works with a keyboard and on a touch screen.'],
+  ['Will my students see ads?', 'No. Fiction & Fact Library shows no ads, on student pages or teacher pages.'],
+  ['Which grades is it for?', 'Grades 2 to 8, which is ages about 7 to 14. Each activity lists the grades it suits best. Grade levels are US grades; for other countries, use the ages.'],
+];
+---
+<Layout title="For Teachers: Free Reading Worksheets & Answer Keys" description="Free reading tools for grades 2–8 with printable one-page worksheets, teacher answer keys and short lesson plans. No logins, no ads, Chromebook-ready." section="For teachers" crumbs={[['For teachers']]}>
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">For teachers</span>
+      <h1>Fiction & Fact Library for teachers</h1>
+      <p class="lede">Free interactive reading tools with a printable student worksheet and an answer key for each. Students need no accounts, there are no ads, and the tools run on school Chromebooks with nothing to install.</p>
+      <div class="page-actions">
+        <a class="btn primary" href="#activities">See the activities</a>
+        <span class="share-lead">Each tool has its own Share to Google Classroom button in the table below.</span>
+      </div>
+    </div>
+
+    <section class="section" aria-labelledby="activities">
+      <h2 id="activities">Ready-made classroom activities</h2>
+      <p class="prose">Each activity is a one-page worksheet that students complete with the tool open. Times are for a typical class working in pairs.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">Tool</th><th scope="col">Activity</th><th scope="col">Grades</th><th scope="col">Time</th><th scope="col">Standards</th><th scope="col">Resources</th></tr></thead>
+          <tbody>
+            {activities.map(act => (
+              <tr>
+                <td><a href={`/tools/${act.tool}/`}>{act.toolName}</a></td>
+                <td>{act.title}</td>
+                <td class="nowrap">{act.grade}</td>
+                <td class="nowrap">{act.minutes} min</td>
+                <td>{act.standards.map((code, i) => <>{i > 0 && ', '}<span class="nowrap">{code}</span></>)}</td>
+                <td class="resources"><a href={`/tools/${act.tool}/activity/`}>Student worksheet</a><br /><a href={`/teachers/answers/${act.tool}/`}>Answer key</a><br /><ClassroomShare url={toolUrl(act)} label={act.toolName} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>Run an activity in 15–20 minutes</h2>
+      <ol>
+        <li><strong>Hook (2 min).</strong> Show the tool on the board and ask its opening question (below).</li>
+        <li><strong>Try it together (3 min).</strong> Do the first example as a class so everyone knows what to press.</li>
+        <li><strong>Work in pairs (8–10 min).</strong> Students follow the worksheet steps with the tool open.</li>
+        <li><strong>Debrief (3 min).</strong> Ask the debrief question and collect two or three answers.</li>
+      </ol>
+      <p>Before class, open the answer key. Each key is generated from the same data the tool uses, and automated tests check that they match.</p>
+    </section>
+
+    <section class="section" aria-labelledby="lesson-notes">
+      <h2 id="lesson-notes">Opening and closing each activity</h2>
+      <div class="grid-3">
+        {activities.map(act => (
+          <div class="card">
+            <h3><a href={`/tools/${act.tool}/`}>{act.toolName}</a></h3>
+            <p><strong>Hook:</strong> {act.lesson.hook}</p>
+            <p><strong>Debrief:</strong> {act.lesson.debrief}</p>
+            <p class="muted"><strong>Tip:</strong> {act.lesson.tip}</p>
+            <p><a href={`/teachers/answers/${act.tool}/`}>Answer key<span class="visually-hidden">: {act.title}</span> →</a></p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>Standards</h2>
+      {standardCodes.map(code => <p><strong>Common Core {code}</strong> ({usedBy(code)}): {standards[code]}</p>)}
+      <p>The standards are paraphrased from the Common Core State Standards for English Language Arts. Each activity is a supplement to your curriculum, not a complete unit.</p>
+    </section>
+
+    <section class="section">
+      <div class="grid-3">
+        <div class="card">
+          <h3>Chromebooks, no logins</h3>
+          <p>Runs in Chrome on Chromebooks and Safari on iPads, with nothing to install and no accounts. Every control works with a keyboard and on a touch screen.</p>
+        </div>
+        <div class="card">
+          <h3>Student privacy</h3>
+          <p>Students never enter a name or any personal details, and nothing they type is sent to us. {tracking} Details are in the <a href="/privacy/">privacy policy</a>.</p>
+        </div>
+        <div class="card">
+          <h3>Print-ready, no ads</h3>
+          <p>Each worksheet and answer key prints on a single page, on Letter or A4 paper. There are no ads on any page.</p>
+        </div>
+      </div>
+    </section>
+
+    <Faq items={faq} title="Questions teachers ask" eyebrow="Teacher FAQ" />
+  </div>
+</Layout>

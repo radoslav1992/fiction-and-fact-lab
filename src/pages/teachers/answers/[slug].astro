@@ -1,0 +1,29 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ActivitySections from '../../../components/ActivitySections.astro';
+import { activities, standards } from '../../../lib/activities.mjs';
+
+export function getStaticPaths() {
+  return activities.map(act => ({ params: { slug: act.tool }, props: { act } }));
+}
+const { act } = Astro.props;
+---
+<Layout title={`Answer Key: ${act.title}`} description={`Teacher answer key for the ${act.title}: the completed worksheet with worked answers, generated from the same data as the ${act.toolName}.`} section="For teachers" noindex crumbs={[['For teachers', '/teachers/'], [`Answer key: ${act.toolName}`]]}>
+  <article class="worksheet answer-key">
+    <div class="breadcrumb no-print"><a href="/teachers/">For teachers</a> / Answer key</div>
+    <header class="worksheet-head">
+      <div>
+        <span class="eyebrow">Teacher answer key · {act.grade} · about {act.minutes} minutes</span>
+        <h1>Answer key: {act.title}</h1>
+      </div>
+    </header>
+    <p class="key-note no-print">For teachers. This page is hidden from search engines and not linked from student pages, but it is not password-protected, so please don’t share the link with students. Student worksheet: <a href={`/tools/${act.tool}/activity/`}>{act.title}</a>.</p>
+    <p class="worksheet-goal"><strong>Goal:</strong> {act.goal}</p>
+    <p class="worksheet-meta">Connects to Common Core {act.standards.map(code => `${code} (${standards[code]})`).join('; ')}</p>
+    <ActivitySections act={act} answers />
+    <div class="page-actions no-print">
+      <button class="btn primary" type="button" data-print>Print answer key</button>
+      <a class="btn" href="/teachers/">All activities</a>
+    </div>
+  </article>
+</Layout>
