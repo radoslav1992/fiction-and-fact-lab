@@ -1,0 +1,90 @@
+/* Context Clues Game. The word to work out sits on the yellow marker; the clue has a solid underline and the
+   signal word a dotted one, so the answer never depends on color alone. */
+.cc { background: var(--card); border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; padding: 20px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.cc h2 { font-size: 1.4rem; margin: 0 0 12px; }
+.cc h2:focus-visible { outline-offset: 6px; }
+
+/* Level picker */
+.cc-levels { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.cc-level { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 44px; padding: 16px 18px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; box-shadow: 4px 4px 0 var(--hl); }
+.cc-level:hover { background: var(--hl-soft); }
+.cc-level-name { font: 700 1.4rem/1.2 var(--font-display); }
+.cc-level-grades { font-weight: 700; }
+.cc-level-about { color: var(--muted); font-size: .97rem; }
+.cc-level-best { font-size: .92rem; font-weight: 700; min-height: 1.5em; }
+.cc-sample { margin-top: 20px; padding: 14px 18px 16px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; max-width: 760px; }
+.cc-sample .cc-sentence { font-size: clamp(1.15rem, 3.2vw, 1.4rem); }
+.cc-sample-note { margin: 10px 0 0; font-size: .98rem; }
+.cc-help { margin: 18px 0 0; color: var(--muted); font-size: .97rem; max-width: 760px; }
+
+/* Playing */
+.cc-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; font-size: .98rem; }
+.cc-bar b { font: 700 1.2rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.cc-quit { margin-left: auto; min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.cc-quit:hover { background: var(--hl-soft); }
+.cc-dots { display: flex; gap: 6px; list-style: none; margin: 10px 0 14px; padding: 0; }
+.cc-dots li { flex: 1; height: 10px; margin: 0; border: 2px solid var(--ink); border-radius: 5px; background: var(--card); }
+.cc-dots .is-current { background: var(--hl); }
+.cc-dots .is-right { background: var(--ink); }
+.cc-dots .is-wrong { background: repeating-linear-gradient(135deg, var(--ink) 0 2px, var(--card) 2px 5px); }
+/* The sentence sits on a ruled library card. */
+.cc-card { padding: 18px 20px 20px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; }
+.cc-card:focus-visible { outline-offset: 2px; }
+.cc-prompt { margin: 0 0 8px; font-size: 1.02rem; font-weight: 700; color: var(--ink-2); }
+.cc-sentence { margin: 0; font: 600 clamp(1.25rem, 3.4vw, 1.6rem)/1.6 var(--font-display); }
+.cc-word { padding: 0 .12em; margin: 0 -.05em; border-radius: 3px; background: linear-gradient(transparent 8%, var(--hl) 8% 92%, transparent 92%); font-weight: 700; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.cc-clue, .cc-signal { background: none; color: inherit; text-decoration: underline 3px; text-underline-offset: 5px; }
+.cc-signal { text-decoration-style: dotted; }
+.cc-type { display: inline-block; padding: 1px 10px; border: 1.5px solid var(--ink); border-radius: 6px; background: var(--hl-soft); font-weight: 700; font-size: .92rem; line-height: 1.5; white-space: nowrap; }
+
+.cc-options { display: grid; gap: 10px; margin-top: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.cc-option { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink); font: 700 1.08rem/1.35 var(--font-body); text-align: left; cursor: pointer; }
+.cc-option kbd { flex: none; }
+.cc-option span { flex: 1; }
+.cc-words { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.cc-pick { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 48px; padding: 8px 12px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink); font: 700 1.08rem/1.35 var(--font-body); cursor: pointer; }
+.cc-pick.is-target { border-style: dashed; background: var(--hl); cursor: default; }
+.cc-option:hover:not(:disabled), .cc-pick:hover:not(:disabled):not(.is-target) { background: var(--hl-soft); }
+/* After an answer: the right choice gets a tick, the one you pressed a thick outline. */
+.cc-option:disabled, .cc-pick:disabled { cursor: default; opacity: .55; }
+.cc-option.is-answer, .cc-pick.is-answer, .cc-option.is-chosen, .cc-pick.is-chosen { opacity: 1; }
+.cc .is-answer { background: var(--hl); }
+.cc .is-answer::after { content: '✓'; margin-left: 4px; font-weight: 700; }
+.cc .is-chosen { outline: 3px solid var(--ink); outline-offset: 3px; }
+.cc-words .cc-pick:disabled:not(.is-answer):not(.is-chosen) { opacity: .45; }
+
+.cc-feedback { margin-top: 14px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.cc-verdict { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 700 1.35rem/1.2 var(--font-display); }
+.cc-verdict svg { width: 28px; height: 28px; flex: none; }
+.cc-verdict.is-right span { background: linear-gradient(transparent 55%, var(--hl) 55%); }
+.cc-meaning { margin: 0 0 6px; font-size: 1.15rem; font-weight: 700; }
+.cc-note { margin: 0 0 6px; font-size: 1.05rem; }
+.cc-again { margin: 0 0 12px; font-size: 1.05rem; }
+.cc-again-label { display: block; font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+
+/* Results */
+.cc-final { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin: 0 0 10px; font-size: 1.1rem; }
+.cc-final-score { display: inline-block; padding: 4px 18px 6px; border: 4px solid var(--ink); border-radius: 10px; background: var(--hl); font: 700 clamp(1.7rem, 5vw, 2.4rem)/1.2 var(--font-display); transform: rotate(-2deg); }
+.cc-message { font-size: 1.12rem; max-width: 760px; }
+.cc-results h3 { margin: 18px 0 8px; }
+.cc-missed { padding-left: 1.3em; }
+.cc-missed li { margin-bottom: 14px; }
+.cc-missed .cc-sentence { font-size: 1.15rem; margin-bottom: 4px; }
+.cc-missed p { margin: 0; }
+.cc-share { margin: 6px 0 0; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
+
+/* Examples and lesson content on the page */
+.cc-example { margin: 0 0 4px; font: 600 1.08rem/1.6 var(--font-display); }
+.cc-examples td { min-width: 150px; }
+.cc-examples td:last-child { min-width: 280px; }
+.cc-examples .cc-example + .cc-example { margin-top: 10px; }
+.cc-steps { counter-reset: step; list-style: none; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); max-width: none; }
+.cc-steps li { counter-increment: step; margin: 0; padding: 16px 18px; border: 1px solid var(--rule); border-top: 4px solid var(--ink); border-radius: 4px 4px 12px 12px; background: var(--card); }
+.cc-steps li::before { content: counter(step); display: inline-grid; place-items: center; width: 32px; height: 32px; margin-bottom: 8px; border-radius: 50%; background: var(--hl); font: 700 1.1rem/1 var(--font-display); }
+.cc-steps strong { display: block; font: 700 1.1rem/1.3 var(--font-display); margin-bottom: 4px; }
+
+@media (max-width: 480px) {
+  .cc { padding: 14px 12px; margin: 0 -6px; }
+  .cc-card, .cc-sample { padding: 14px; }
+  .cc-option kbd { display: none; }
+}

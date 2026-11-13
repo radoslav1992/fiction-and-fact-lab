@@ -1,0 +1,25 @@
+---
+// The Context Clues worksheet sections, for ActivitySections.astro: blank for students, filled in for the
+// answer key. Everything printed comes from the sentence bank.
+import './worksheet.css';
+import { pieces, clueType } from '../../lib/context-clues.mjs';
+const { section, answers = false } = Astro.props;
+---
+{answers && section.keyNote && <p class="worksheet-meta">{section.keyNote}</p>}
+{section.part === 'meanings' && (
+  <ol class:list={['cc-sheet', { 'key-answers': answers }]}>
+    {section.items.map(item => (
+      <li>
+        <p>{pieces(item, answers).map(piece => piece.kind === 'word' ? <strong>{piece.text}</strong> : piece.kind === 'clue' ? <u>{piece.text}</u> : piece.kind === 'signal' ? <u class="cc-sheet-signal">{piece.text}</u> : piece.text)}</p>
+        {answers
+          ? <p class="cc-sheet-answer">“{item.word}” means <strong>{item.meaning}</strong>.</p>
+          : <p class="cc-sheet-line">“{item.word}” means <span aria-hidden="true"></span></p>}
+      </li>
+    ))}
+  </ol>
+)}
+{section.part === 'types' && (
+  <ul class:list={['cc-sheet-types', { 'key-answers': answers }]}>
+    {section.items.map((item, i) => <li>{section.start + i}. {answers ? <strong>{clueType(item.type).name}</strong> : <span aria-hidden="true"></span>}</li>)}
+  </ul>
+)}
