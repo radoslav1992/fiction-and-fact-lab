@@ -2,6 +2,8 @@
 // The body of a classroom activity, shared by the student worksheet and the teacher answer key so the two
 // cannot drift apart: the same sections render blank for students and filled in when `answers` is set.
 import { parts, withClues, explain } from '../lib/fact-opinion.mjs';
+import PartsOfSpeechWorksheet from './parts-of-speech/Worksheet.astro';
+import WordBuilderWorksheet from './word-builder/Worksheet.astro';
 const { act, answers = false } = Astro.props;
 ---
 {act.sections.map(section => (
@@ -46,5 +48,9 @@ const { act, answers = false } = Astro.props;
           : <li><p>{item.q}</p><div class="write-lines" aria-hidden="true">{Array.from({ length: item.lines }, () => <span />)}</div></li>)}
       </ol>
     )}
+    {/* Parts of Speech Game: sentences to mark, and words to sort into a table. */}
+    {section.type.startsWith('pos-') && <PartsOfSpeechWorksheet section={section} answers={answers} />}
+    {/* Prefix and Suffix Word Builder: words to break up, words to build, prefixes to match. */}
+    {section.type.startsWith('wb-') && <WordBuilderWorksheet section={section} answers={answers} />}
   </Fragment>
 ))}
