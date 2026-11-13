@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { site } from '../src/lib/site.mjs';
 import { learningApps, currentApp } from '../src/lib/learning-apps.mjs';
-import { tools, toolBySection, toolCount, ToolCount } from '../src/lib/labs.mjs';
+import { toolGroups, tools, toolBySection, toolCount, ToolCount } from '../src/lib/labs.mjs';
 import { activities, standards } from '../src/lib/activities.mjs';
 
 test('site settings', () => {
@@ -47,6 +47,12 @@ test('activities: metadata, standards and page titles', () => {
     for (const field of ['hook', 'debrief', 'tip']) assert.ok(act.lesson[field].length > 20, `${act.tool}.lesson.${field}`);
     assert.ok(act.steps.length >= 3 && act.sections.length >= 2, act.tool);
   }
+});
+
+test('tool groups: every live tool is in exactly one group', () => {
+  const grouped = toolGroups.flatMap(group => group.tools.map(tool => tool.slug));
+  assert.deepEqual([...grouped].sort(), tools.map(tool => tool.slug).sort());
+  for (const group of toolGroups) assert.ok(group.name && group.about, group.id);
 });
 
 test('home page title and description say what the site is', () => {

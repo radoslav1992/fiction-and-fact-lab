@@ -114,3 +114,15 @@ export const toolCount = COUNT_WORDS[tools.length] ?? String(tools.length);
 export const ToolCount = toolCount[0].toUpperCase() + toolCount.slice(1);
 
 export const toolBySection = section => tools.find(tool => tool.section === section);
+
+// The tools in groups, for the home page and the Tools hub. Every live tool must be in exactly one group
+// (tests/config.test.mjs checks it). A group with no live tool is left out.
+const GROUPS = [
+  { id: 'stories', name: 'Stories and genres', about: 'How stories are built, what kind of text you are reading and what the author is doing with words.', slugs: ['plot-diagram', 'fables', 'fiction-or-nonfiction', 'figurative-language'] },
+  { id: 'understanding', name: 'Understanding what you read', about: 'Find the point of a paragraph, work out a new word and weigh what a sentence claims.', slugs: ['main-idea', 'context-clues', 'cause-and-effect', 'fact-or-opinion'] },
+  { id: 'words', name: 'Words and sentences', about: 'The jobs words do in a sentence and the parts that words are built from.', slugs: ['parts-of-speech', 'word-builder'] },
+  { id: 'fluency', name: 'Fluency and reading level', about: 'How fast and how well you read, and how hard a text is to read.', slugs: ['reading-speed', 'reading-level'] },
+];
+export const toolGroups = GROUPS
+  .map(group => ({ ...group, tools: group.slugs.map(slug => tools.find(tool => tool.slug === slug)).filter(Boolean) }))
+  .filter(group => group.tools.length);

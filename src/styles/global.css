@@ -129,6 +129,20 @@ tr:last-child > td, tbody tr:last-child > th { border-bottom: 0; }
 .tool-cards .card { display: flex; flex-direction: column; }
 .tool-cards h3 { font-size: 1.35rem; font-weight: 700; margin: 0 0 .35em; }
 .tool-cards .page-actions { margin: auto 0 0; padding-top: 14px; }
+.tool-cards h3 a, .tool-list h4 a { color: var(--ink); text-decoration: none; }
+.tool-cards h3 a:hover, .tool-list h4 a:hover { text-decoration: underline; }
+/* Tools in groups: a heading and a line about the group, then its tools. */
+.tool-group + .tool-group { margin-top: 34px; }
+.section.tool-group { padding: 26px 0; }
+.section.tool-group + .section.tool-group { margin-top: 0; }
+.tool-group-title { font-size: 1.3rem; margin: 0 0 .2em; }
+.tool-group-about { margin: 0 0 14px; max-width: 46rem; }
+.tool-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); }
+.tool-list .card { display: flex; flex-direction: column; padding: 16px 18px; }
+.tool-list .eyebrow { margin-bottom: 4px; font-size: .74rem; }
+.tool-list h4 { font: 700 1.15rem/1.2 var(--font-display); margin: 0 0 .35em; }
+.tool-list p { font-size: .95rem; margin: 0 0 .6em; color: var(--muted); }
+.tool-list .tool-list-links { margin: auto 0 0; font-weight: 700; }
 .why-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
 .why-grid h3 { font-size: 1.1rem; }
 .checklist { list-style: none; padding: 0; }
@@ -223,6 +237,7 @@ td.resources > a:not(.classroom-share) { display: inline-block; padding: 9px 0; 
   /* A short title that nearly fills a phone's width breaks at a fixed place, so it cannot re-wrap when the web font loads. */
   .h1-line { display: block; }
   .header { padding: 8px 16px; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
   .wrap { padding: 0 16px; }
   /* One row that never wraps, so the header keeps its height whichever font is showing. */
   .main-nav { margin: 0 -8px; gap: 0; flex-wrap: nowrap; max-width: calc(100% + 16px); overflow-x: auto; scrollbar-width: none; }
