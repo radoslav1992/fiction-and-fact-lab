@@ -1,0 +1,65 @@
+---
+// The Fiction or Nonfiction Game. The level picker is rendered here; game.ts runs the rounds in the browser.
+import './game.css';
+import { LEVELS, ROUND_LENGTH } from '../../lib/fiction-or-nonfiction.mjs';
+import { ICON } from '../../lib/fiction-or-nonfiction-view.mjs';
+---
+<section class="fn" data-game aria-label="Fiction or Nonfiction Game">
+  <div class="fn-start" data-screen="start">
+    <h2 id="fn-choose">Choose a level to start</h2>
+    <div class="fn-levels" role="group" aria-labelledby="fn-choose">
+      {LEVELS.map(level => (
+        <button type="button" class="fn-level" data-level={level.id}>
+          <span class="fn-level-name">{level.name}</span>
+          <span class="fn-level-grades">{level.grades} · {level.ages}</span>
+          <span class="fn-level-about">{level.about}</span>
+          <span class="fn-level-best" data-best={level.id}></span>
+        </button>
+      ))}
+    </div>
+    <p class="fn-help">Each round has {ROUND_LENGTH} questions. You get an explanation after every answer. On a keyboard, press <kbd>F</kbd> for fiction and <kbd>N</kbd> for nonfiction, or a number key to choose a genre, then <kbd>Enter</kbd> for the next one. Your score stays in this browser.</p>
+    <noscript><p class="note">The game needs JavaScript. Turn it on in your browser to play, or use the examples and the printable worksheet below.</p></noscript>
+  </div>
+
+  <div class="fn-play" data-screen="play" hidden>
+    <div class="fn-bar">
+      <strong data-level-name></strong>
+      <span>Question <b data-number>1</b> of {ROUND_LENGTH}</span>
+      <span>Score <b data-score>0</b></span>
+      <span>Streak <b data-streak>0</b></span>
+      <button type="button" class="fn-quit" data-quit>Change level</button>
+    </div>
+    <ol class="fn-dots" data-dots aria-hidden="true">{Array.from({ length: ROUND_LENGTH }, () => <li />)}</ol>
+    <div class="fn-card" data-card tabindex="-1">
+      <p class="fn-prompt" data-prompt></p>
+      <p class="fn-text" data-text></p>
+    </div>
+    <div class="fn-answers" data-answers="sort">
+      <button type="button" class="fn-answer fiction" data-answer="fiction"><span class="fn-answer-icon" set:html={ICON.fiction} />Fiction<kbd aria-hidden="true">F</kbd></button>
+      <button type="button" class="fn-answer nonfiction" data-answer="nonfiction"><span class="fn-answer-icon" set:html={ICON.nonfiction} />Nonfiction<kbd aria-hidden="true">N</kbd></button>
+    </div>
+    <div class="fn-picks" data-answers="genre" hidden></div>
+    <div class="fn-feedback" data-feedback hidden>
+      <p class="fn-verdict" data-verdict></p>
+      <p class="fn-why" data-why></p>
+      <button type="button" class="btn primary" data-next>Next question</button>
+    </div>
+    <p class="visually-hidden" role="status" data-live></p>
+  </div>
+
+  <div class="fn-results" data-screen="results" hidden>
+    <h2 data-results-title tabindex="-1">Your results</h2>
+    <p class="fn-final"><strong class="fn-final-score"><span data-final>0</span> out of {ROUND_LENGTH}</strong> <span>Best streak: <b data-best-streak>0</b> in a row</span></p>
+    <p class="fn-message" data-message></p>
+    <div data-missed></div>
+    <div class="page-actions">
+      <button type="button" class="btn primary" data-again>Play a new round</button>
+      <button type="button" class="btn" data-same>Play this round again</button>
+      <button type="button" class="btn" data-levels>Choose another level</button>
+    </div>
+    <p class="fn-share">For teachers: this was round <b data-round-number></b>. Everyone who opens this link gets the same {ROUND_LENGTH} questions: <a data-round-link href="/tools/fiction-or-nonfiction/"></a></p>
+  </div>
+</section>
+<script>
+  import './game.ts';
+</script>

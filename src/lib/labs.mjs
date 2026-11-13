@@ -31,12 +31,11 @@ const ALL = [
   },
   {
     slug: 'fiction-or-nonfiction',
-    live: false,
     name: 'Fiction or Nonfiction Game',
     section: 'Fiction or Nonfiction',
     topic: 'Genres',
-    kind: 'Fiction vs nonfiction sorting game',
-    blurb: 'TODO',
+    kind: 'Fiction vs nonfiction and genre sorting game',
+    blurb: 'Read a passage or a book description and decide: fiction or nonfiction? Three levels for grades 2–8, from clear cases to naming 13 genres, with the clues explained after every answer.',
   },
   {
     slug: 'main-idea',
