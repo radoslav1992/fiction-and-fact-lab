@@ -94,6 +94,9 @@ const resource = {
       <ul class="prose">
         {others.map(item => <li><a class="tap" href={examplePath(item)}>Plot diagram of {item.title}</a></li>)}
       </ul>
+      {tale.slug === 'tortoise-and-the-hare'
+        ? <p class="prose">Read the story itself: <a href="/tools/fables/tortoise-and-hare/">The Tortoise and the Hare, read aloud with questions</a>. There are nine more short fables in the <a href="/tools/fables/">Fables Read-Along</a>, each one a good story to diagram.</p>
+        : <p class="prose">Need a short story to diagram next? The ten fables in the <a href="/tools/fables/">Fables Read-Along</a> are each under 200 words.</p>}
     </section>
   </div>
 </Layout>

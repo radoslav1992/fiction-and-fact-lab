@@ -20,6 +20,10 @@ const hubUrl = new URL('/tools/fables/', Astro.site).href;
 const host = new URL(site.url).hostname;
 const listOf = (items: string[]) => items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
 const saying = SAYINGS.find(item => item.fable === fable.slug);
+// The Tortoise and the Hare also has a finished plot diagram; the other fables link to the builder.
+const diagram = fable.slug === 'tortoise-and-hare'
+  ? { href: '/tools/plot-diagram/examples/tortoise-and-the-hare/', text: `See the plot diagram of ${fable.title}` }
+  : { href: '/tools/plot-diagram/', text: 'Map this fable on a story mountain with the Plot Diagram Builder' };
 const organization = { '@type': 'Organization', name: site.name, url: site.url + '/' };
 
 // The text is this site's own retelling of a traditional fable, so the site is the author of the wording
@@ -91,6 +95,13 @@ const work = {
       <p>{fable.title} is a traditional fable credited to Aesop, a storyteller who is said to have lived in ancient Greece. This version was retold for {site.name} in our own words. It keeps the traditional story and ends with its moral: “{fable.moral}”</p>
       {saying && <p>The saying “{saying.saying}” comes from this fable. It means: {saying.meaning}</p>}
       <p>A good way to use this page: listen once and follow the highlighted sentence with your eyes. Then read the fable aloud yourself, and answer the {QUIZ_LENGTH_WORD} questions. If the moral is hard to put into words, <a href="/tools/fables/#find-the-moral">these four questions</a> help.</p>
+    </section>
+    <section class="section fb-screen-only" aria-labelledby="all-fables">
+      <h2 id="all-fables">All {FABLES.length} fables</h2>
+      <ul class="link-columns">
+        {FABLES.map(item => <li>{item === fable ? <span aria-current="page">{item.title}</span> : <a href={fablePath(item)}>{item.title}</a>}</li>)}
+      </ul>
+      <p><a href={diagram.href}>{diagram.text}</a>.</p>
     </section>
     <p class="fb-foot fb-print-only">Free from {site.name} · {host}{fablePath(fable)} · Retold from the traditional fable credited to Aesop.</p>
   </article>

@@ -6,6 +6,8 @@ import Faq from '../components/Faq.astro';
 import { site } from '../lib/site.mjs';
 import { flagship } from '../lib/learning-apps.mjs';
 import { tools, toolGroups, toolCount, ToolCount } from '../lib/labs.mjs';
+import { FABLES, fablePath } from '../lib/fables.mjs';
+import { TALES, examplePath } from '../lib/plot-diagram.mjs';
 
 const faq: [string, string][] = [
   ['What is Fiction & Fact Library?', 'A set of free reading tools for students in grades 2 to 8 (ages about 7 to 14) and their teachers. Each tool is something to do, not just something to read, and each comes with a printable worksheet and a teacher answer key.'],
@@ -55,6 +57,27 @@ const faq: [string, string][] = [
           </ul>
         </div>
       ))}
+    </section>
+
+    <section class="section" aria-labelledby="stories">
+      <span class="eyebrow">Stories to start with</span>
+      <h2 id="stories">Read a fable, or see a story taken apart</h2>
+      <div class="story-links">
+        <div>
+          <h3><a href="/tools/fables/">{FABLES.length} fables to read along with</a></h3>
+          <p class="muted">Each is under 200 words, is read aloud with the sentence highlighted and ends with questions.</p>
+          <ul class="link-columns">
+            {FABLES.map(fable => <li><a href={fablePath(fable)}>{fable.title}</a></li>)}
+          </ul>
+        </div>
+        <div>
+          <h3><a href="/tools/plot-diagram/">{TALES.length} finished plot diagrams</a></h3>
+          <p class="muted">Well-known tales on a story mountain, with the reason each event sits where it does.</p>
+          <ul class="link-columns">
+            {TALES.map(tale => <li><a href={examplePath(tale)}>{tale.title}</a></li>)}
+          </ul>
+        </div>
+      </div>
     </section>
 
     <section class="section" aria-labelledby="listen">
