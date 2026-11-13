@@ -71,12 +71,16 @@ assert.equal(keys.length, activities.length, 'one answer key per activity');
 const noindex = /<meta name="robots" content="noindex"/;
 for (const file of keys) assert.match(read(file), noindex, `${file}: noindex`);
 assert.match(read('404.html'), noindex, '404: noindex');
+// The audiobook player and the saved shelf have no content of their own: noindex and out of the sitemap.
+for (const page of ['book', 'favorites']) assert.match(read(path.join(page, 'index.html')), noindex, `/${page}/: noindex`);
+assert.doesNotMatch(read(path.join('listen', 'index.html')), noindex, '/listen/ is indexed');
 const sitemap = fs.readFileSync(path.join(root, 'sitemap-0.xml'), 'utf8');
 assert.ok(!sitemap.includes('/teachers/answers/'), 'answer keys must stay out of the sitemap');
 assert.ok(!sitemap.includes('/404'), '404 must stay out of the sitemap');
-const listed = ['/', '/tools/', ...tools.flatMap(tool => [`/tools/${tool.slug}/`, `/tools/${tool.slug}/activity/`]), '/teachers/', '/about/', '/privacy/'];
+assert.ok(!sitemap.includes('/book/') && !sitemap.includes('/favorites/'), 'the player and the saved shelf must stay out of the sitemap');
+const listed = ['/', '/tools/', ...tools.flatMap(tool => [`/tools/${tool.slug}/`, `/tools/${tool.slug}/activity/`]), '/listen/', '/teachers/', '/about/', '/privacy/'];
 for (const page of listed) assert.ok(sitemap.includes(`<loc>${site.url}${page}</loc>`), `sitemap lists ${page}`);
 assert.equal((sitemap.match(/<loc>/g) ?? []).length, listed.length, 'the sitemap lists exactly the indexable pages');
 for (const file of ['robots.txt', 'llms.txt', 'favicon.svg', 'og-image.png', '_headers']) assert.ok(fs.existsSync(path.join(root, file)), `dist/${file}`);
 
-console.log(`Verified ${pages.length} pages: unique titles and H1s, title and description lengths, ${structured} JSON-LD blocks, unique IDs, ${links} local links/assets; answer keys noindex and out of the sitemap; no ads.`);
+console.log(`Verified ${pages.length} pages: unique titles and H1s, title and description lengths, ${structured} JSON-LD blocks, unique IDs, ${links} local links/assets; answer keys, player and saved shelf noindex and out of the sitemap; no ads.`);

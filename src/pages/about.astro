@@ -16,6 +16,8 @@ import { tools } from '../lib/labs.mjs';
     <ul>
       {tools.map(tool => <li><a href={`/tools/${tool.slug}/`}>{tool.name}</a>: {tool.blurb}</li>)}
     </ul>
+    <h2>Listen</h2>
+    <p>The site began as a player for public-domain audiobooks, and that is still here as <a href="/listen/">Listen</a>. The recordings were made by volunteers at LibriVox and are kept by the Internet Archive; this site only finds and plays them. It is a large library for all ages, not a list chosen for children.</p>
     <h2>How the tools work</h2>
     <p>The tools run in your browser. Nothing you type is sent to us, and there is nothing to install. Where a tool gives a number, the page says how the number is worked out and what it cannot tell you. Worksheets and answer keys are generated from the same data the tools use, and automated tests check that they match.</p>
     <h2>No ads, no accounts</h2>

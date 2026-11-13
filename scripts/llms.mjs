@@ -15,7 +15,7 @@ import { site } from '../src/lib/site.mjs';
 import { tools, toolCount } from '../src/lib/labs.mjs';
 import { learningApps, currentApp } from '../src/lib/learning-apps.mjs';
 
-const INTRO = `Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: ${toolCount} interactive tool${tools.length === 1 ? '' : 's'}, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. From the makers of Interactive Periodic Table.`;
+const INTRO = `Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: ${toolCount} interactive tool${tools.length === 1 ? '' : 's'}, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. The site also has Listen, a player for free public-domain audiobooks read by LibriVox volunteers. From the makers of Interactive Periodic Table.`;
 const SISTERS = learningApps.filter(app => app.id !== currentApp).map(app => [app.name, app.url + '/']);
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -46,10 +46,11 @@ function section(route) {
   if (route === '/') return null;
   if (route.endsWith('/activity/') || route.startsWith('/teachers/')) return 'Classroom';
   if (/^\/(about|privacy)\//.test(route)) return 'About';
+  if (route.startsWith('/listen/')) return 'Listen';
   return 'Tools';
 }
 
-const order = ['Tools', 'Classroom', 'About'];
+const order = ['Tools', 'Classroom', 'Listen', 'About'];
 const depth = route => route.split('/').length;
 const lines = [`# ${site.name}`, '', `> ${INTRO}`, ''];
 for (const heading of order) {

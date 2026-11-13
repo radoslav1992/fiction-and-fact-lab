@@ -1,0 +1,226 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/listen.css';
+---
+<Layout title="Audiobook Player" description="Play a free public-domain audiobook from LibriVox in your browser: every chapter, with skip, playback speed and a saved place. No sign-up or download." section="Listen" noindex crumbs={[['Listen', '/listen/'], ['Audiobook player']]}>
+  <div class="wrap" id="book-root">
+    <div class="breadcrumb"><a href="/listen/">Listen</a> / Audiobook</div>
+    <article class="book">
+      <div class="book__art" id="book-art"></div>
+      <div class="book__info">
+        <span class="eyebrow">Audiobook · LibriVox</span>
+        <h1 class="book__title" id="book-title">Audiobook player</h1>
+        <p class="listen-loading" id="book-status" role="status">Opening the book…</p>
+        <noscript><p class="note">The player needs JavaScript to load the book from the Internet Archive.</p></noscript>
+        <div id="book-details"></div>
+      </div>
+    </article>
+    <div id="book-player"></div>
+  </div>
+
+  <!-- Filled in and moved into the page once the book's details arrive -->
+  <template id="book-art-template">
+    <img class="book__cover" data-cover alt="" width="280" height="280" />
+    <button class="btn book__fav" type="button" data-fav aria-pressed="false">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+      <span data-fav-label>Add to favorites</span>
+    </button>
+  </template>
+  <template id="book-details-template">
+    <p class="book__author" data-author></p>
+    <div class="book__facts" data-facts></div>
+    <p class="book__desc is-clamped" data-desc></p>
+    <button class="book__more" type="button" data-desc-toggle hidden>Read more</button>
+    <div class="book__links" data-links></div>
+  </template>
+  <template id="book-player-template">
+    <section class="player" data-player aria-label="Audio player">
+      <div class="player__now">
+        <span class="player__chapter" data-now-chapter>—</span>
+        <span class="player__book" data-now-book></span>
+      </div>
+      <div class="player__seek">
+        <span class="player__time" data-current>0:00</span>
+        <input type="range" data-seek min="0" max="1000" value="0" step="1" aria-label="Seek" />
+        <span class="player__time" data-duration>0:00</span>
+      </div>
+      <div class="player__controls">
+        <button class="player__btn" type="button" data-prev aria-label="Previous chapter"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor"><path d="M5 5h2.5v14H5zM20 5v14L9 12z"/></svg></button>
+        <button class="player__btn player__btn--skip" type="button" data-back aria-label="Back 15 seconds"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.6-5.9"/><path d="M4 4v4.5h4.5"/></svg><span aria-hidden="true">15</span></button>
+        <button class="player__btn player__btn--play" type="button" data-play aria-label="Play"></button>
+        <button class="player__btn player__btn--skip" type="button" data-fwd aria-label="Forward 30 seconds"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v4.5h-4.5"/></svg><span aria-hidden="true">30</span></button>
+        <button class="player__btn" type="button" data-next aria-label="Next chapter"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor"><path d="M16.5 5H19v14h-2.5zM4 5v14l11-7z"/></svg></button>
+        <button class="player__rate" type="button" data-rate aria-label="Playback speed" title="Playback speed">1×</button>
+      </div>
+    </section>
+
+    <section class="chapters" aria-labelledby="chapters-title">
+      <h2 id="chapters-title">Chapters <span class="player__book" data-chapter-count></span></h2>
+      <ul class="chapter-list" data-chapters></ul>
+    </section>
+
+    <!-- Author biography, filled in from Wikipedia once it loads. It sits last so that nothing moves when it arrives. -->
+    <section class="author-bio" data-author-bio aria-labelledby="author-bio-title" hidden>
+      <h2 id="author-bio-title">About the author</h2>
+      <div class="author-bio__body">
+        <img class="author-bio__portrait" data-bio-portrait alt="" hidden />
+        <div class="author-bio__text">
+          <p class="author-bio__name" data-bio-name></p>
+          <p class="author-bio__extract" data-bio-extract></p>
+          <a class="tap" data-bio-link target="_blank" rel="noopener">Read more on Wikipedia ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <audio data-audio preload="metadata"></audio>
+  </template>
+</Layout>
+
+<script>
+  import { getBook, formatTime } from '../scripts/listen/api.js';
+  import { fetchAuthorBio } from '../scripts/listen/wikipedia.js';
+  import { esc, FALLBACK_COVER } from '../scripts/listen/ui.js';
+  import { isFavorite, toggleFavorite } from '../scripts/listen/store.js';
+  import { setupPlayer } from '../scripts/listen/player.js';
+  import { site } from '../lib/site.mjs';
+
+  const root = document.getElementById('book-root')!;
+  const status = document.getElementById('book-status')!;
+  const id = new URL(location.href).searchParams.get('id');
+  const fail = (html: string) => { status.className = 'listen-error'; status.innerHTML = html; };
+
+  if (!id) {
+    fail('No book selected. <a href="/listen/">Return to the audiobooks →</a>');
+  } else {
+    boot(id).catch((err) => {
+      console.error(err);
+      fail('This book could not be opened. It may have been moved. <a href="/listen/">Back to the audiobooks →</a>');
+    });
+  }
+
+  const fill = (target: string, template: string) =>
+    document.getElementById(target)!.replaceChildren((document.getElementById(template) as HTMLTemplateElement).content.cloneNode(true));
+
+  async function boot(identifier: string) {
+    const book = await getBook(identifier);
+    if (!book.chapters.length) {
+      fail('No audio tracks were found for this title.');
+      return;
+    }
+
+    document.title = `${book.title} | ${site.name}`;
+
+    // Copy the templates into the page.
+    fill('book-art', 'book-art-template');
+    fill('book-details', 'book-details-template');
+    fill('book-player', 'book-player-template');
+    status.remove();
+
+    const $ = (sel: string) => root.querySelector<HTMLElement>(sel)!;
+
+    // ---- static metadata ----
+    const cover = $('[data-cover]') as HTMLImageElement;
+    cover.src = book.cover;
+    cover.alt = `Cover of ${book.title}`;
+    cover.onerror = () => { cover.onerror = null; cover.src = FALLBACK_COVER; };
+
+    document.getElementById('book-title')!.textContent = book.title;
+    $('[data-author]').textContent = book.author;
+
+    const facts = [];
+    if (book.runtime) facts.push(`Length ${book.runtime}`);
+    facts.push(`${book.chapters.length} chapters`);
+    if (book.year) facts.push(String(book.year));
+    if (book.language) facts.push(book.language);
+    $('[data-facts]').innerHTML = facts.map((f) => `<span class="book__fact">${esc(f)}</span>`).join('');
+
+    const descEl = $('[data-desc]');
+    descEl.textContent = book.description || 'No description available for this recording.';
+    const descToggle = $('[data-desc-toggle]');
+    requestAnimationFrame(() => {
+      if (descEl.scrollHeight - descEl.clientHeight > 4) {
+        descToggle.hidden = false;
+        descToggle.addEventListener('click', () => {
+          const clamped = descEl.classList.toggle('is-clamped');
+          descToggle.textContent = clamped ? 'Read more' : 'Show less';
+        });
+      }
+    });
+
+    const links = [`<a class="tap" href="${esc(book.detail)}" target="_blank" rel="noopener">Archive page ↗</a>`];
+    if (book.textSource)
+      links.push(`<a class="tap" href="${esc(book.textSource)}" target="_blank" rel="noopener">Read the text ↗</a>`);
+    $('[data-links]').innerHTML = links.join('');
+
+    $('[data-now-book]').textContent = book.title;
+    $('[data-chapter-count]').textContent = `· ${book.chapters.length}`;
+
+    // ---- favorites ----
+    const favBtn = $('[data-fav]');
+    const favLabel = $('[data-fav-label]');
+    function renderFav() {
+      const on = isFavorite(book.id);
+      favBtn.classList.toggle('is-on', on);
+      favBtn.setAttribute('aria-pressed', String(on));
+      favLabel.textContent = on ? 'In your favorites' : 'Add to favorites';
+    }
+    favBtn.addEventListener('click', () => {
+      toggleFavorite({ id: book.id, title: book.title, author: book.author, cover: book.cover });
+      renderFav();
+    });
+    renderFav();
+
+    // ---- chapter list ----
+    $('[data-chapters]').innerHTML = book.chapters
+      .map(
+        (c, i) => `
+        <li>
+          <button class="chapter" type="button" data-chapter-index="${i}">
+            <span class="chapter__num">${i + 1}</span>
+            <span class="chapter__title">${esc(c.title)}</span>
+            <span class="chapter__eq" data-eq hidden>Playing</span>
+            <span class="chapter__len">${c.length ? formatTime(c.length) : ''}</span>
+          </button>
+        </li>`
+      )
+      .join('');
+
+    // ---- player wiring ----
+    setupPlayer(book, root);
+
+    // ---- author biography (Wikipedia, best-effort) ----
+    renderAuthorBio(book.author);
+  }
+
+  // Fetch a short author biography for historical context and reveal the
+  // section only if Wikipedia returns something useful — otherwise it stays
+  // hidden so a missing or ambiguous author never leaves a broken panel.
+  async function renderAuthorBio(author: string) {
+    const section = root.querySelector<HTMLElement>('[data-author-bio]');
+    if (!section) return;
+    let bio;
+    try {
+      bio = await fetchAuthorBio(author);
+    } catch (err) {
+      console.warn(err);
+      return;
+    }
+    if (!bio) return;
+
+    const portrait = section.querySelector('[data-bio-portrait]') as HTMLImageElement;
+    if (bio.thumbnail) {
+      portrait.src = bio.thumbnail;
+      portrait.alt = `Portrait of ${bio.title}`;
+      portrait.hidden = false;
+      portrait.onerror = () => { portrait.onerror = null; portrait.hidden = true; };
+    }
+
+    const nameParts = [bio.title];
+    if (bio.description) nameParts.push(bio.description);
+    section.querySelector('[data-bio-name]')!.textContent = nameParts.join(' · ');
+    section.querySelector('[data-bio-extract]')!.textContent = bio.extract;
+    (section.querySelector('[data-bio-link]') as HTMLAnchorElement).href = bio.url;
+
+    section.hidden = false;
+  }
+</script>

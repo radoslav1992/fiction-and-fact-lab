@@ -10,12 +10,17 @@ import { tools, toolCount, ToolCount } from '../lib/labs.mjs';
 const faq: [string, string][] = [
   ['What is Fiction & Fact Library?', 'A set of free reading tools for students in grades 2 to 8 (ages about 7 to 14) and their teachers. Each tool is something to do, not just something to read, and each comes with a printable worksheet and a teacher answer key.'],
   ['What can I do here?', `There are ${toolCount} tools. ${tools.map(tool => `${tool.name}: ${tool.blurb}`).join(' ')}`],
+  ['What happened to the audiobooks?', 'They are still here, under Listen. The catalogue, the player and your saved shelf work as before, and books you saved or started on this device are still there.'],
   ['Is it free? Do students need to sign up?', 'Everything is free, with no accounts, logins or downloads. The tools run in the browser on Chromebooks, tablets, laptops and phones.'],
   ['Are there ads?', 'No. The site shows no ads of any kind.'],
   ['Does anything a student types get saved or sent anywhere?', 'No. The tools work inside the browser. Text that a student types or pastes is never sent to us, and scores stay on the device.'],
 ];
 ---
 <Layout title={site.defaultTitle} description={site.defaultDescription} section="Home">
+  <script is:inline slot="head">
+    // The old site's home page was the audiobook catalogue, and links to a search looked like /?q=holmes.
+    if (new URLSearchParams(location.search).has('q')) location.replace('/listen/' + location.search);
+  </script>
   <div class="wrap">
     <section class="hero">
       <div>
@@ -47,6 +52,18 @@ const faq: [string, string][] = [
       </div>
     </section>
 
+    <section class="section" aria-labelledby="listen">
+      <span class="eyebrow">Listen</span>
+      <h2 id="listen">Classic books, read aloud</h2>
+      <div class="listen-teaser card">
+        <div>
+          <p>Thousands of free audiobooks to play in your browser: classic stories, poems and non-fiction in the public domain, read aloud by LibriVox volunteers. The player remembers your place.</p>
+          <p class="muted">It is a big library for all ages, not a children’s list, so teachers and parents may want to pick a title first.</p>
+        </div>
+        <p class="page-actions"><a class="btn primary" href="/listen/">Browse the audiobooks</a> <a class="btn" href="/favorites/">Your saved books</a></p>
+      </div>
+    </section>
+
     <section class="section" aria-labelledby="why">
       <span class="eyebrow">For teachers</span>
       <h2 id="why">Made for a class period</h2>
@@ -63,3 +80,9 @@ const faq: [string, string][] = [
     <LearningApps />
   </div>
 </Layout>
+
+<style>
+  .listen-teaser { display: grid; gap: 4px 28px; align-items: center; }
+  .listen-teaser p { max-width: 44rem; }
+  @media (min-width: 900px) { .listen-teaser { grid-template-columns: 1fr auto; } }
+</style>

@@ -41,7 +41,7 @@ if (trail.length) {
   });
 }
 
-const nav = [['Home', '/'], ['Tools', '/tools/'], ['For teachers', '/teachers/'], ['About', '/about/']];
+const nav = [['Home', '/'], ['Tools', '/tools/'], ['Listen', '/listen/'], ['For teachers', '/teachers/'], ['About', '/about/']];
 const sisterApps = learningApps.filter(app => app.id !== currentApp && app.url);
 ---
 <!doctype html>
@@ -107,6 +107,7 @@ const sisterApps = learningApps.filter(app => app.id !== currentApp && app.url);
       <nav class="footer-links" aria-label="Site">
         {tools.map(item => <a href={`/tools/${item.slug}/`}>{item.name}</a>)}
         <a href="/tools/">All tools</a>
+        <a href="/listen/">Listen</a>
         <a href="/teachers/">For teachers</a>
         <a href="/about/">About</a>
         <a href="/privacy/">Privacy policy</a>

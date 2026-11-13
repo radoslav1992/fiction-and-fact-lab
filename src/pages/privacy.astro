@@ -7,6 +7,8 @@ const analytics = Boolean(site.analyticsId);
 const stored: [string, string, string][] = [
   ['cookieConsent', 'Your Accept or Reject choice from the cookie banner (only saved if the banner is shown and you choose).', '180 days'],
   ['factOpinionBest', 'Your best score for each level of the Fact or Opinion Game, so you can try to beat it.', 'Until you clear your browser data'],
+  ['vintage_audiobooks.favorites.v1', 'Audiobooks you saved with “Add to favorites” on the Listen pages: each book’s title, author and cover address.', 'Until you remove them or clear your browser data'],
+  ['vintage_audiobooks.progress.v1', 'The chapter and the second you stopped at in each audiobook you have played, so you can carry on later.', 'Until you clear your browser data'],
 ];
 ---
 <Layout title="Privacy Policy" description="How Fiction & Fact Library handles your data: no accounts, no ads, no personal details, anonymous statistics, and what stays in your browser." section="" crumbs={[['Privacy policy']]}>
@@ -48,6 +50,9 @@ const stored: [string, string, string][] = [
         </tbody>
       </table>
     </div>
+
+    <h2>Audiobooks from other sites</h2>
+    <p>The <a href="/listen/">Listen</a> pages do not hold any audiobooks themselves. Your browser fetches the list of books, the cover pictures and the sound directly from the <a href="https://archive.org/">Internet Archive</a>, and a short note about the author from <a href="https://www.wikipedia.org/">Wikipedia</a>. Those sites receive your IP address and the name of the book or search, as they would if you visited them, and their own privacy policies apply. The address of a Listen page includes the search words or the book’s identifier, so our anonymous statistics see those too.</p>
 
     <h2>Fonts and hosting</h2>
     <p>The site is served by Cloudflare, which processes standard request data (such as IP addresses) to deliver and protect the site. Text is set in fonts loaded from Google Fonts, which receives your IP address when the fonts are downloaded.</p>
