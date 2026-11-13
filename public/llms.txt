@@ -1,19 +1,21 @@
 # Fiction & Fact Library
 
-> Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: no interactive tools, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. From the makers of Interactive Periodic Table.
+> Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: one interactive tool, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. From the makers of Interactive Periodic Table.
 
 ## Tools
 
-- [Reading Tools: Free Interactive Practice for Grades 2–8](https://fictionandfactlibrary.com/tools/): Free interactive reading tools for grades 2–8, each with a printable worksheet and a teacher answer key. They run in the browser with no sign-up and no ads.
+- [Reading Tools: Free Interactive Practice for Grades 2–8](https://fictionandfactlibrary.com/tools/): Free interactive reading tools for grades 2–8, each with a printable worksheet and a teacher answer key. They run in the browser with no sign-up or ads.
+- [Reading Level Checker: Free Readability & Grade Level Tool](https://fictionandfactlibrary.com/tools/reading-level/): Free reading level checker: paste any text to see its grade level, age range, Flesch Reading Ease and Flesch–Kincaid score. Nothing you type is saved.
 
 ## Classroom
 
 - [For Teachers: Free Reading Worksheets & Answer Keys](https://fictionandfactlibrary.com/teachers/): Free reading tools for grades 2–8 with printable one-page worksheets, teacher answer keys and short lesson plans. No logins, no ads, Chromebook-ready.
+- [Reading Level Worksheet: Rewrite for a Younger Reader](https://fictionandfactlibrary.com/tools/reading-level/activity/): Free printable reading level worksheet for grades 4–8: students check a passage, record the numbers, rewrite it for a younger reader and check it again.
 
 ## About
 
 - [About Fiction & Fact Library](https://fictionandfactlibrary.com/about/): Fiction & Fact Library makes free reading tools for students in grades 2–8 and their teachers, with no sign-up and no ads. Here is who makes it and how.
-- [Privacy Policy](https://fictionandfactlibrary.com/privacy/): How Fiction & Fact Library handles your data: no accounts, no ads, no personal details, anonymous statistics with a cookie choice, and what stays in your browser.
+- [Privacy Policy](https://fictionandfactlibrary.com/privacy/): How Fiction & Fact Library handles your data: no accounts, no ads, no personal details, anonymous statistics, and what stays in your browser.
 - Contact: info@fictionandfactlibrary.com
 
 ## Optional

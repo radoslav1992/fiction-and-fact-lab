@@ -5,7 +5,7 @@ const { act, answers = false } = Astro.props;
 ---
 {act.sections.map(section => (
   <Fragment>
-    <h2>{section.heading}</h2>
+    <h2>{answers && section.type === 'questions' ? 'Answers' : section.heading}</h2>
     {section.intro && <p class="worksheet-meta">{section.intro}</p>}
     {section.type === 'passage' && <blockquote class="passage">{section.text.split('\n\n').map(paragraph => <p>{paragraph}</p>)}</blockquote>}
     {section.type === 'table' && (

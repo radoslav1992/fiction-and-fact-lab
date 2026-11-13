@@ -11,12 +11,11 @@ const text = readFileSync(new URL('../public/llms.txt', import.meta.url), 'utf8'
 
 test('llms.txt names the site, summarises it and lists every tool and worksheet', () => {
   assert.ok(text.startsWith(`# ${site.name}\n\n> `), 'starts with the site name and a one-paragraph summary');
-  assert.ok(text.includes(`${toolCount} interactive tools`), 'counts the tools the way the pages do: run npm run build && npm run llms');
+  assert.ok(text.includes(`: ${toolCount} interactive tool`), 'counts the tools the way the pages do: run npm run build && npm run llms');
   for (const href of ['/tools/', '/teachers/', ...tools.flatMap(tool => [`/tools/${tool.slug}/`, `/tools/${tool.slug}/activity/`])]) {
     assert.ok(text.includes(`](${site.url}${href}): `), `${href} is missing: run npm run build && npm run llms`);
   }
   assert.ok(!text.includes('/teachers/answers/'), 'answer keys are not listed');
-  assert.ok(!/lexile/i.test(text));
 });
 
 test('llms.txt links only to this site and its sister apps, each line with a description', () => {

@@ -18,14 +18,14 @@ const stored: [string, string, string][] = [
     </div>
 
     <h2>No accounts, no personal details</h2>
-    <p>You can use every tool, worksheet and answer key without signing up. The tools run in your browser: what you type, paste or answer is not sent to us.</p>
+    <p>You can use every tool, worksheet and answer key without signing up. The tools run in your browser: what you type, paste or answer is not sent to us. Text you put into the Reading Level Checker is analyzed on your own device and is gone when you close or reload the page.</p>
 
     <h2>No ads</h2>
     <p>The site shows no ads and uses no advertising cookies.</p>
 
     <h2>Analytics</h2>
     {analytics ? (
-      <p>We use Google Analytics 4 to count visits and see which tools are used, so we can improve them. It records anonymous, aggregated information such as pages viewed, the type of device and browser, the approximate country, and tool events such as “a round was finished” with the level and the score. It never receives names or any text that students type or paste. Google processes this data as described in <a href="https://policies.google.com/privacy">Google’s privacy policy</a>.</p>
+      <p>We use Google Analytics 4 to count visits and see which tools are used, so we can improve them. It records anonymous, aggregated information such as pages viewed, the type of device and browser, the approximate country, and tool events such as “a text was checked”, with its word count and reading level. It never receives names or any text that students type or paste. Google processes this data as described in <a href="https://policies.google.com/privacy">Google’s privacy policy</a>.</p>
     ) : (
       <p>Fiction & Fact Library does not run any analytics at the moment, so no analytics cookies are set.</p>
     )}

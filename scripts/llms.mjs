@@ -12,10 +12,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { site } from '../src/lib/site.mjs';
-import { toolCount } from '../src/lib/labs.mjs';
+import { tools, toolCount } from '../src/lib/labs.mjs';
 import { learningApps, currentApp } from '../src/lib/learning-apps.mjs';
 
-const INTRO = `Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: ${toolCount} interactive tools, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. From the makers of Interactive Periodic Table.`;
+const INTRO = `Free reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers: ${toolCount} interactive tool${tools.length === 1 ? '' : 's'}, each with a short lesson, a printable one-page worksheet and a teacher answer key. Everything runs in the browser with no sign-up and no ads. From the makers of Interactive Periodic Table.`;
 const SISTERS = learningApps.filter(app => app.id !== currentApp).map(app => [app.name, app.url + '/']);
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));

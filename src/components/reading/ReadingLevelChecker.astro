@@ -1,0 +1,90 @@
+---
+// The Reading Level Checker. The default sample is analyzed and rendered here on the server, so the page shows
+// real results before any JavaScript runs; checker.ts then redraws the same elements as the reader types.
+import './reading.css';
+import { analyze, LONG_SENTENCE_WORDS, LONG_WORD_SYLLABLES, SILENT_WPM, ALOUD_WPM } from '../../lib/readability.mjs';
+import { display, notices, markedHtml, FORMULAS, MARK_LABELS, MARKED_WORD_LIMIT } from '../../lib/readability-view.mjs';
+import { SAMPLES, WORKSHEET_PASSAGE, DEFAULT_SAMPLE, sampleById } from '../../lib/reading-samples.mjs';
+
+const start = sampleById(DEFAULT_SAMPLE);
+const analysis = analyze(start.text);
+const d = display(analysis);
+const samples = [...SAMPLES, WORKSHEET_PASSAGE];
+---
+<section class="rl" data-checker aria-label="Reading Level Checker">
+  <div class="rl-grid">
+    <div class="rl-input">
+      <label class="rl-label" for="rl-text">Type or paste your text</label>
+      <textarea id="rl-text" data-text rows="12" spellcheck="true" aria-describedby="rl-private">{start.text}</textarea>
+      <p class="rl-private" id="rl-private"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Your text stays in this browser. It is never sent anywhere or saved.</p>
+      <div class="rl-samples" role="group" aria-labelledby="rl-samples-label">
+        <span class="rl-label" id="rl-samples-label">Or load a sample</span>
+        <div class="rl-chips">
+          {samples.map(sample => <button type="button" class="rl-chip" data-sample={sample.id} aria-pressed={sample.id === start.id ? 'true' : 'false'}>{sample.label}</button>)}
+          <button type="button" class="rl-chip rl-clear" data-clear>Clear the box</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="rl-results">
+      <div class="rl-grade">
+        <span class="rl-kicker">Reading level</span>
+        <strong class="rl-stamp" data-out="grade">{d.grade}</strong>
+        <span class="rl-ages" data-out="ages">{d.ages}</span>
+        <span class="rl-small">Middle value of five grade formulas: <b data-out="gradeNumber">{d.gradeNumber}</b></span>
+      </div>
+      <div class="rl-ease">
+        <span class="rl-kicker">Flesch Reading Ease</span>
+        <p class="rl-ease-score"><strong data-out="ease">{d.ease}</strong> <span data-out="easeLabel">{d.easeLabel}</span></p>
+        <div class="rl-meter" data-meter style={`--ease:${d.easePosition}`} aria-hidden="true"><span class="rl-meter-mark"></span></div>
+        <div class="rl-meter-ends" aria-hidden="true"><span>0 · very difficult</span><span>100 · very easy</span></div>
+      </div>
+      <dl class="rl-counts">
+        <div><dt>Words</dt><dd data-out="words">{d.words}</dd></div>
+        <div><dt>Sentences</dt><dd data-out="sentences">{d.sentences}</dd></div>
+        <div><dt>Words per sentence</dt><dd data-out="wordsPerSentence">{d.wordsPerSentence}</dd></div>
+        <div><dt>Syllables per word</dt><dd data-out="syllablesPerWord">{d.syllablesPerWord}</dd></div>
+        <div><dt>Long words <small>({LONG_WORD_SYLLABLES}+ syllables)</small></dt><dd data-out="longWordShare">{d.longWordShare}</dd></div>
+        <div><dt>Reading time <small>(at {SILENT_WPM} words a minute)</small></dt><dd data-out="readTime">{d.readTime}</dd></div>
+        <div><dt>Read-aloud time <small>(at {ALOUD_WPM} words a minute)</small></dt><dd data-out="aloudTime">{d.aloudTime}</dd></div>
+      </dl>
+      <ul class="rl-notices" data-notices>{notices(analysis).map(text => <li>{text}</li>)}</ul>
+      <p class="visually-hidden" role="status" data-status></p>
+    </div>
+  </div>
+
+  <div class="rl-marked-block">
+    <div class="rl-marked-head">
+      <h2 id="rl-marked-title">Your text, marked</h2>
+      <div class="rl-toggles" role="group" aria-label="Marks to show">
+        <label class="rl-toggle"><input type="checkbox" data-toggle="sentences" checked /><span><mark class="rl-sentence">{MARK_LABELS.sentences}</mark><span class="rl-badge">{LONG_SENTENCE_WORDS + 1} words</span></span></label>
+        <label class="rl-toggle"><input type="checkbox" data-toggle="words" checked /><span><span class="rl-word">{MARK_LABELS.words}</span></span></label>
+      </div>
+    </div>
+    <div class="rl-marked show-sentences show-words" data-marked tabindex="0" role="region" aria-labelledby="rl-marked-title" set:html={markedHtml(start.text, analysis)} />
+    <p class="rl-small" data-truncated hidden>Only the first {MARKED_WORD_LIMIT.toLocaleString('en-US')} words are shown here. The numbers use the whole text.</p>
+  </div>
+
+  <div class="rl-breakdown">
+    <h2>Formula by formula</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Formula</th><th scope="col">Result</th><th scope="col">What it counts</th><th scope="col">How it is worked out</th></tr></thead>
+        <tbody>
+          {FORMULAS.map(f => (
+            <tr>
+              <th scope="row">{f.name}</th>
+              <td class="rl-result"><strong data-out={f.key}>{d[f.key]}</strong><small>{f.result}</small></td>
+              <td data-label="Counts">{f.uses}</td>
+              <td class="rl-formula" data-label="Formula">{f.formula}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <noscript><p class="note">The results above are for the sample text. To check your own text, turn on JavaScript in your browser.</p></noscript>
+</section>
+<script>
+  import './checker.ts';
+</script>

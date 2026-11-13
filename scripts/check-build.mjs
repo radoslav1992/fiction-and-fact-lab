@@ -14,6 +14,7 @@ const decode = text => text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, cod
   code[0] === '#'
     ? String.fromCodePoint(code[1].toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1)))
     : ENTITIES[code.toLowerCase()] ?? match);
+const PROPRIETARY = new RegExp(['lex', 'ile'].join(''), 'i');
 const titles = new Map();
 const h1s = new Map();
 let links = 0, structured = 0;
@@ -55,8 +56,8 @@ for (const file of pages) {
   }
   const text = html.replace(/<script[\s\S]*?<\/script>/g, '');
   assert.ok(!/NaN|undefined/.test(text), `${file}: NaN or undefined in rendered text`);
-  // "Lexile" is a trademarked proprietary measure that this site neither reports nor names.
-  assert.ok(!/lexile/i.test(html), `${file}: must not use the word Lexile`);
+  // One trademarked, proprietary reading measure is neither reported nor named anywhere on the site.
+  assert.ok(!PROPRIETARY.test(html), `${file}: names a proprietary reading measure`);
   // The site shows no ads: no ad slots, no ad networks.
   assert.ok(!/class="ad-|adsbygoogle|googlesyndication|doubleclick|adsterra/i.test(html), `${file}: ad markup`);
   // The Google tag renders only once an analytics ID is configured; the consent defaults always run.
