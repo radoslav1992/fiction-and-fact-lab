@@ -1,0 +1,99 @@
+---
+// One page per tale in the Plot Diagram Builder's story bank: its finished story mountain, the summary and
+// the reason each event sits on its stage. Everything comes from plot-diagram.mjs.
+import Layout from '../../../../layouts/Layout.astro';
+import PlotDiagram from '../../../../components/plot-diagram/PlotDiagram.astro';
+import NextLabs from '../../../../components/NextLabs.astro';
+import { STAGES, TALES, eventsFor, climaxOf, diagramFromTale, exampleMeta, examplePath, practicePath, TOOL_PATH } from '../../../../lib/plot-diagram.mjs';
+
+export function getStaticPaths() {
+  return TALES.map(tale => ({ params: { tale: tale.slug }, props: { tale } }));
+}
+const { tale } = Astro.props;
+const meta = exampleMeta(tale);
+const url = new URL(examplePath(tale), Astro.site).href;
+const words = tale.summary.split(/\s+/).length;
+const others = TALES.filter(item => item !== tale);
+const resource = {
+  '@context': 'https://schema.org',
+  '@type': 'LearningResource',
+  name: meta.heading,
+  description: meta.description,
+  url,
+  learningResourceType: 'Worked example',
+  educationalLevel: 'Grades 2–8',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  teaches: 'Plot structure: exposition, rising action, climax, falling action and resolution',
+};
+---
+<Layout title={meta.title} description={meta.description} section="Plot Diagram" crumbs={[['Plot Diagram Builder', TOOL_PATH], [`Example: ${tale.title}`]]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(resource)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <div class="breadcrumb"><a href={TOOL_PATH}>Plot Diagram Builder</a> / Example</div>
+      <span class="eyebrow">Plot diagram example</span>
+      <h1>{meta.heading}</h1>
+      <p class="lede">The finished story mountain for {tale.title}, {tale.origin}, retold in our own words. It shows the exposition, rising action, climax, falling action and resolution, with the reason each event belongs where it is.</p>
+      <div class="page-actions">
+        <a class="btn primary" href={practicePath(tale)}>Sort these events yourself</a>
+        <a class="btn" href={TOOL_PATH}>Build your own plot diagram</a>
+      </div>
+    </div>
+
+    <PlotDiagram diagram={diagramFromTale(tale)} caption={`The plot diagram of ${tale.title}: ${tale.events.length} key events on the five stages of a story mountain.`} />
+
+    <section class="section prose">
+      <h2>{tale.title} in {words} words</h2>
+      <p>{tale.summary}</p>
+      <ul>
+        <li><strong>Characters:</strong> {tale.characters}.</li>
+        <li><strong>Setting:</strong> {tale.setting}.</li>
+        <li><strong>Problem:</strong> {tale.problem}</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Why each event sits where it does</h2>
+        <p>A plot diagram keeps only the key events and gives each one a job. Here are the five stages in order, with the events of {tale.title} and the reason for each.</p>
+      </div>
+      <ol class="pd-why-list">
+        {STAGES.map(stage => (
+          <li>
+            <span class="pd-num" aria-hidden="true">{stage.number}</span>
+            <div>
+              <h3>{stage.name}{stage.also && <span class="muted"> ({stage.also})</span>}</h3>
+              <p class="pd-because">{stage.definition}</p>
+              {eventsFor(tale, stage.id).map(event => <p><strong>{event.text}</strong> {event.why}</p>)}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="section prose">
+      <h2>Finding the climax of {tale.title}</h2>
+      <p>The climax is the turning point: the moment that decides the main problem. After it, you can tell how the story will end.</p>
+      <ul>
+        <li><strong>The main problem:</strong> {tale.problem}</li>
+        <li><strong>The moment that decides it:</strong> {climaxOf(tale).text}</li>
+      </ul>
+      <p>{tale.tricky}</p>
+      <p>Old tales are told in many ways. This diagram fits the short retelling above, so a longer version of {tale.title} may have more events on each stage.</p>
+    </section>
+
+    <NextLabs heading="Try it yourself" items={[
+      { href: practicePath(tale), name: `Sort the events of ${tale.title}`, text: 'Get the events on mixed-up cards and put each one on its stage.' },
+      { href: TOOL_PATH, name: 'Build your own plot diagram', text: 'Make a story mountain for any story you have read.' },
+      { href: '/tools/plot-diagram/activity/', name: 'Story Mountain Worksheet', text: 'One printable page with a blank story mountain.' },
+    ]} />
+
+    <section class="section" aria-labelledby="more-examples">
+      <h2 id="more-examples">More plot diagram examples</h2>
+      <ul class="prose">
+        {others.map(item => <li><a class="tap" href={examplePath(item)}>Plot diagram of {item.title}</a></li>)}
+      </ul>
+    </section>
+  </div>
+</Layout>

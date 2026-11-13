@@ -1,0 +1,232 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PlotDiagramTool from '../../../components/plot-diagram/PlotDiagramTool.astro';
+import PlotDiagram from '../../../components/plot-diagram/PlotDiagram.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { STAGES, TALES, taleBySlug, eventsFor, climaxOf, diagramFromTale, examplePath, practicePath, TOOL_PATH } from '../../../lib/plot-diagram.mjs';
+
+const title = 'Plot Diagram Builder: Free Story Mountain Maker';
+const description = 'Free plot diagram maker: build a story mountain for any story, with exposition, rising action, climax, falling action and resolution. Print it or share it.';
+const url = new URL(TOOL_PATH, Astro.site).href;
+
+// The worked example and the examples in the lesson all come from the tool's own story bank.
+const pigs = taleBySlug('three-little-pigs'), cinderella = taleBySlug('cinderella'), hare = taleBySlug('tortoise-and-the-hare'), jack = taleBySlug('jack-and-the-beanstalk');
+const lower = (text: string) => text[0].toLowerCase() + text.slice(1);
+const quote = (text: string) => text.replace(/\.$/, '');
+const word = (count: number) => ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven'][count];
+const cards = word(TALES[0].events.length);
+const stageNames = STAGES.map(item => lower(item.name));
+const stageList = `${stageNames.slice(0, -1).join(', ')} and ${stageNames.at(-1)}`;
+
+const faq: [string, string][] = [
+  ['What is a plot diagram?', 'A plot diagram is a picture of how a story is built. It is a line shaped like a mountain: the story starts on flat ground, climbs as the problem grows, peaks at the turning point and comes down to an ending. Writing the key events along the line shows how the story fits together.'],
+  ['What are the five parts of a plot diagram?', `The five parts are the ${stageList}. ${STAGES.map(item => `${item.number}. ${item.name}. ${item.definition}`).join(' ')}`],
+  ['Is a story mountain the same as a plot diagram?', 'Yes. Story mountain, plot mountain, story arc and plot diagram are names for the same picture. A story mountain made for younger students may use simpler words, such as beginning, build-up, problem and ending. Older students use the five stage names on this page.'],
+  ['What is the climax of a story?', `The climax is the turning point: the most tense moment, when the main problem is decided. After the climax you can tell how the story will end. In ${hare.title}, the climax is when ${lower(quote(climaxOf(hare).text))}.`],
+  ['What is the difference between falling action and resolution?', `Falling action is what happens right after the climax, because of it. The resolution is the ending, when the problem is over and we see how life is for the characters now. In ${pigs.title}, the falling action is “${quote(eventsFor(pigs, 'falling')[0].text)},” and the resolution is “${quote(eventsFor(pigs, 'resolution')[0].text)}.”`],
+  ['What is the difference between exposition and rising action?', 'The exposition sets the scene: who is in the story, where it happens and how things stand. The rising action begins when the problem appears. If an event makes trouble for the main character, it belongs to the rising action, not the exposition.'],
+  ['Where do the conflict and the inciting incident go on a plot diagram?', 'The conflict is the main problem of the story. It is not one point on the line: it starts in the rising action and is decided at the climax. The inciting incident is the event that starts the problem, so it is the first event of the rising action. Some diagrams mark it as a sixth point. In the builder you can write the problem in its own box.'],
+  ['Is there a blank plot diagram template to print?', 'Yes, two ways. Press Print in the builder before you type anything and you get a blank story mountain with a question in each box. Or print the story mountain worksheet, which has a blank mountain with lines to write on and a short sorting task.'],
+  ['Can I save my plot diagram or share it?', 'Your diagram is kept in your own browser, so it is still there when you come back on the same device. To share it, press “Copy a link to this diagram”. The link holds your words after the # sign, a part of a link that browsers never send to a website. Anyone who opens the link sees your diagram and can change their own copy.'],
+  ['Which grades is the Plot Diagram Builder for?', 'Grades 2 to 8, which is ages about 7 to 14. Younger students can start with the practice mode and its six well-known tales. Older students can diagram a class novel, a short story or a film. No sign-in is needed, and there are no ads.'],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Plot Diagram Builder',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Plot Diagram" crumbs={[['Plot Diagram Builder']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <!-- A shared diagram arrives in the part of the address after "#". This runs before any other script and
+       moves it out of the address, so the words in it can never reach the analytics page view. -->
+  <script slot="head" is:inline>
+    (function () {
+      function take() {
+        var found = /^#d=([\w-]+)$/.exec(location.hash);
+        if (!found) return;
+        window.plotDiagramShared = found[1];
+        history.replaceState(history.state, '', location.pathname + location.search);
+        window.dispatchEvent(new Event('plotdiagramshared'));
+      }
+      take();
+      window.addEventListener('popstate', take, true);
+      window.addEventListener('hashchange', take, true);
+    })();
+  </script>
+  <div class="wrap">
+    <div class="page-intro no-print">
+      <span class="eyebrow">Story mountain · Story structure</span>
+      <h1><span class="h1-line"><span class="hl">Plot Diagram</span></span> <span class="h1-line">Builder</span></h1>
+      <p class="lede">Build the plot diagram of any story on a story mountain. Type what happens in each of the five stages, from the exposition to the resolution, and watch the mountain fill in. Or practice first by sorting the events of {word(TALES.length)} well-known tales.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/plot-diagram/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <PlotDiagramTool />
+
+    <div class="no-print">
+      <NextLabs heading="Keep going" items={[
+        { href: '/tools/plot-diagram/activity/', name: 'Story Mountain Worksheet', text: 'One printable page: place six events, then fill in a blank story mountain.' },
+        { href: examplePath(pigs), name: 'Plot diagram examples', text: `Six finished story mountains, starting with ${pigs.title}.` },
+        { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+      ]} />
+
+      <section class="section prose">
+        <h2>What is a plot diagram?</h2>
+        <p>A plot diagram is a picture of how a story is built. It is a line shaped like a mountain. The story starts on flat ground, climbs as the problem grows, reaches a peak at the most important moment and comes back down to an ending. The same picture is often called a <strong>story mountain</strong>, a plot mountain or a story arc.</p>
+        <p>The <strong>plot</strong> is what happens in a story and why: a chain of events, each one leading to the next. A plot diagram lets you see that chain at a glance. It works for a picture book, a novel, a play or a film.</p>
+        <p>Older students may meet the name Freytag’s pyramid. Gustav Freytag was a German writer of the 1800s who drew the shape of a play as a pyramid with five parts. The plot diagram used in schools today grew from that idea.</p>
+      </section>
+
+      <section class="section">
+        <div class="prose">
+          <h2>The five stages of a plot diagram</h2>
+          <p>Every stage has a job. Here are the five, with one worked example: {pigs.title}, {pigs.origin}, retold in our own words.</p>
+        </div>
+        <div class="table-wrap pd-stage-table">
+          <table>
+            <thead><tr><th scope="col">Stage</th><th scope="col">What it is</th><th scope="col">In {pigs.title}</th></tr></thead>
+            <tbody>
+              {STAGES.map(item => (
+                <tr>
+                  <th scope="row"><span class="pd-num" aria-hidden="true">{item.number}</span>{item.name}{item.also && <span class="muted"> ({item.also})</span>}</th>
+                  <td>{item.definition}</td>
+                  <td>{eventsFor(pigs, item.id).map(event => event.text).join(' ')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="prose">
+          <h3>The finished story mountain</h3>
+          <p>Put those events on the mountain and you have a plot diagram. The boxes follow the line from left to right, in the order the story is told.</p>
+        </div>
+        <PlotDiagram diagram={diagramFromTale(pigs)} caption={`The plot diagram of ${pigs.title}. ${pigs.tricky}`} />
+        <p><a class="tap" href={examplePath(pigs)}>Why each event of {pigs.title} sits where it does →</a></p>
+      </section>
+
+      <section class="section">
+        <div class="prose">
+          <h2>Plot, summary and theme: what is the difference?</h2>
+          <p>These three words are easy to mix up. Each answers a different question about the same story. Take {hare.title}, {hare.origin}.</p>
+        </div>
+        <div class="pd-three">
+          <div class="card">
+            <h3>Plot: what happens, and why?</h3>
+            <p>The plot is the chain of events, in order, with each event leading to the next. A plot diagram maps it.</p>
+            <p>{hare.title} has {word(hare.events.length)} key events, from “{quote(hare.events[0].text)}” to “{quote(hare.events.at(-1).text)}.”</p>
+          </div>
+          <div class="card">
+            <h3>Summary: can you tell it quickly?</h3>
+            <p>A summary is a short retelling in your own words. It keeps the main events and leaves out the small details.</p>
+            <p>“{hare.summary}”</p>
+          </div>
+          <div class="card">
+            <h3>Theme: what is it really about?</h3>
+            <p>The theme is the big idea or lesson of the story. It is not an event. You work it out from the whole story.</p>
+            <p>Here the theme is that steady effort can beat careless speed. A fable often states its theme at the end as a moral: slow and steady wins the race.</p>
+          </div>
+        </div>
+        <p class="prose" style="margin-top:18px">A plot diagram and a summary use the same events. The diagram also shows what job each event does. The theme does not go in any box of the diagram.</p>
+      </section>
+
+      <section class="section">
+        <div class="prose">
+          <h2>How to find the climax</h2>
+          <p>The climax is the stage students argue about most. These steps settle it.</p>
+          <ol>
+            <li><strong>Name the main problem first.</strong> In {cinderella.title} it is this: {cinderella.problem}</li>
+            <li><strong>Find the moment that decides the problem.</strong> After the climax, you can tell how the story will end. Before it, you cannot.</li>
+            <li><strong>Do not stop at the first exciting moment.</strong> {cinderella.tricky}</li>
+            <li><strong>Look near the end.</strong> The peak is drawn in the middle of the diagram, but in most stories the climax comes late, with only a little falling action after it.</li>
+            <li><strong>Ask what has changed.</strong> After the climax something important is different for good. In {jack.title}, the beanstalk is gone and the giant cannot follow.</li>
+          </ol>
+          <h3>The climax of each practice story</h3>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Story</th><th scope="col">The main problem</th><th scope="col">The climax</th></tr></thead>
+            <tbody>
+              {TALES.map(tale => <tr><th scope="row"><a href={examplePath(tale)}>{tale.title}</a></th><td>{tale.problem}</td><td>{climaxOf(tale).text}</td></tr>)}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section prose">
+        <h2>Common mistakes</h2>
+        <ul>
+          <li><strong>Putting the climax in the middle of the story.</strong> It is in the middle of the picture, not the middle of the book. Look near the end.</li>
+          <li><strong>Choosing the most exciting moment.</strong> The climax is the turning point, the moment that decides the problem. It is often exciting, but an exciting moment is not always the climax.</li>
+          <li><strong>Writing down every event.</strong> A plot diagram holds the key events only, usually one or two for each stage. If you can take an event out and the story still makes sense, leave it out.</li>
+          <li><strong>Mixing up falling action and resolution.</strong> Falling action is what happens right after the climax. The resolution is how things are at the very end.</li>
+          <li><strong>Starting the rising action too early.</strong> Meeting the characters and the setting is exposition. The rising action begins when the problem appears.</li>
+          <li><strong>Writing the theme or your opinion in a box.</strong> The boxes are for events: things that happen in the story.</li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="examples">
+        <div class="prose">
+          <h2 id="examples">Plot diagram examples</h2>
+          <p>Each of the {word(TALES.length)} practice stories has a finished story mountain, with a short reason for the place of every event. Look at one, or sort its events yourself first.</p>
+        </div>
+        <div class="pd-example-cards">
+          {TALES.map(tale => (
+            <div class="card">
+              <h3>{tale.title}</h3>
+              <p class="muted">Climax: {climaxOf(tale).text}</p>
+              <p style="margin-top:auto"><a class="tap" href={examplePath(tale)}>See the plot diagram<span class="visually-hidden"> of {tale.title}</span> →</a><a class="tap" href={practicePath(tale)}>Sort the events<span class="visually-hidden"> of {tale.title}</span> →</a></p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="section prose">
+        <h2>How the two modes work</h2>
+        <h3>Build your own</h3>
+        <p>Type the title of your story, then one or two key events for each stage. Each box has a question to help you. The mountain fills in as you type. Print gives one clean page with a line for your name, on Letter or A4 paper. “Copy a link to this diagram” makes a link you can hand in or send to a partner.</p>
+        <h3>Sort the events</h3>
+        <p>Choose one of the {word(TALES.length)} stories. You get {cards} event cards in a mixed-up order. Choose a card, then choose its stage on the mountain. When every card is placed, press Check. Each card then shows whether it is in the right place and a one-line reason, and you get a score. You can fix the ones you missed and check again.</p>
+        <p>A round has a number. The link under the board holds the story and the round number, so a whole class that opens it gets the same cards in the same order.</p>
+      </section>
+
+      <section class="section prose">
+        <h2>What the builder cannot do</h2>
+        <ul>
+          <li><strong>It cannot check your own diagram.</strong> The builder has not read your story, so in Build your own nothing is marked right or wrong. Swap with a partner and ask: does the climax decide the main problem?</li>
+          <li><strong>Not every story is a tidy mountain.</strong> A long novel can have several problems and several peaks. Some stories begin in the middle of the action. Some poems and picture books have no problem at all. Diagram what is there.</li>
+          <li><strong>The practice stories are short retellings.</strong> Old tales are told in many ways, and other versions of these six differ in their details and even their endings. The answers here fit the retellings on this site.</li>
+          <li><strong>Not everyone draws the diagram the same way.</strong> Some teachers mark a sixth point, the inciting incident, and some call the ending the denouement. If your class uses other names, the five boxes still work.</li>
+        </ul>
+        <p class="note">If you think an event in one of the practice stories is on the wrong stage, please <a href={`mailto:${site.contactEmail}`}>tell us</a>.</p>
+      </section>
+
+      <Faq items={faq} />
+
+      <section class="section">
+        <h2>Use it in your class</h2>
+        <div class="prose">
+          <p>On a projector, press “Bigger diagram” and fill in a story the class has just read together, one stage at a time. For practice, share one round link so that everyone sorts the same cards, then compare answers.</p>
+          <p>The <a href="/tools/plot-diagram/activity/">story mountain worksheet</a> takes about 20 minutes and prints on one page. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+        </div>
+        <LinkSnippet url={url} name="Plot Diagram Builder" />
+      </section>
+    </div>
+  </div>
+</Layout>

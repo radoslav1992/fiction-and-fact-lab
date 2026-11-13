@@ -1,0 +1,141 @@
+---
+// The Plot Diagram Builder. The first screen (the boxes to type in and an empty story mountain with its
+// questions) is rendered here; tool.ts fills the mountain as the student types and runs the practice mode.
+import './plot-diagram.css';
+import { STAGES, EXTRAS, TALES, LIMITS, emptyDiagram } from '../../lib/plot-diagram.mjs';
+import { diagramHtml } from '../../lib/plot-diagram-view.mjs';
+import { site } from '../../lib/site.mjs';
+const host = new URL(site.url).hostname;
+---
+<section class="pd" data-plot aria-label="Plot Diagram Builder">
+  <div class="pd-modes no-print" role="group" aria-label="What do you want to do?">
+    <button type="button" class="pd-mode" data-mode="build" aria-pressed="true">Build your own<small>for any story</small></button>
+    <button type="button" class="pd-mode" data-mode="sort" aria-pressed="false">Sort the events<small>practice on a story you know</small></button>
+  </div>
+
+  <div class="pd-build" data-panel="build">
+    <form class="pd-form no-print" data-form autocomplete="off">
+      <h2>Your story</h2>
+      <div class="pd-field">
+        <label for="pd-title">Story title</label>
+        <input id="pd-title" type="text" data-field="title" maxlength={LIMITS.title} />
+      </div>
+      <div class="pd-field">
+        <label for="pd-author">Author <span>(optional)</span></label>
+        <input id="pd-author" type="text" data-field="author" maxlength={LIMITS.author} />
+      </div>
+      {STAGES.map(stage => (
+        <div class="pd-field">
+          <label for={`pd-${stage.id}`}><span class="pd-num" aria-hidden="true">{stage.number}</span>{stage.name}{stage.also && <span>({stage.also})</span>}</label>
+          <p class="pd-hint" id={`pd-${stage.id}-hint`}>{stage.prompt}</p>
+          <textarea id={`pd-${stage.id}`} data-field={stage.id} rows="3" maxlength={LIMITS.stage} aria-describedby={`pd-${stage.id}-hint`}></textarea>
+        </div>
+      ))}
+      <details class="pd-more">
+        <summary>Characters, setting and problem (optional)</summary>
+        {EXTRAS.map(extra => (
+          <div class="pd-field">
+            <label for={`pd-${extra.id}`}>{extra.name}</label>
+            <p class="pd-hint" id={`pd-${extra.id}-hint`}>{extra.prompt}</p>
+            <textarea id={`pd-${extra.id}`} data-field={extra.id} rows="2" maxlength={LIMITS.extra} aria-describedby={`pd-${extra.id}-hint`}></textarea>
+          </div>
+        ))}
+      </details>
+      <!-- Saved work in the optional boxes: open them before the page is first drawn, so nothing jumps. -->
+      <script is:inline>
+        try {
+          var saved = JSON.parse(localStorage.getItem('plotDiagramDraft') || 'null');
+          if (saved && saved.diagram && (saved.diagram.characters || saved.diagram.setting || saved.diagram.problem)) document.currentScript.previousElementSibling.open = true;
+        } catch (e) {}
+      </script>
+      <p class="pd-private no-print"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="12" height="8" rx="2"/><path d="M7 9V6.5a3 3 0 0 1 6 0V9"/></svg><span>What you type stays in this browser, so a reload does not lose it. A copied link holds your words inside the link itself, after the # sign. Browsers never send that part to a website, so nothing is sent to a server. Anyone you give the link to can read your diagram.</span></p>
+      <noscript><p class="note">The builder needs JavaScript. Turn it on in your browser, or print the blank story mountain worksheet and look at the examples below.</p></noscript>
+    </form>
+
+    <div class="pd-view">
+      <p class="note pd-shared no-print" data-shared hidden><span data-shared-text></span> <button type="button" class="btn small" data-restore hidden>Go back to my own diagram</button></p>
+      <div class="pd-actions no-print">
+        <button type="button" class="btn primary" data-print-diagram>Print</button>
+        <button type="button" class="btn" data-copy-link>Copy a link to this diagram</button>
+        <button type="button" class="btn pd-big" data-big aria-pressed="false">Bigger diagram</button>
+        <button type="button" class="btn is-quiet" data-clear>Clear</button>
+      </div>
+      <p class="pd-status no-print" role="status" data-build-status></p>
+      <div class="pd-linkbox no-print" data-link-box hidden>
+        <label for="pd-link">The link to this diagram</label>
+        <input id="pd-link" type="text" readonly spellcheck="false" data-link-field />
+      </div>
+      <div class="pd-print-head">
+        <div><span class="eyebrow">Plot diagram · story mountain</span><strong>My plot diagram</strong></div>
+        <div class="name-lines" aria-hidden="true"><span>Name</span><span>Class</span><span>Date</span></div>
+      </div>
+      <div class="pd-canvas">
+        <div class="pd-figure" data-figure set:html={diagramHtml(emptyDiagram(), { prompts: true })} />
+      </div>
+      <p class="pd-print-foot">Made with the Plot Diagram Builder · {host}/tools/plot-diagram/</p>
+    </div>
+  </div>
+
+  <div class="pd-sort" data-panel="sort" hidden>
+    <div data-sort-screen="pick">
+      <h2 id="pd-choose" tabindex="-1">Choose a story to sort</h2>
+      <div class="pd-stories" role="group" aria-labelledby="pd-choose">
+        {TALES.map(tale => (
+          <button type="button" class="pd-story" data-story={tale.slug}>
+            <span class="pd-story-title">{tale.title}</span>
+            <span class="pd-story-about">{tale.events.length} event cards</span>
+            <span class="pd-story-best" data-best={tale.slug}></span>
+          </button>
+        ))}
+      </div>
+      <p class="pd-sort-help">You get the events of the story on cards, in a mixed-up order. Put each card on the right stage of the story mountain, then check your answer. Your best score stays in this browser.</p>
+    </div>
+
+    <div data-sort-screen="play" hidden>
+      <div class="pd-sort-bar">
+        <h2 tabindex="-1" data-sort-title>Sort the events</h2>
+        <button type="button" class="pd-quit" data-change>Change story</button>
+      </div>
+      <details class="pd-remind">
+        <summary>Read the story first</summary>
+        <p data-sort-summary></p>
+      </details>
+      <p class="pd-how">Choose a card, then choose its stage on the mountain. On a keyboard, choose a card and press a number from <kbd>1</kbd> to <kbd>5</kbd>. Each stage gets one or two cards.</p>
+      <div class="pd-tray" data-tray>
+        <h3 id="pd-tray-title">Event cards</h3>
+        <ul class="pd-cards" aria-labelledby="pd-tray-title" data-tray-cards></ul>
+        <p class="pd-tray-note" data-tray-note hidden>All the cards are on the mountain.</p>
+        <button type="button" class="btn small pd-back" data-place="tray" hidden>Put the card back here</button>
+      </div>
+      <div class="pd-board">
+        <svg class="pd-board-hill" viewBox="0 0 1000 96" preserveAspectRatio="none" aria-hidden="true"><path class="pd-hill" d="M200,90L500,8L800,90z"/><path class="pd-line" d="M4,90H200L500,8L800,90H996"/></svg>
+        <div class="pd-zones" data-zones></div>
+      </div>
+      <div class="pd-hand" data-hand hidden>
+        <p><strong>Your card:</strong> <span data-hand-text></span></p>
+        <button type="button" class="btn small" data-drop>Put it down</button>
+      </div>
+      <div class="pd-sort-actions">
+        <button type="button" class="btn primary" data-check disabled>Check my mountain</button>
+        <span class="pd-progress" data-progress></span>
+      </div>
+      <div class="pd-result" data-result hidden>
+        <h3 tabindex="-1" data-result-title>Your result</h3>
+        <p class="pd-score" data-score></p>
+        <p data-message></p>
+        <p data-tricky hidden></p>
+        <div class="page-actions">
+          <button type="button" class="btn primary" data-fix>Fix the ones I missed</button>
+          <button type="button" class="btn" data-restart>Start this story again</button>
+          <button type="button" class="btn" data-next-story>Sort another story</button>
+          <a class="btn" data-example-link href="/tools/plot-diagram/">See the finished diagram</a>
+        </div>
+      </div>
+      <p class="pd-share">For teachers: this is round <b data-round-number></b>. Everyone who opens this link gets the same cards in the same order: <a data-round-link href="/tools/plot-diagram/"></a></p>
+      <p class="visually-hidden" role="status" data-live></p>
+    </div>
+  </div>
+</section>
+<script>
+  import './tool.ts';
+</script>

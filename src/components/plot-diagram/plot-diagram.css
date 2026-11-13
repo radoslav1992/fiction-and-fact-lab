@@ -1,0 +1,241 @@
+/* Plot Diagram Builder. The story mountain is drawn in indigo ink on paper, with highlighter yellow inside.
+   The same drawing is used by the tool, the example pages and the worksheet (plot-diagram-view.mjs). */
+
+/* ------------------------------------------------------------ the mountain */
+.pd-figure { margin: 0; container-type: inline-size; }
+.pd-svg { display: block; width: 100%; height: auto; }
+.pd-svg text { font-family: var(--font-body); fill: var(--ink); }
+.pd-hill { fill: var(--hl-soft); }
+.pd-ground { fill: none; stroke: var(--rule-strong); stroke-width: 1.5; stroke-dasharray: 2 6; stroke-linecap: round; }
+.pd-line { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+.pd-arrow { fill: var(--ink); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+.pd-leader { fill: none; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.pd-box { fill: var(--card); stroke: var(--rule-strong); stroke-width: 1; }
+.pd-bar, .pd-badge { fill: var(--ink); }
+.pd-svg .pd-badge-n, .pd-svg .pd-marker-n { fill: #fff; font-size: 13px; font-weight: 700; }
+.pd-marker circle { fill: var(--ink); stroke: var(--card); stroke-width: 3; }
+.pd-marker.is-empty circle { fill: var(--card); stroke: var(--ink); stroke-width: 2.5; }
+.pd-svg .pd-marker.is-empty .pd-marker-n { fill: var(--ink); }
+.pd-name { font-size: 15px; font-weight: 700; }
+.pd-svg .pd-also { font-size: 13px; fill: var(--muted); }
+.pd-text { font-size: 15px; }
+.pd-svg .pd-prompt { font-size: 14px; font-style: italic; fill: var(--muted); }
+.pd-svg .pd-prompt-small { font-size: 13px; }
+.pd-rule { fill: none; stroke: var(--rule-strong); stroke-width: 1; }
+.pd-svg .pd-title { font-family: var(--font-display); font-size: 19px; font-weight: 700; }
+.pd-svg .pd-author { font-size: 13.5px; fill: var(--muted); }
+.pd-notes-box { fill: var(--paper); stroke: var(--rule-strong); stroke-width: 1; stroke-dasharray: 5 4; }
+.pd-svg .pd-notes-name { font-size: 12.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; fill: var(--ink-2); }
+.pd-notes-text { font-size: 14px; }
+
+/* A narrow figure shows a small mountain and the stages stacked under it. On a wide one the stack is still
+   there for screen readers. */
+.pd-mini { display: none; max-width: 430px; margin: 0 auto 6px; }
+.pd-mini .pd-line { stroke-width: 4; }
+.pd-svg .pd-mini-name { font-size: 12px; font-weight: 700; }
+.pd-svg.pd-mini .pd-marker-n { font-size: 12px; }
+.pd-stack { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pd-stack-title { margin: 0 0 10px; font-size: 1.05rem; text-align: center; }
+.pd-stack-title strong { font: 700 1.25rem/1.25 var(--font-display); }
+.pd-stack-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.pd-stack-item { display: flex; gap: 10px; margin: 0; padding: 10px 12px; border: 1px solid var(--rule-strong); border-top: 4px solid var(--ink); border-radius: 4px 4px 10px 10px; background: var(--card); }
+.pd-stack-item > div { min-width: 0; flex: 1; }
+.pd-stack-name { margin: 0 0 2px; }
+.pd-stack-name span { color: var(--muted); font-size: .92rem; }
+.pd-stack-text { margin: 0; overflow-wrap: anywhere; }
+.pd-stack-text em { color: var(--muted); }
+.pd-num { flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: #fff; font: 700 .9rem/1 var(--font-body); }
+.pd-stack-item.is-empty .pd-num { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+.pd-stack-notes { display: grid; gap: 8px; margin: 12px 0 0; padding: 10px 12px; border: 1px dashed var(--rule-strong); border-radius: 8px; background: var(--paper); }
+.pd-stack-notes dt { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.pd-stack-notes dd { margin: 0; overflow-wrap: anywhere; }
+@container (max-width: 699px) {
+  .pd-wide { display: none; }
+  .pd-mini { display: block; }
+  .pd-stack { position: static; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; white-space: normal; }
+}
+
+/* A finished diagram on a page: a sheet of paper. */
+.pd-sheet { margin: 0 0 8px; padding: 14px; border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; background: var(--paper); box-shadow: var(--shadow); }
+.pd-sheet figcaption { margin-top: 10px; font-size: .95rem; color: var(--muted); }
+
+/* ---------------------------------------------------------------- the tool */
+.pd { background: var(--card); border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; padding: 18px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.pd h2 { font-size: 1.35rem; margin: 0 0 10px; }
+.pd h2:focus-visible, .pd h3:focus-visible { outline-offset: 6px; }
+.pd .btn.small { padding: 6px 12px; font-size: .95rem; }
+.pd-modes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); }
+.pd-mode { min-height: 48px; padding: 8px 18px; border: 2px solid var(--ink); border-radius: 24px; background: var(--card); color: var(--ink); font-weight: 700; cursor: pointer; }
+.pd-mode:hover { background: var(--hl-soft); }
+.pd-mode[aria-pressed='true'] { background: var(--hl); box-shadow: inset 0 -3px 0 var(--ink); }
+.pd-mode small { display: block; font-size: .82rem; font-weight: 400; }
+
+/* Build your own: the boxes to type in, and the diagram. */
+.pd-build { display: grid; gap: 20px; }
+.pd-build > * { min-width: 0; }
+@media (min-width: 1100px) {
+  .pd-build { grid-template-columns: 320px minmax(0, 1fr); align-items: start; }
+  /* The diagram stays in view while the boxes scroll. A very tall diagram scrolls inside its own column. */
+  .pd-view { position: sticky; top: 4px; max-height: calc(100vh - 8px); overflow-y: auto; margin: -7px; padding: 7px; }
+  .pd.is-big .pd-build { grid-template-columns: minmax(0, 1fr); }
+  .pd.is-big .pd-form { display: none; }
+  .pd.is-big .pd-view { position: static; max-height: none; overflow: visible; margin: 0; padding: 0; }
+}
+@media (max-width: 1099px) { .pd-big { display: none; } }
+.pd-form { display: grid; gap: 12px; }
+.pd-field label { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; font-weight: 700; margin-bottom: 4px; }
+.pd-field label span:not(.pd-num) { font-weight: 400; color: var(--muted); font-size: .95rem; }
+.pd-hint { margin: 0 0 5px; font-size: .95rem; color: var(--muted); }
+.pd-field input, .pd-field textarea { display: block; width: 100%; padding: 9px 11px; border: 2px solid var(--rule-strong); border-radius: 8px; background: #fff; line-height: 1.45; }
+.pd-field input { min-height: 44px; }
+.pd-field textarea { resize: vertical; min-height: 78px; }
+.pd-field input:focus-visible, .pd-field textarea:focus-visible { border-color: var(--ink-2); outline-offset: 1px; }
+.pd-more { border: 1px dashed var(--rule-strong); border-radius: 8px; padding: 0 12px; background: var(--paper); }
+.pd-more summary { min-height: 44px; padding: 10px 0; font-weight: 700; cursor: pointer; }
+.pd-more[open] { padding-bottom: 12px; }
+.pd-more .pd-field + .pd-field { margin-top: 10px; }
+.pd-canvas { padding: 10px; border: 1px solid var(--rule); border-radius: 12px; background: var(--paper); }
+.pd-canvas .pd-stage { cursor: pointer; }
+.pd-canvas [data-active='exposition'] [data-stage='exposition'] .pd-box, .pd-canvas [data-active='rising'] [data-stage='rising'] .pd-box, .pd-canvas [data-active='climax'] [data-stage='climax'] .pd-box, .pd-canvas [data-active='falling'] [data-stage='falling'] .pd-box, .pd-canvas [data-active='resolution'] [data-stage='resolution'] .pd-box { fill: var(--hl-soft); stroke: var(--ink); stroke-width: 2; }
+.pd-canvas [data-active='exposition'] .pd-stack-item[data-stage='exposition'], .pd-canvas [data-active='rising'] .pd-stack-item[data-stage='rising'], .pd-canvas [data-active='climax'] .pd-stack-item[data-stage='climax'], .pd-canvas [data-active='falling'] .pd-stack-item[data-stage='falling'], .pd-canvas [data-active='resolution'] .pd-stack-item[data-stage='resolution'] { background: var(--hl-soft); }
+.pd-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 6px; }
+.pd-actions .btn.is-quiet { border-style: dashed; }
+.pd-actions .btn[aria-pressed='true'] { background: var(--hl); }
+.pd-status { min-height: 1.6em; margin: 0 0 8px; font-weight: 700; }
+.pd-status .btn { margin-left: 8px; }
+.pd-linkbox { display: grid; gap: 4px; margin: 0 0 10px; }
+.pd-linkbox label { font-weight: 700; font-size: .95rem; }
+.pd-linkbox input { width: 100%; min-height: 44px; padding: 8px 10px; border: 2px solid var(--rule-strong); border-radius: 8px; background: #fff; font: .88rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.pd-private { display: flex; align-items: flex-start; gap: 8px; margin: 0; font-size: .92rem; color: var(--fact); }
+.pd-private svg { flex: none; margin-top: 3px; }
+.pd-shared { margin: 0 0 12px; }
+.pd-print-head, .pd-print-foot { display: none; }
+
+/* Sort the events */
+.pd-stories { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); }
+.pd-story { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-height: 44px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; box-shadow: 4px 4px 0 var(--hl); }
+.pd-story:hover { background: var(--hl-soft); }
+.pd-story-title { font: 700 1.2rem/1.25 var(--font-display); }
+.pd-story-about { color: var(--muted); font-size: .95rem; }
+.pd-story-best { font-size: .92rem; font-weight: 700; min-height: 1.5em; }
+.pd-sort-help { margin: 14px 0 0; color: var(--muted); font-size: .97rem; max-width: 760px; }
+.pd-sort-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; margin-bottom: 8px; }
+.pd-sort-bar h2 { margin: 0; }
+.pd-quit { min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.pd-quit:hover { background: var(--hl-soft); }
+.pd-remind { margin-bottom: 10px; border: 1px solid var(--rule); border-left: 5px solid var(--hl); border-radius: 4px 10px 10px 4px; background: var(--paper); padding: 0 14px; max-width: 860px; }
+.pd-remind summary { min-height: 44px; padding: 10px 0; font-weight: 700; cursor: pointer; }
+.pd-remind p { margin: 0 0 12px; }
+.pd-how { margin: 0 0 12px; max-width: 860px; }
+.pd h3 { font-size: 1.05rem; margin: 0 0 8px; }
+.pd-tray { padding: 12px; border: 2px dashed var(--rule-strong); border-radius: 12px; background: var(--paper); }
+.pd-tray.is-over, .pd-zone.is-over { outline: 3px solid var(--ink-2); outline-offset: 2px; }
+.pd-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.pd-tray .pd-cards { grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); }
+.pd-cards li { margin: 0; }
+.pd-card { display: block; width: 100%; min-height: 48px; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 4px 4px 10px 10px; border-top-width: 5px; background: #fff; color: var(--ink); font: 400 1rem/1.4 var(--font-body); text-align: left; cursor: pointer; }
+.pd-card:hover:not(:disabled) { background: var(--hl-soft); }
+.pd-card[aria-pressed='true'] { background: var(--hl); box-shadow: 0 0 0 3px var(--ink-2); }
+.pd-card:disabled { cursor: default; color: var(--ink); opacity: 1; }
+.pd-tray-note { margin: 0; color: var(--muted); }
+.pd-back { margin-top: 10px; }
+.pd-board { margin-top: 14px; }
+.pd-board-hill { display: none; }
+.pd-zones { display: grid; gap: 10px; }
+.pd-zone { display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 8px; border: 1px solid var(--rule-strong); border-radius: 12px; background: var(--card-2); }
+.pd-place { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 52px; padding: 6px 10px; border: 2px solid var(--ink); border-radius: 8px; background: var(--card); color: var(--ink); font-weight: 700; text-align: left; cursor: pointer; }
+.pd-place:hover { background: var(--hl-soft); }
+.pd-place-name { flex: 1; min-width: 0; line-height: 1.2; }
+.pd-place-name small { display: block; font-size: .82rem; font-weight: 400; color: var(--muted); }
+.pd-icon { flex: none; }
+.pd-icon-line { fill: none; stroke: var(--rule-strong); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.pd-icon-part { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+.pd.has-card .pd-place { background: var(--hl); box-shadow: inset 0 -3px 0 var(--ink); }
+.pd.has-card .pd-place:hover { background: var(--hl-soft); }
+.pd-zone .pd-card { font-size: .97rem; padding: 8px 10px; }
+.pd-why { display: flex; gap: 6px; margin: 4px 2px 0; font-size: .93rem; line-height: 1.4; }
+.pd-why svg { flex: none; margin-top: 1px; }
+/* After checking: a right card is highlighted, a wrong one gets a dashed edge. Each has an icon and words. */
+.pd-cards .is-right .pd-card { background: var(--hl-soft); }
+.pd-cards .is-wrong .pd-card { border-style: dashed; border-top-style: solid; background: var(--card); }
+.pd-hand { position: sticky; bottom: 8px; z-index: 2; display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 12px; background: var(--hl); box-shadow: var(--shadow); }
+.pd-hand p { flex: 1; min-width: 0; margin: 0; font-size: .97rem; line-height: 1.35; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.pd-hand .btn { flex: none; }
+.pd-sort-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 14px; }
+.pd-progress { font-weight: 700; }
+.pd-result { margin-top: 14px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.pd-score { display: inline-block; margin: 0 0 8px; padding: 2px 16px 4px; border: 4px solid var(--ink); border-radius: 10px; background: var(--hl); font: 700 clamp(1.4rem, 4.5vw, 2rem)/1.2 var(--font-display); transform: rotate(-1.5deg); }
+.pd-result p { max-width: 760px; }
+.pd-result .page-actions { margin: 10px 0 0; }
+.pd-share { margin: 12px 0 0; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
+@media (min-width: 900px) {
+  /* Five columns under one long mountain. */
+  .pd-board-hill { display: block; width: 100%; height: 120px; margin-bottom: -2px; }
+  .pd-board-hill .pd-line { vector-effect: non-scaling-stroke; }
+  .pd-zones { grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: stretch; }
+  .pd-zone { padding: 6px; }
+  .pd-place { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .pd-place .pd-icon { display: none; }
+  .pd-place .pd-num { margin-bottom: 2px; }
+}
+
+/* Lesson content on the page */
+.pd-stage-table td:first-child, .pd-stage-table tbody th { min-width: 150px; }
+.pd-stage-table .pd-num { margin-right: 8px; vertical-align: middle; }
+.pd-stage-table th .muted { font-weight: 400; }
+.pd-example-cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.pd-example-cards .card { display: flex; flex-direction: column; }
+.pd-example-cards h3 { margin: 0 0 .3em; }
+.pd-example-cards p { margin-bottom: .5em; }
+.pd-example-cards .tap + .tap { margin-left: 16px; }
+.pd-three { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.pd-why-list { list-style: none; padding: 0; max-width: 860px; }
+.pd-why-list > li { display: flex; gap: 12px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--rule); border-left: 5px solid var(--hl); border-radius: 4px 12px 12px 4px; background: var(--card); }
+.pd-why-list h3 { margin: 0 0 4px; font-size: 1.1rem; }
+.pd-why-list p { margin: 0 0 4px; }
+.pd-why-list .pd-because { color: var(--muted); }
+
+/* Worksheet: the events to place and the blank mountain. */
+.pd-ws-events { list-style: none; margin: 4px 0 6px; padding: 0; }
+.pd-ws-events li { display: flex; align-items: baseline; gap: 8px; margin-bottom: 9px; break-inside: avoid; }
+.pd-ws-blank { flex: none; width: 30px; height: 1.2em; border-bottom: 1.5px solid var(--ink); }
+.pd-ws-letter { flex: none; font-weight: 700; }
+.pd-ws-answer { flex: none; min-width: 30px; text-align: center; font-weight: 700; border-bottom: 1.5px solid var(--ink); }
+.pd-ws-title { display: flex; align-items: flex-end; gap: 8px; margin: 0 0 6px; font-weight: 700; }
+.pd-ws-title span { flex: 1; max-width: 420px; height: 1.3em; border-bottom: 1px solid var(--rule-strong); }
+.pd-ws-mountain { max-width: 760px; }
+.pd-ws-check { margin: 4px 0; padding-left: 1.3em; }
+.answer-key .pd-ws-mountain { max-width: 600px; }
+
+@media (max-width: 480px) {
+  .pd { padding: 14px 12px; margin: 0 -6px; }
+  .pd-canvas { padding: 8px; }
+  .pd-mode { flex: 1; padding: 8px 10px; }
+  .pd-sheet { padding: 10px; margin: 0 -6px 8px; }
+}
+
+@media print {
+  /* Printing from the builder: the name lines, the diagram and nothing else. */
+  .pd { border: 0; padding: 0; box-shadow: none; background: none; }
+  .pd-build { display: block; }
+  .pd-canvas { border: 0; padding: 0; background: none; }
+  .pd-print-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; padding-bottom: 6px; margin-bottom: 10px; border-bottom: 1px solid #000; }
+  .pd-print-head strong { font: 700 17pt/1.2 var(--font-display); }
+  .pd-print-head .eyebrow { display: block; margin-bottom: 2px; color: #333; font-size: 7.5pt; }
+  .pd-print-foot { display: block; margin: 8px 0 0; font-size: 7.5pt; color: #333; }
+  .pd-figure .pd-wide, .pd-ws-mountain .pd-svg { display: block; max-height: 205mm; }
+  .pd-figure .pd-mini, .pd-figure .pd-stack { display: none; }
+  .pd-hill { fill: #fff6c2; }
+  .pd-box { fill: #fff; stroke: #666; }
+  .pd-notes-box { fill: #fff; stroke: #666; }
+  .pd-rule { stroke: #999; }
+  .pd-svg .pd-prompt, .pd-svg .pd-also, .pd-svg .pd-author { fill: #333; }
+  .pd-sheet { border: 0; padding: 0; box-shadow: none; background: none; }
+  .pd-ws-events { margin: 2px 0 3px; }
+  .pd-ws-events li { margin-bottom: 4px; }
+  .pd-ws-title { margin-bottom: 3px; }
+  .pd-ws-mountain { max-width: 92%; margin: 0 auto; }
+  .answer-key .pd-ws-mountain { max-width: 72%; }
+  .pd-ws-blank, .pd-ws-answer { border-color: #000; }
+  .pd-ws-check li { margin-bottom: 1px; }
+}
