@@ -1,0 +1,74 @@
+---
+// The Main Idea and Details Game. The level picker is rendered here; game.ts runs the rounds in the browser.
+import './game.css';
+import { LEVELS, ROUND_LENGTH, ROUND_POINTS } from '../../lib/main-idea.mjs';
+---
+<section class="mi" data-main-idea aria-label="Main Idea and Details Game">
+  <div class="mi-start" data-screen="start">
+    <h2 id="mi-choose">Choose a level to start</h2>
+    <div class="mi-levels" role="group" aria-labelledby="mi-choose">
+      {LEVELS.map(level => (
+        <button type="button" class="mi-level" data-level={level.id}>
+          <span class="mi-level-name">{level.name}</span>
+          <span class="mi-level-grades">{level.grades} · {level.ages}</span>
+          <span class="mi-level-about">{level.about}</span>
+          <span class="mi-level-best" data-best={level.id}></span>
+        </button>
+      ))}
+    </div>
+    <p class="mi-help">Each round has {ROUND_LENGTH} short paragraphs. For each one you choose the main idea, then sort some sentences into “supports the main idea” and “does not belong”. That is two points a paragraph, {ROUND_POINTS} in all. On a keyboard, press <kbd>1</kbd> to <kbd>4</kbd> to choose a main idea. Your score stays in this browser.</p>
+    <noscript><p class="note">The game needs JavaScript. Turn it on in your browser to play, or use the worked examples and the printable worksheet below.</p></noscript>
+  </div>
+
+  <div class="mi-play" data-screen="play" hidden>
+    <div class="mi-bar">
+      <strong data-level-name></strong>
+      <span>Paragraph <b data-number>1</b> of {ROUND_LENGTH}</span>
+      <span>Score <b data-score>0</b></span>
+      <button type="button" class="mi-quit" data-quit>Change level</button>
+    </div>
+    <ol class="mi-dots" data-dots aria-hidden="true">{Array.from({ length: ROUND_LENGTH }, () => <li><span></span><span></span></li>)}</ol>
+
+    <div class="mi-step" data-step="main">
+      <div class="mi-card" data-card tabindex="-1">
+        <p class="mi-prompt">Step 1 of 2 · Read the paragraph</p>
+        <p class="mi-paragraph" data-paragraph></p>
+      </div>
+      <h3 class="mi-question" id="mi-question">What is the main idea of this paragraph?</h3>
+      <div class="mi-options" data-options role="group" aria-labelledby="mi-question"></div>
+    </div>
+
+    <div class="mi-step" data-step="sort" hidden>
+      <div class="mi-card mi-card-main" data-sort-card tabindex="-1">
+        <p class="mi-prompt">Step 2 of 2 · The main idea</p>
+        <p class="mi-main" data-main></p>
+      </div>
+      <h3 class="mi-question" id="mi-sort-question">Which sentences support the main idea? Which do not belong?</h3>
+      <ol class="mi-sort" data-sort aria-labelledby="mi-sort-question"></ol>
+      <button type="button" class="btn primary" data-check>Check my sorting</button>
+    </div>
+
+    <div class="mi-feedback" data-feedback hidden>
+      <p class="mi-verdict" data-verdict></p>
+      <p class="mi-why" data-why></p>
+      <button type="button" class="btn primary" data-next>Next</button>
+    </div>
+    <p class="visually-hidden" role="status" data-live></p>
+  </div>
+
+  <div class="mi-results" data-screen="results" hidden>
+    <h2 data-results-title tabindex="-1">Your results</h2>
+    <p class="mi-final"><strong class="mi-final-score"><span data-final>0</span> out of {ROUND_POINTS}</strong> <span>Main ideas: <b data-final-main>0</b> of {ROUND_LENGTH}</span> <span>Sorting: <b data-final-sort>0</b> of {ROUND_LENGTH}</span></p>
+    <p class="mi-message" data-message></p>
+    <div data-missed></div>
+    <div class="page-actions">
+      <button type="button" class="btn primary" data-again>Play a new round</button>
+      <button type="button" class="btn" data-same>Play this round again</button>
+      <button type="button" class="btn" data-levels>Choose another level</button>
+    </div>
+    <p class="mi-share">For teachers: this was round <b data-round-number></b>. Everyone who opens this link gets the same {ROUND_LENGTH} paragraphs: <a data-round-link href="/tools/main-idea/"></a></p>
+  </div>
+</section>
+<script>
+  import './game.ts';
+</script>

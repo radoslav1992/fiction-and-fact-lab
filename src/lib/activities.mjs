@@ -10,6 +10,8 @@ import * as causeAndEffect from './activities/cause-and-effect.mjs';
 import * as plotDiagram from './activities/plot-diagram.mjs';
 import * as partsOfSpeech from './activities/parts-of-speech.mjs';
 import * as wordBuilder from './activities/word-builder.mjs';
+import * as readingSpeed from './activities/reading-speed.mjs';
+import * as mainIdea from './activities/main-idea.mjs';
 
 const MODULES = [
   readingLevel,
@@ -19,6 +21,8 @@ const MODULES = [
   plotDiagram,
   partsOfSpeech,
   wordBuilder,
+  readingSpeed,
+  mainIdea,
 ];
 
 // Common Core ELA standards referenced by the activities, paraphrased.

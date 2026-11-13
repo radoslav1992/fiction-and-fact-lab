@@ -1,0 +1,188 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ReadingSpeedTest from '../../../components/reading-speed/ReadingSpeedTest.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { gradeLabel } from '../../../lib/readability.mjs';
+import {
+  LEVELS, PASSAGES, RECORD_PASSAGE, KINDS, QUESTIONS_PER_PASSAGE, MIN_SECONDS, MAX_WPM, MIN_WPM, QUICK_WPM, HISTORY_LIMIT,
+  PHRASE_EXAMPLE, passagesFor, wordCount, readingGrade, wordsPerMinute, formatTime, interpret,
+} from '../../../lib/reading-speed.mjs';
+import { EXAMPLE_SECONDS } from '../../../lib/activities/reading-speed.mjs';
+
+const title = 'Reading Speed Test: Free Words per Minute Test with Quiz';
+const description = 'Free reading speed test for grades 2–8: time yourself on a short passage, see your words per minute, then answer five questions to check you understood.';
+const url = new URL('/tools/reading-speed/', Astro.site).href;
+
+// Worked example: the fluency record sheet's passage, read in the time the answer key uses.
+const exampleWords = wordCount(RECORD_PASSAGE);
+const exampleSeconds = EXAMPLE_SECONDS[0];
+const exampleWpm = wordsPerMinute(exampleWords, exampleSeconds * 1000);
+const exampleTime = formatTime(exampleSeconds * 1000);
+// The four kinds of result the test can give, as the model words them.
+const meanings = [
+  { score: 'Four or five of five right', result: interpret({ wpm: 140, correct: 5, total: 5 }) },
+  { score: 'Three of five right', result: interpret({ wpm: 140, correct: 3, total: 5 }) },
+  { score: 'Two or fewer right, read quickly', result: interpret({ wpm: 260, correct: 2, total: 5 }) },
+  { score: 'Two or fewer right, not read quickly', result: interpret({ wpm: 90, correct: 2, total: 5 }) },
+];
+// The number of questions as a word, for running text.
+const questionCount = ['no', 'one', 'two', 'three', 'four', 'five', 'six'][QUESTIONS_PER_PASSAGE];
+const counts = { stories: PASSAGES.filter(p => p.kind === 'story').length, info: PASSAGES.filter(p => p.kind === 'info').length };
+
+const faq: [string, string][] = [
+  ['What is a good reading speed?', 'There is no single good number, because the speed depends on the text, on why you are reading and on who is reading. As a very rough guide, adults reading easy text silently are often somewhere around 200 to 300 words a minute, and reading aloud is slower. Students who are still learning to read are slower again, and that is normal. A good speed is one at which you understand what you read. The useful comparison is with your own earlier results on passages of the same level.'],
+  ['How is words per minute calculated?', `Divide the number of words by the number of seconds you took, then multiply by 60. A ${exampleWords}-word passage read in ${exampleTime} is ${exampleWords} ÷ ${exampleSeconds} × 60, which is ${exampleWpm} words per minute. The test counts the words in each passage with the same rules as the Reading Level Checker and rounds the result to a whole number.`],
+  ['Does it work for read-aloud fluency practice?', 'Yes. Choose “Aloud” before you start. The timing works the same way, and the labels and the advice change to suit reading aloud. The test can only time you: it cannot hear whether you read each word correctly or with expression. For that, read to a partner or a teacher and use the printable fluency record sheet.'],
+  ['Why are there questions after the reading?', `Because speed means little without understanding. Anyone can move their eyes down a page quickly. The ${questionCount} questions check that you took in what the passage said, and the result shows both numbers side by side.`],
+  ['Why did my result not count?', `The test does not count a reading of less than ${MIN_SECONDS} seconds, or one faster than ${MAX_WPM} words a minute, because nobody reads every word that fast. It also does not count a reading slower than ${MIN_WPM} words a minute, because the timer was almost certainly left running. Start the passage again when you are ready.`],
+  ['What happens if I switch to another tab during the test?', 'The timer stops while the tab is hidden and starts again when you come back. Your result still counts, but it carries a note that the timer stopped, because the time may be a little off.'],
+  ['Can I read the same passage twice?', 'Yes, and reading a passage again is good fluency practice. Expect the second reading to be faster, because you already know the words and the ideas. For a fair check of your speed, choose a passage you have not read. The set-up marks the ones you have read before.'],
+  ['Is this an official reading test?', 'No. It is a self-timed practice tool. The passages are short, you press the buttons yourself, and nobody checks how accurately you read. It cannot diagnose a reading difficulty or place a student in a reading group. A teacher who needs that should use an assessment given one to one.'],
+  ['Are my results saved? Do I need to sign in?', `No sign-in is needed. Your last ${HISTORY_LIMIT} results are kept in your own browser so you can see your progress, and you can clear them with one button. They are never sent to us, and there are no ads.`],
+  ['Which level should I choose?', `${LEVELS.map(level => `${level.name} is written for ${level.grades.toLowerCase()} (${level.ages})`).join(', ')}. Pick the level where the words come easily. If you miss more than one or two questions, try an easier level first.`],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Reading Speed Test',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Reading Speed" crumbs={[['Reading Speed Test']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Words per minute test · Fluency</span>
+      <h1><span class="h1-line">Reading <span class="hl">Speed</span></span> <span class="h1-line">Test</span></h1>
+      <p class="lede">Read a short passage against the clock, see your words per minute, then answer {questionCount} questions to find out how much you understood. This free reading speed test has three levels for grades 2–8, and it keeps your results in your own browser so you can watch them change.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/reading-speed/activity/">Printable record sheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <ReadingSpeedTest />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/reading-speed/activity/', name: 'Fluency Record Sheet', text: 'One printable page: read a passage three times and work out your words per minute.' },
+      { href: '/tools/reading-level/', name: 'Reading Level Checker', text: 'Paste any text to see its grade level before you time yourself on it.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section prose">
+      <h2>How the reading speed test works</h2>
+      <ol>
+        <li><strong>Choose a level, a passage and a way of reading.</strong> You can read silently or aloud.</li>
+        <li><strong>Press Start.</strong> The passage appears and the timer starts. Nothing ticks on the screen while you read.</li>
+        <li><strong>Read the whole passage at your normal speed, then press Done.</strong> The test shows your words per minute.</li>
+        <li><strong>Answer {questionCount} questions from memory.</strong> The passage is put away first.</li>
+        <li><strong>Read your result.</strong> It shows your speed with your score next to it, says what the two mean together and explains every answer.</li>
+      </ol>
+      <h3>What words per minute means</h3>
+      <p>Words per minute, often written WPM, is how many words you would read in one minute if you kept going at the same speed. It is worked out like this:</p>
+      <p class="rs-formula">Words per minute = words read ÷ seconds taken × 60<small>Example: {exampleWords} words in {exampleTime} ({exampleSeconds} seconds) is {exampleWords} ÷ {exampleSeconds} × 60 = {exampleWpm} words per minute.</small></p>
+      <p>The example uses “{RECORD_PASSAGE.title}”, the {exampleWords}-word passage on the <a href="/tools/reading-speed/activity/">fluency record sheet</a>.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>Why understanding matters more than speed</h2>
+      <p>The point of reading is to understand. A reader who races through a page and remembers nothing has not really read it. That is why this words per minute test never shows a speed on its own: the number of questions you got right sits next to it.</p>
+      <p>Speed still matters, in one way. A reader who has to stop and work out many of the words has little attention left for the meaning. When the words come easily, the mind is free to think about what they say. So the aim is not to read as fast as you can. It is to read smoothly enough that you can think about the meaning.</p>
+      <h3>How the test reads the two numbers together</h3>
+      <p>“Read quickly” in the table means {QUICK_WPM.silent} words a minute or more when reading silently, and {QUICK_WPM.aloud} or more when reading aloud. Those numbers are not targets. They only decide whether the advice for a low score is “slow down” or “try an easier passage”.</p>
+    </section>
+
+    <section class="section" style="padding-top:0">
+      <div class="table-wrap" style="max-width:900px">
+        <table>
+          <thead><tr><th scope="col">Your score</th><th scope="col">What the test says</th><th scope="col">What to do next</th></tr></thead>
+          <tbody>
+            {meanings.map(({ score, result }) => <tr><th scope="row">{score}</th><td>{result.title}</td><td>{result.advice}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>The passages</h2>
+        <p>There are {PASSAGES.length} passages, written for this site: {counts.stories} stories and {counts.info} informational texts, four at each level. The stories are original, or old fables retold in new words. The informational passages stick to plain school science that does not change. The reading level of each one was checked with the same formulas as the <a href="/tools/reading-level/">Reading Level Checker</a>.</p>
+      </div>
+      <div class="table-wrap" style="max-width:900px">
+        <table>
+          <thead><tr><th scope="col">Passage</th><th scope="col">Level</th><th scope="col">Kind</th><th scope="col">Words</th><th scope="col">Reading level</th></tr></thead>
+          <tbody>
+            {LEVELS.flatMap(level => passagesFor(level.id).map(passage => (
+              <tr><th scope="row">{passage.title}</th><td class="nowrap">{level.name} · {level.grades.toLowerCase()}</td><td>{KINDS[passage.kind]}</td><td>{wordCount(passage)}</td><td class="nowrap">{gradeLabel(readingGrade(passage))}</td></tr>
+            )))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>How to become a more fluent reader</h2>
+      <p>Fluent reading is accurate, smooth and paced like speech. It grows with practice, and these three habits help most.</p>
+      <h3>1. Read the same passage again</h3>
+      <p>Read a short passage three or four times over a few days. Each time, more of the words are familiar, so you spend less effort on them and more on the meaning. The <a href="/tools/reading-speed/activity/">fluency record sheet</a> is made for this: you time three readings of one passage and watch the number change.</p>
+      <h3>2. Read aloud</h3>
+      <p>Reading aloud makes you say every word, so you notice the ones you skip or guess. Read to a partner, a parent or a pet. Listening to a good reader and then reading the same lines yourself helps too.</p>
+      <h3>3. Read in phrases</h3>
+      <p>Fluent readers do not read one word at a time. They read groups of words that belong together, and they pause where the punctuation tells them to. Take the first sentence of “{RECORD_PASSAGE.title}”:</p>
+      <blockquote class="passage"><p>{PHRASE_EXAMPLE.join(' ')}</p></blockquote>
+      <p>A fluent reader says it in three groups, with a small pause at each slash:</p>
+      <blockquote class="passage"><p>{PHRASE_EXAMPLE.join(' / ')}</p></blockquote>
+      <h3>And read a lot</h3>
+      <ul class="checklist">
+        <li>Choose books that are easy enough to enjoy. Easy reading builds speed.</li>
+        <li>Read a little every day. Ten minutes a day adds up.</li>
+        <li>Do not chase the number. If your score for understanding drops, slow down.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>What changes your words per minute</h2>
+      <ul>
+        <li><strong>How hard the text is.</strong> Long sentences, long words and new ideas all slow a reader down. That is why the test has three levels, and why you should only compare results from the same level.</li>
+        <li><strong>Why you are reading.</strong> Most people read a story for fun faster than they read instructions they must follow or a page they must learn.</li>
+        <li><strong>Silent or aloud.</strong> For a practiced reader, reading aloud is slower than silent reading, because the voice cannot keep up with the eyes.</li>
+        <li><strong>Screen or paper.</strong> Many people read a little differently on a screen than on a printed page. A number from this test and a number from a paper passage are not the same measurement.</li>
+        <li><strong>What you already know.</strong> A passage about something you know well is easier to read than one about something new.</li>
+        <li><strong>Whether you have read it before.</strong> A second reading is faster than a first.</li>
+        <li><strong>How you feel.</strong> Tired or distracted readers are slower. One result on one day does not tell you much.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>What this test cannot tell you</h2>
+      <ul>
+        <li><strong>It is timed by you.</strong> The clock starts when you press Start and stops when you press Done. If you press Done early or late, the number is wrong. The test only catches the extreme cases: less than {MIN_SECONDS} seconds, faster than {MAX_WPM} words a minute or slower than {MIN_WPM}.</li>
+        <li><strong>It is not a diagnostic test.</strong> It cannot tell whether a reader has a reading difficulty, and it does not give a grade level for the reader. If you are worried about a child’s reading, talk to their teacher.</li>
+        <li><strong>It does not hear you.</strong> In read-aloud mode it measures the time only. It cannot count mistakes or judge expression.</li>
+        <li><strong>The passages are short.</strong> A speed over {LEVELS[0].words[0]} to {LEVELS[2].words[1]} words is a snapshot. Reading a whole chapter is a different task.</li>
+        <li><strong>{questionCount[0].toUpperCase() + questionCount.slice(1)} questions are a small sample.</strong> They check the main facts and one or two simple inferences. Missing one question is not a sign of anything.</li>
+        <li><strong>There are no averages here.</strong> This page does not print tables of typical speeds by grade, because such numbers depend heavily on the texts and the students they came from. Your own earlier results are the fair comparison.</li>
+      </ul>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/reading-speed/activity/">fluency record sheet</a> takes about 20 minutes and prints on one page. Pairs time three readings of one passage and work out the words per minute themselves. The answer key is on the <a href="/teachers/">For teachers</a> page. A link can open the test with a passage already chosen, for example <code>?passage=water&amp;mode=aloud</code> at the end of this page’s address.</p>
+      <LinkSnippet url={url} name="Reading Speed Test" />
+    </section>
+  </div>
+</Layout>

@@ -39,12 +39,11 @@ const ALL = [
   },
   {
     slug: 'main-idea',
-    live: false,
     name: 'Main Idea and Details Game',
     section: 'Main Idea',
     topic: 'Comprehension',
     kind: 'Main idea and supporting details practice',
-    blurb: 'TODO',
+    blurb: 'Read a short paragraph, choose its main idea, then sort the sentences that support it from the ones that do not belong. Three levels for grades 2–8, from a main idea stated in the first sentence to one that is only implied.',
   },
   {
     slug: 'context-clues',
@@ -89,12 +88,11 @@ const ALL = [
   },
   {
     slug: 'reading-speed',
-    live: false,
     name: 'Reading Speed Test',
     section: 'Reading Speed',
     topic: 'Fluency',
-    kind: 'Words per minute reading test',
-    blurb: 'TODO',
+    kind: 'Words per minute reading test with comprehension questions',
+    blurb: 'Time yourself on a short passage to see your words per minute, then answer five questions to check that you understood it. Three levels for grades 2–8, silent or aloud, with your own earlier results to compare against.',
   },
   {
     slug: 'fables',

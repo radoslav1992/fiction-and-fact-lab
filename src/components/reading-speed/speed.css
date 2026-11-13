@@ -1,0 +1,111 @@
+/* Reading Speed Test */
+.rs { background: var(--card); border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; padding: 20px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.rs h2 { font-size: 1.4rem; margin: 0 0 12px; }
+.rs h2:focus-visible { outline-offset: 6px; }
+.rs h3 { margin: 20px 0 8px; }
+.rs-small { font-size: .92rem; color: var(--muted); }
+
+/* Set-up: three groups of radio buttons drawn as cards */
+.rs-field { margin: 0 0 18px; padding: 0; border: 0; min-width: 0; }
+.rs-field legend { padding: 0; margin-bottom: 8px; font: 700 1.1rem/1.3 var(--font-display); }
+.rs-cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.rs-picks { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+/* The three levels' passages share one space, so nothing below moves when the level changes. */
+.rs-stack { display: grid; }
+.rs-stack > .rs-picks { grid-area: 1 / 1; align-content: start; }
+.rs-stack > .rs-picks:not([data-active]) { visibility: hidden; }
+.rs-card, .rs-pick { position: relative; display: block; cursor: pointer; }
+.rs-card input, .rs-pick input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.rs-card-face, .rs-pick-face { display: flex; flex-direction: column; gap: 2px; height: 100%; min-height: 48px; padding: 12px 14px 12px 44px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+/* The radio button itself, drawn on the card. */
+.rs-card-face::before, .rs-pick-face::before { content: ''; position: absolute; left: 14px; top: 15px; width: 20px; height: 20px; border: 2px solid var(--ink); border-radius: 50%; background: #fff; }
+.rs-card input:checked + span::before, .rs-pick input:checked + span::before { background: radial-gradient(var(--ink) 0 45%, #fff 50%); }
+.rs-card:hover .rs-card-face, .rs-pick:hover .rs-pick-face { background: var(--hl-soft); }
+.rs-card input:checked + span, .rs-pick input:checked + span { background: var(--hl); box-shadow: 4px 4px 0 var(--ink); }
+.rs-card input:focus-visible + span, .rs-pick input:focus-visible + span { outline: 3px solid var(--ink-2); outline-offset: 3px; }
+.rs-card-name { font: 700 1.3rem/1.2 var(--font-display); }
+.rs-card-grades { font-weight: 700; }
+.rs-card-about, .rs-pick small { font-size: .94rem; color: var(--muted); }
+.rs-card input:checked + span .rs-card-about, .rs-pick input:checked + span small { color: var(--ink); }
+.rs-pick b { font-size: 1.05rem; }
+/* "Read before" sits in the corner of the card, so showing it moves nothing. */
+.rs-stack .rs-pick-face { padding-right: 76px; }
+.rs-pick .rs-pick-read { position: absolute; top: 10px; right: 10px; padding: 0 6px; border: 1.5px solid var(--ink); border-radius: 5px; background: var(--card); color: var(--ink); font-size: .74rem; font-weight: 700; line-height: 1.5; }
+.rs-go { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.rs-start { min-height: 56px; padding: 12px 28px; font-size: 1.2rem; }
+.rs-help { flex: 1 1 280px; margin: 0; max-width: 620px; color: var(--muted); font-size: .97rem; }
+.rs-history { margin-top: 22px; padding-top: 4px; border-top: 1px solid var(--rule); }
+.rs-history ol { margin: 0 0 8px; padding: 0; list-style: none; display: grid; gap: 6px; }
+.rs-history li { margin: 0; padding: 8px 12px; border-left: 5px solid var(--hl); border-radius: 4px 8px 8px 4px; background: var(--paper); font-size: .97rem; }
+.rs-history-day { font-weight: 700; margin-right: 4px; }
+.rs-link { min-height: 44px; padding: 0 4px; border: 0; background: none; color: var(--ink-2); font-weight: 700; text-decoration: underline; text-underline-offset: .18em; cursor: pointer; }
+
+/* Reading: a quiet page, a comfortable line length and plenty of space between lines */
+.rs-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; margin-bottom: 12px; font-size: .95rem; font-weight: 700; }
+.rs-running { display: inline-flex; align-items: center; gap: 8px; }
+.rs-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 3px var(--hl); }
+.rs-quit { min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.rs-quit:hover { background: var(--hl-soft); }
+.rs-passage { max-width: 36em; margin: 0 auto; padding: 22px 26px 12px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; font-size: 1.2rem; line-height: 1.85; }
+.rs-passage:focus-visible { outline-offset: 2px; }
+.rs-passage h3, .rs-passage h4 { margin: 0 0 .6em; font: 700 1.45rem/1.25 var(--font-display); }
+.rs-passage p { margin: 0 0 1em; }
+.rs-done { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; max-width: 36em; margin: 16px auto 0; }
+.rs-done .btn { min-height: 56px; padding: 12px 28px; font-size: 1.2rem; }
+
+/* The speed, stamped like a date in a library book */
+.rs-speed { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin: 0 0 12px; }
+.rs-stamp { display: inline-block; min-width: 2.6ch; padding: 0 18px 4px; border: 4px solid var(--ink); border-radius: 10px; background: var(--hl); font: 700 clamp(2.4rem, 8vw, 3.4rem)/1.15 var(--font-display); font-variant-numeric: tabular-nums; text-align: center; transform: rotate(-2deg); }
+.rs-speed-unit { font: 700 1.3rem/1.2 var(--font-display); }
+.rs-speed-unit small { display: block; font: 400 .95rem/1.4 var(--font-body); color: var(--muted); }
+.rs-numbers { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 36px; margin-bottom: 6px; }
+.rs-numbers .rs-speed { margin: 0; }
+.rs-score { display: flex; flex-direction: column; margin: 0; padding: 8px 16px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); }
+.rs-score strong { font: 700 1.7rem/1.2 var(--font-display); font-variant-numeric: tabular-nums; }
+.rs-meaning { max-width: 46em; margin-top: 14px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.rs-meaning h3 { margin: 0 0 4px; font-size: 1.3rem; }
+.rs-meaning p { margin: 0 0 8px; }
+.rs-meaning p:last-child { margin-bottom: 0; }
+
+/* Questions */
+.rs-quiz-intro { max-width: 46em; }
+.rs-questions { margin: 0 0 14px; padding-left: 1.4em; max-width: 46em; }
+.rs-questions > li { margin-bottom: 16px; padding-left: 4px; }
+.rs-questions > li::marker { font-weight: 700; }
+.rs-question { margin: 0; padding: 0; border: 0; min-width: 0; }
+.rs-question legend { padding: 0; margin-bottom: 8px; font-weight: 700; font-size: 1.08rem; }
+.rs-question.is-waiting legend { background: linear-gradient(transparent 55%, var(--hl) 55%); }
+.rs-option { position: relative; display: block; margin-bottom: 8px; cursor: pointer; }
+.rs-option input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.rs-option span { position: relative; display: block; min-height: 44px; padding: 9px 14px 9px 44px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); }
+.rs-option span::before { content: ''; position: absolute; left: 13px; top: 11px; width: 20px; height: 20px; border: 2px solid var(--ink); border-radius: 50%; background: #fff; }
+.rs-option:hover span { background: var(--hl-soft); }
+.rs-option input:checked + span { background: var(--hl); font-weight: 700; }
+.rs-option input:checked + span::before { background: radial-gradient(var(--ink) 0 45%, #fff 50%); }
+.rs-option input:focus-visible + span { outline: 3px solid var(--ink-2); outline-offset: 3px; }
+.rs-error { min-height: 1.6em; margin: 0 0 8px; font-weight: 700; }
+
+/* Review of the questions on the results screen */
+.rs-review { padding-left: 1.4em; max-width: 46em; }
+.rs-review > li { margin-bottom: 14px; }
+.rs-review p { margin: 0 0 2px; }
+.rs-review-q { font-weight: 700; }
+.rs-review-a { display: flex; align-items: flex-start; gap: 8px; }
+.rs-review-a svg { flex: none; margin-top: 4px; }
+.rs-review-why { color: var(--muted); font-size: .97rem; }
+.rs-again { max-width: 46em; margin: 10px 0 4px; border: 1px solid var(--rule); border-radius: 10px; background: var(--paper); }
+.rs-again summary { min-height: 44px; padding: 10px 14px; font-weight: 700; cursor: pointer; }
+.rs-again .rs-passage { margin: 0 12px 12px; font-size: 1.08rem; line-height: 1.75; }
+.rs-void-text { max-width: 46em; font-size: 1.12rem; }
+
+/* Lesson content on the page */
+.rs-formula { max-width: 760px; margin: 0 0 1em; padding: 14px 18px; border: 2px solid var(--ink); border-radius: 12px; background: var(--card); font: 700 1.15rem/1.5 var(--font-display); }
+.rs-formula small { display: block; font: 400 .95rem/1.5 var(--font-body); color: var(--muted); }
+
+@media (max-width: 480px) {
+  .rs { padding: 14px 12px; margin: 0 -6px; }
+  .rs-passage { padding: 16px 16px 6px; font-size: 1.12rem; line-height: 1.8; }
+  .rs-start, .rs-done .btn { width: 100%; }
+  .rs-again .rs-passage { margin: 0 6px 8px; }
+}
+@media print { .rs-setup form, .rs-bar, .rs-done { display: none; } }
