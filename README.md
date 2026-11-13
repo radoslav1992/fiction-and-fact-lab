@@ -21,6 +21,24 @@ switch on; `tests/config.test.mjs` and `scripts/check-build.mjs` fail if ad mark
   explanation after every answer and a results screen. Level 1 (grades 2–3) and level 2 (grades 4–5) ask
   "fact or opinion?"; level 3 (grades 6–8) uses sentences that mix a fact with an opinion, and the student
   taps the opinion part or a clue word. A round can be shared by link (`?level=2&round=424242`).
+- **Plot Diagram Builder** (`/tools/plot-diagram/`). A story mountain that fills in as the student types the
+  five stages of any story, with print and a copy-a-link option (the text travels in the part of the link after
+  `#`, which is never sent to a server). A practice mode sorts the events of six traditional tales, and each
+  tale has an example page at `/tools/plot-diagram/examples/<tale>/`.
+- **Fables Read-Along** (`/tools/fables/`, one page per fable). Ten of Aesop's fables, retold for the site,
+  read aloud by the browser's own speech (`speechSynthesis`) with the sentence highlighted, then vocabulary and
+  questions. With no voice available, the page says so and works as a read-it-yourself page.
+- **Fiction or Nonfiction Game** and **Figurative Language Game** (`/tools/fiction-or-nonfiction/`,
+  `/tools/figurative-language/`). Sorting games: fiction or nonfiction, then genres; simile or metaphor, then
+  personification, hyperbole, idiom, alliteration and onomatopoeia.
+- **Main Idea and Details Game**, **Context Clues Game**, **Cause and Effect Game** (`/tools/main-idea/`,
+  `/tools/context-clues/`, `/tools/cause-and-effect/`). Comprehension games on short paragraphs and sentences.
+- **Parts of Speech Game** and **Prefix and Suffix Word Builder** (`/tools/parts-of-speech/`,
+  `/tools/word-builder/`). Tag the words of a sentence; build words from prefixes, base words, suffixes and roots.
+- **Reading Speed Test** (`/tools/reading-speed/`). A timed passage, words per minute, then five questions.
+  Results are kept in the browser only.
+- Every game has three levels for grades 2–8, rounds that can be shared by link (the same items in the same
+  order for a whole class), an explanation after each answer and a best score kept in local storage.
 - **Listen** (`/listen/`, `/book/?id=…`, `/favorites/`). The public-domain audiobook player that the domain
   used to be: a catalogue of LibriVox recordings fetched in the browser from the Internet Archive, a player
   and a saved shelf. See [Listen](#listen-the-audiobook-player).
@@ -60,7 +78,7 @@ file. `tests/llms.test.mjs` fails if a tool or worksheet is missing from it.
 | Path | What it is |
 | --- | --- |
 | `src/lib/site.mjs` | Site name, URL, tagline, contact address and the Google Analytics ID |
-| `src/lib/labs.mjs` | Every tool in menu order (name, section, kind, blurb), read by the Tools hub, the home page and the footer, plus `toolCount` |
+| `src/lib/labs.mjs` | Every tool in menu order (name, section, kind, blurb) and the four groups they are shown in (`toolGroups`), read by the Tools hub, the home page and the footer, plus `toolCount`. An entry with `live: false` is registered but not linked |
 | `src/lib/activities.mjs`, `src/lib/activities/` | One classroom activity per tool. The worksheet and the answer key are rendered from the same object by `src/components/ActivitySections.astro` |
 | `src/lib/readability.mjs` | The Reading Level Checker's model: sentences, words, syllables, six formulas, the consensus grade, labels and times |
 | `src/lib/readability-view.mjs` | What the checker shows for an analysis (formatted values, notices, the marked text), shared by the server and the browser |
@@ -69,6 +87,7 @@ file. `tests/llms.test.mjs` fails if a tool or worksheet is missing from it.
 | `src/lib/fact-opinion.mjs` | The game's statement bank (98 statements) and rules: definitions, clue words, seeded round building, answer checking, scoring |
 | `src/lib/fact-opinion-view.mjs` | How a statement is shown once its answer is known, shared by the server and the browser |
 | `src/components/factopinion/` | The game's markup (`FactOpinionGame.astro`), browser code (`game.ts`) and styles |
+| `src/lib/<slug>.mjs`, `src/lib/<slug>-view.mjs`, `src/components/<slug>/`, `src/pages/tools/<slug>/`, `src/lib/activities/<slug>.mjs`, `tests/<slug>.test.mjs` | The same pattern for every other tool: a model with its content bank and rules, an optional shared view, the markup, browser code and styles, the page, the classroom activity and the tests. Slugs: `plot-diagram`, `fables` (plus `fables-player.mjs`), `fiction-or-nonfiction`, `figurative-language`, `main-idea`, `context-clues`, `cause-and-effect`, `parts-of-speech`, `word-builder`, `reading-speed` |
 | `src/scripts/listen/` | The audiobook scripts, ported from the old site: `api.js` (Internet Archive), `wikipedia.js`, `store.js` (local storage), `ui.js` (cards), `player.js` (the player) |
 | `src/pages/listen/index.astro`, `src/pages/book.astro`, `src/pages/favorites.astro`, `src/styles/listen.css` | The Listen pages and their styles |
 | `src/components/listen/ContinueShelf.astro` | The "Continue listening" shelf, opened before the first paint when this browser has saved progress |
@@ -78,7 +97,7 @@ file. `tests/llms.test.mjs` fails if a tool or worksheet is missing from it.
 | `src/lib/learning-apps.mjs` | Sister apps shown in the footer and on the home page (this site is `reading`) |
 | `src/styles/global.css` | The look: paper, indigo ink, highlighter yellow, and the fact (teal) and opinion (pink) colors |
 | `scripts/` | `check-build.mjs`, `llms.mjs`, `og-image.mjs` |
-| `tests/` | `readability`, `fact-opinion`, `activities`, `listen`, `config`, `llms` |
+| `tests/` | One file per tool, plus `activities`, `listen`, `config`, `llms` |
 
 ## The models, honestly
 
@@ -136,7 +155,8 @@ A test checks its word count (272 by the usual count, 271 here because "battle-f
   five "tap a clue word" questions.
 - The game teaches clear cases. The page explains what it leaves out: predictions, false statements,
   "everyone knows", and judgments backed by evidence.
-- The best score for each level is kept in local storage (`factOpinionBest`) and nowhere else.
+- The best score for each level is kept in local storage (`factOpinionBest`) and nowhere else. The privacy
+  page lists every key the site stores.
 
 ### Worksheets and answer keys
 
@@ -221,11 +241,31 @@ a student typed or pasted.
 | `reading_sample` | A sample button is pressed, or a `?sample=` link is opened | `sample` |
 | `fact_opinion_start` | A round starts | `level` |
 | `fact_opinion_round_complete` | The results screen is shown | `level`, `score` (0–10), `streak` |
+| `<tool>_start`, `<tool>_round_complete` | A round starts or ends in a game (`fiction_nonfiction`, `figurative_language`, `main_idea`, `context_clues`, `cause_effect`, `parts_of_speech`, `word_builder`) | `level`, and the score at the end |
+| `word_builder_build` | The first word built at a level in the Word Builder | `level` |
+| `plot_diagram_mode`, `plot_diagram_print`, `plot_diagram_link`, `plot_diagram_open_link`, `plot_diagram_clear` | The Plot Diagram Builder's buttons | counts only, never the text |
+| `plot_sort_start`, `plot_sort_check` | Practice mode in the Plot Diagram Builder | the tale and the score |
+| `reading_speed_start`, `reading_speed_complete`, `reading_speed_void` | The Reading Speed Test | the level and passage; no speed or score |
+| `fable_play`, `fable_listen_complete`, `fable_quiz_complete` | The Fables Read-Along | the fable, and the quiz score |
 | `worksheet_print` | Print button on a worksheet or answer key | `page` |
 | `share_classroom` | A Share to Google Classroom link is clicked | `page` |
 
 Page views on the Listen pages include the page address, and so the search words (`?q=`) or the book's
 identifier (`?id=`), as on the old site. The privacy page says this.
+
+### The other tools
+
+- **Content banks are hand-written and hand-checked.** Every statement, sentence, passage, word and answer in
+  the banks was written for this site and read one by one before release. Facts are school science, nature and
+  everyday life; if you add an item, keep it true, timeless and beyond argument, with one defensible answer.
+- **Parts of Speech** leaves out the words grammar books disagree about (possessives before a noun, numbers,
+  words such as "this" and "every") and says so on the page. A helping verb and its main verb are both verbs.
+- **Word Builder** only breaks a word where the parts really are its parts, and knows only the words in its
+  list: an unlisted result is "not a word we know", never "not a word".
+- **Reading Speed Test** is self-timed and is not a diagnostic test. It prints no table of average rates.
+- **Fables Read-Along** depends on the voices the device has. Their quality varies, and "online" voices send
+  the sentence to the browser's speech service. Real voices could not be tested in the build environment.
+- **Fiction or Nonfiction** treats poetry as neither, and never offers two overlapping genres as choices.
 
 ## For the owner
 
