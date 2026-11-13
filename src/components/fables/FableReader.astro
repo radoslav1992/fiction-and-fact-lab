@@ -29,7 +29,7 @@ const icon = (path: string) => `<svg viewBox="0 0 24 24" width="22" height="22" 
     <p class="fb-keys">Keys, once you have pressed Play: <kbd>P</kbd> play or pause, <kbd>S</kbd> stop, <kbd>←</kbd> <kbd>→</kbd> back or next sentence.</p>
   </div>
   <p class="note fb-notice" data-notice hidden></p>
-  <noscript><p class="note fb-notice">Reading aloud needs JavaScript. You can still read the fable yourself and use the questions below.</p></noscript>
+  <noscript><style is:inline>.fb-transport, .fb-settings { display: none; }</style><p class="note fb-notice">Reading aloud needs JavaScript. You can still read the fable yourself and talk about the questions below.</p></noscript>
 
   <div class="fb-story" data-story tabindex="-1">
     {paragraphs.map((list, p) => (
