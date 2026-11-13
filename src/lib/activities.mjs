@@ -13,6 +13,8 @@ import * as wordBuilder from './activities/word-builder.mjs';
 import * as readingSpeed from './activities/reading-speed.mjs';
 import * as mainIdea from './activities/main-idea.mjs';
 import * as fables from './activities/fables.mjs';
+import * as fictionOrNonfiction from './activities/fiction-or-nonfiction.mjs';
+import * as figurativeLanguage from './activities/figurative-language.mjs';
 
 const MODULES = [
   readingLevel,
@@ -25,6 +27,8 @@ const MODULES = [
   readingSpeed,
   mainIdea,
   fables,
+  fictionOrNonfiction,
+  figurativeLanguage,
 ];
 
 // Common Core ELA standards referenced by the activities, paraphrased.
