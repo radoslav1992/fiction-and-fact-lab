@@ -328,7 +328,7 @@ export function exampleMeta(tale) {
     `Plot diagram of ${tale.title}: exposition, rising action, climax, falling action and resolution on a story mountain, each explained.`,
   ];
   return {
-    title: titles.find(text => text.length <= 65),
+    title: titles.find(text => text.length <= 62),
     description: descriptions.find(text => text.length >= 120 && text.length <= 155),
     heading: `Plot diagram of ${tale.title}`,
   };
