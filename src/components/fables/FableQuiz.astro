@@ -1,0 +1,38 @@
+---
+// The questions for one fable: four about the story and one about the moral. They are rendered here with their
+// choices; quiz.ts checks each answer against the bank in fables.mjs and keeps the score in the browser.
+import './fables.css';
+import { questions, LETTERS, QUIZ_LENGTH, STORY_QUESTIONS_WORD } from '../../lib/fables.mjs';
+
+const { fable } = Astro.props;
+const list = questions(fable);
+---
+<section class="fb-quiz" data-quiz data-fable={fable.slug} aria-labelledby="fb-quiz-title">
+  <h2 id="fb-quiz-title">Questions about the fable</h2>
+  <p class="fb-quiz-intro fb-screen-only">Choose one answer for each question. You will see at once whether it is right, and why. The first {STORY_QUESTIONS_WORD} questions are about the story and the last one is about its moral.</p>
+  <p class="fb-quiz-intro fb-print-only">Circle the letter of the best answer.</p>
+  <ol class="fb-questions">
+    {list.map((question, i) => (
+      <li class="fb-q" data-q={i}>
+        <p class="fb-q-text" id={`fb-q${i + 1}`}>{question.q}</p>
+        <div class="fb-choices" role="group" aria-labelledby={`fb-q${i + 1}`}>
+          {question.choices.map((choice, c) => (
+            <button type="button" class="fb-choice" data-choice={c}><span class="fb-letter">{LETTERS[c]}</span><span>{choice}</span></button>
+          ))}
+        </div>
+        <p class="fb-why" data-why hidden></p>
+      </li>
+    ))}
+  </ol>
+  <p class="fb-score fb-screen-only">Answered <b data-answered>0</b> of {QUIZ_LENGTH} · Right so far <b data-right>0</b></p>
+  <div class="fb-result" data-result hidden>
+    <p class="fb-final"><strong class="fb-final-score"><span data-final>0</span> out of {QUIZ_LENGTH}</strong> <span data-best></span></p>
+    <p class="fb-message" data-message></p>
+    <button type="button" class="btn" data-again>Try the questions again</button>
+  </div>
+  <p class="visually-hidden" role="status" data-live></p>
+  <noscript><p class="note">Checking the answers needs JavaScript. Without it, you can still read the questions and talk about them.</p></noscript>
+</section>
+<script>
+  import './quiz.ts';
+</script>

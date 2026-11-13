@@ -12,6 +12,7 @@ import * as partsOfSpeech from './activities/parts-of-speech.mjs';
 import * as wordBuilder from './activities/word-builder.mjs';
 import * as readingSpeed from './activities/reading-speed.mjs';
 import * as mainIdea from './activities/main-idea.mjs';
+import * as fables from './activities/fables.mjs';
 
 const MODULES = [
   readingLevel,
@@ -23,6 +24,7 @@ const MODULES = [
   wordBuilder,
   readingSpeed,
   mainIdea,
+  fables,
 ];
 
 // Common Core ELA standards referenced by the activities, paraphrased.

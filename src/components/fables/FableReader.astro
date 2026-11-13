@@ -1,0 +1,47 @@
+---
+// One fable with its read-aloud player. The whole text is rendered here on the server, one <span> per sentence,
+// so the page is a complete story before any JavaScript runs. reader.ts then drives the browser's own speech
+// and marks the sentence (and, where the browser reports it, the word) being read.
+import './fables.css';
+import { sentences } from '../../lib/fables.mjs';
+import { RATES, DEFAULT_RATE } from '../../lib/fables-player.mjs';
+import { site } from '../../lib/site.mjs';
+
+const { fable } = Astro.props;
+const all = sentences(fable);
+const paragraphs = fable.paragraphs.map((_, p) => all.filter(sentence => sentence.paragraph === p));
+const icon = (path: string) => `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="currentColor"><path d="${path}"/></svg>`;
+---
+<section class="fb-reader" data-reader data-fable={fable.slug} aria-label={`Read along: ${fable.title}`}>
+  <div class="fb-transport" data-transport role="group" aria-label="Read aloud controls">
+    <button type="button" class="fb-btn" data-prev aria-label="Back one sentence" disabled><Fragment set:html={icon('M6 5h2v14H6zM20 5v14L9 12z')} /><span class="fb-btn-text" aria-hidden="true">Back</span></button>
+    <button type="button" class="fb-btn fb-play" data-play disabled><span class="fb-icon-play" set:html={icon('M8 5v14l11-7z')} /><span class="fb-icon-pause" set:html={icon('M6 5h4v14H6zM14 5h4v14h-4z')} /><span data-play-label>Play</span></button>
+    <button type="button" class="fb-btn" data-next aria-label="Next sentence" disabled><span class="fb-btn-text" aria-hidden="true">Next</span><Fragment set:html={icon('M16 5h2v14h-2zM4 5v14l11-7z')} /></button>
+    <button type="button" class="fb-btn" data-stop disabled><Fragment set:html={icon('M6 6h12v12H6z')} /><span>Stop</span></button>
+    <p class="fb-status" data-status>Press Play to hear the fable. You can also tap any sentence to start there.</p>
+  </div>
+  <div class="fb-settings" data-settings>
+    <div class="fb-speed" role="group" aria-labelledby="fb-speed-label">
+      <span class="fb-label" id="fb-speed-label">Speed</span>
+      {RATES.map(rate => <button type="button" class="fb-chip" data-rate={rate.id} aria-pressed={rate.id === DEFAULT_RATE ? 'true' : 'false'}>{rate.label}</button>)}
+    </div>
+    <label class="fb-voice"><span class="fb-label">Voice</span><select data-voice disabled><option>Device voice</option></select></label>
+    <p class="fb-keys">Keys, once you have pressed Play: <kbd>P</kbd> play or pause, <kbd>S</kbd> stop, <kbd>←</kbd> <kbd>→</kbd> back or next sentence.</p>
+  </div>
+  <p class="note fb-notice" data-notice hidden></p>
+  <noscript><style is:inline>.fb-transport, .fb-settings { display: none; }</style><p class="note fb-notice">Reading aloud needs JavaScript. You can still read the fable yourself and talk about the questions below.</p></noscript>
+
+  <div class="fb-story" data-story tabindex="-1">
+    {paragraphs.map((list, p) => (
+      <p class:list={{ 'fb-moral': p === paragraphs.length - 1 }}>
+        {p === paragraphs.length - 1 && <strong class="fb-moral-label">The moral </strong>}
+        {list.map((sentence, i) => <Fragment>{i > 0 && ' '}<span class="fb-s" data-s={sentence.index}>{sentence.text}</span></Fragment>)}
+      </p>
+    ))}
+  </div>
+  <p class="fb-credit">Retold for {site.name} from the traditional fable credited to Aesop.</p>
+  <p class="visually-hidden" role="status" data-live></p>
+</section>
+<script>
+  import './reader.ts';
+</script>

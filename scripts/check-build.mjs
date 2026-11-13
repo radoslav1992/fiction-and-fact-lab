@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { activities } from '../src/lib/activities.mjs';
 import { tools } from '../src/lib/labs.mjs';
 import { TALES, examplePath } from '../src/lib/plot-diagram.mjs';
+import { FABLES, fablePath } from '../src/lib/fables.mjs';
 import { site } from '../src/lib/site.mjs';
 
 const root = path.resolve('dist');
@@ -82,6 +83,8 @@ assert.ok(!sitemap.includes('/book/') && !sitemap.includes('/favorites/'), 'the 
 const listed = ['/', '/tools/', ...tools.flatMap(tool => [`/tools/${tool.slug}/`, `/tools/${tool.slug}/activity/`]), '/listen/', '/teachers/', '/about/', '/privacy/'];
 // The Plot Diagram Builder has one indexable example page per tale.
 listed.push(...TALES.map(examplePath));
+// Fables Read-Along has a page for each fable as well.
+if (tools.some(tool => tool.slug === 'fables')) listed.push(...FABLES.map(fablePath));
 for (const page of listed) assert.ok(sitemap.includes(`<loc>${site.url}${page}</loc>`), `sitemap lists ${page}`);
 assert.equal((sitemap.match(/<loc>/g) ?? []).length, listed.length, 'the sitemap lists exactly the indexable pages');
 for (const file of ['robots.txt', 'llms.txt', 'favicon.svg', 'og-image.png', '_headers']) assert.ok(fs.existsSync(path.join(root, file)), `dist/${file}`);
