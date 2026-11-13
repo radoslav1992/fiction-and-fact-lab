@@ -4,6 +4,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { activities } from '../src/lib/activities.mjs';
 import { tools } from '../src/lib/labs.mjs';
+import { FABLES, fablePath } from '../src/lib/fables.mjs';
 import { site } from '../src/lib/site.mjs';
 
 const root = path.resolve('dist');
@@ -79,6 +80,8 @@ assert.ok(!sitemap.includes('/teachers/answers/'), 'answer keys must stay out of
 assert.ok(!sitemap.includes('/404'), '404 must stay out of the sitemap');
 assert.ok(!sitemap.includes('/book/') && !sitemap.includes('/favorites/'), 'the player and the saved shelf must stay out of the sitemap');
 const listed = ['/', '/tools/', ...tools.flatMap(tool => [`/tools/${tool.slug}/`, `/tools/${tool.slug}/activity/`]), '/listen/', '/teachers/', '/about/', '/privacy/'];
+// Fables Read-Along has a page for each fable as well.
+if (tools.some(tool => tool.slug === 'fables')) listed.push(...FABLES.map(fablePath));
 for (const page of listed) assert.ok(sitemap.includes(`<loc>${site.url}${page}</loc>`), `sitemap lists ${page}`);
 assert.equal((sitemap.match(/<loc>/g) ?? []).length, listed.length, 'the sitemap lists exactly the indexable pages');
 for (const file of ['robots.txt', 'llms.txt', 'favicon.svg', 'og-image.png', '_headers']) assert.ok(fs.existsSync(path.join(root, file)), `dist/${file}`);

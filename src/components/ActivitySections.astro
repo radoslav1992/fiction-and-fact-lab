@@ -46,5 +46,14 @@ const { act, answers = false } = Astro.props;
           : <li><p>{item.q}</p><div class="write-lines" aria-hidden="true">{Array.from({ length: item.lines }, () => <span />)}</div></li>)}
       </ol>
     )}
+    {/* Fables Read-Along: a pointer to the other fables for students; for teachers, the right letters for every printed fable page. */}
+    {section.type === 'fables-letters' && (answers
+      ? <Fragment>
+          <p class="worksheet-meta">{section.keyNote}</p>
+          <ul class="key-answers" style="columns:2 250px;column-gap:28px;margin:0;padding-left:1.2em;font-size:.9em">
+            {section.items.map(item => <li style="break-inside:avoid;margin-bottom:1px">{item.title}: <strong>{item.letters.join(' ')}</strong></li>)}
+          </ul>
+        </Fragment>
+      : section.lines.map(line => <p class="worksheet-meta">{line}</p>))}
   </Fragment>
 ))}

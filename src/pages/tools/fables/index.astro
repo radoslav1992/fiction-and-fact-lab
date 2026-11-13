@@ -1,0 +1,187 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import FableList from '../../../components/fables/FableList.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { DEFINITIONS, FABLES, SAYINGS, QUIZ_LENGTH_WORD, STORY_QUESTIONS_WORD, fableBySlug, fablePath, wordCount } from '../../../lib/fables.mjs';
+import { RATES } from '../../../lib/fables-player.mjs';
+import { activity } from '../../../lib/activities/fables.mjs';
+
+const title = 'Fables Read-Along: Aesop’s Fables Read Aloud, with Questions';
+const description = 'Ten of Aesop’s fables for grades 2–5, read aloud in your browser with each sentence highlighted, then questions on the story and its moral. Free.';
+const url = new URL('/tools/fables/', Astro.site).href;
+
+const counts = FABLES.map(wordCount);
+const shortest = Math.min(...counts), longest = Math.max(...counts);
+const hare = fableBySlug('tortoise-and-hare'), mouse = fableBySlug('lion-and-mouse'), ant = fableBySlug('ant-and-grasshopper');
+const moralInOtherWords = fable => fable.questions.find(question => question.kind === 'moral').right;
+const saying = slug => SAYINGS.find(item => item.fable === slug);
+const speeds = RATES.map(rate => rate.label.toLowerCase());
+const worksheetFable = fableBySlug(activity.fable);
+
+const faq: [string, string][] = [
+  ['What is a fable?', `${DEFINITIONS.fable} Most fables are only a few paragraphs long and end with a moral. The ${FABLES.length} on this page have between ${shortest} and ${longest} words each.`],
+  ['What is the moral of a story?', `${DEFINITIONS.moral} In ${mouse.title}, the moral is: “${mouse.moral}” A moral is not a summary. A summary tells what happened, and a moral tells what to learn from it.`],
+  ['Who was Aesop?', 'Aesop is the name of a storyteller who is said to have lived in ancient Greece about 2,600 years ago. Very little is known about him for certain. His fables were told aloud for a long time before other people collected them and wrote them down.'],
+  ['What is the moral of The Tortoise and the Hare?', `“${hare.moral}” In other words: ${moralInOtherWords(hare).toLowerCase().replace(/\.$/, '')}. The hare is faster, but he stops to sleep, and the tortoise wins by never stopping.`],
+  ['What do “sour grapes” and “cry wolf” mean?', `Both sayings come from fables. “Sour grapes” comes from ${fableBySlug('fox-and-grapes').title} and means ${saying('fox-and-grapes').meaning.toLowerCase().replace(/\.$/, '')}. “To cry wolf” comes from ${fableBySlug('boy-who-cried-wolf').title} and means ${saying('boy-who-cried-wolf').meaning.toLowerCase().replace(/\.$/, '')}.`],
+  ['Which grades are these fables for?', 'Grades 2 to 5, which is ages about 7 to 11. The sentences are short and plain, and the harder words are explained under each fable. Older students can use the same fables to practice finding a moral and explaining it.'],
+  ['Why can I not hear the fable?', 'First check that the sound on your device is turned up and not muted. The voice comes from your browser, and a few browsers have no voice for reading aloud. If that happens the page tells you, and you can still read the fable yourself and answer the questions. Opening the page in another browser often helps.'],
+  ['Can I change the voice or the speed?', `Yes. There are three speeds: ${speeds.join(', ').replace(/, ([^,]+)$/, ' and $1')}. If your device has more than one English voice, a voice list appears next to the speed buttons. Both choices are remembered on your device.`],
+  ['Is there a fable worksheet?', `Yes. The free printable worksheet has ${worksheetFable.title} in full, with questions, the moral and a short writing task on one page. Every fable page also prints as its own one-page sheet. The answer key is on the For teachers page.`],
+  ['Are these the original words of Aesop’s fables?', 'No. Aesop’s fables were first told in ancient Greek, so every version in English is a translation or a retelling. These were retold for Fiction & Fact Library in our own words. Each one keeps the traditional plot and the traditional moral.'],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Fables Read-Along',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary school (grades 2–5, ages 7–11)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Aesop’s fables to read along with',
+  itemListElement: FABLES.map(fable => ({ '@type': 'ListItem', position: fable.number, name: fable.title, url: new URL(fablePath(fable), Astro.site).href })),
+};
+---
+<Layout title={title} description={description} section="Fables" crumbs={[['Fables Read-Along']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(itemList)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Read-along stories · Fables and morals</span>
+      <h1><span class="h1-line">Fables</span> <span class="h1-line"><span class="hl">Read-Along</span></span></h1>
+      <p class="lede">Ten short fables credited to Aesop, retold in plain words for grades 2–5. Your browser reads each fable aloud and highlights the sentence it is reading. Then you answer {QUIZ_LENGTH_WORD} questions about the story and its moral.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/fables/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <section aria-labelledby="choose-a-fable">
+      <h2 id="choose-a-fable">Choose a fable</h2>
+      <FableList />
+    </section>
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/fables/activity/', name: activity.title, text: 'One printable page: the fable, four questions, the moral and a new ending to write.' },
+      { href: '/listen/', name: 'Listen', text: 'Longer stories read by people: free classic audiobooks.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section prose">
+      <h2>What is a fable?</h2>
+      <p><strong>{DEFINITIONS.fable}</strong></p>
+      <p>You can spot a fable by four things:</p>
+      <ul>
+        <li><strong>It is short.</strong> The fables here have between {shortest} and {longest} words. You can read one in a minute or two.</li>
+        <li><strong>It has only a few characters.</strong> {hare.title} has two. {fableBySlug('fox-and-grapes').title} has just one.</li>
+        <li><strong>The animals stand for ways that people behave.</strong> The hare is proud, the ant plans ahead, and the fox makes excuses. Nobody thinks real hares and ants talk. The story is really about us.</li>
+        <li><strong>It teaches a lesson.</strong> The lesson is called the moral, and it is often written as the last sentence.</li>
+      </ul>
+      <h3>Fable or fairy tale?</h3>
+      <p>A fairy tale is usually longer, often has magic in it, and does not have to teach a lesson. A fable is short and is told to make one point.</p>
+    </section>
+
+    <section class="section" id="morals">
+      <div class="prose">
+        <h2>What is a moral?</h2>
+        <p><strong>{DEFINITIONS.moral}</strong> A moral is not about one hare or one mouse. It is a rule that fits many people in many places, and that is why fables are still told.</p>
+        <p>These are the morals of the ten fables on this page.</p>
+      </div>
+      <div class="table-wrap" style="max-width:860px">
+        <table>
+          <thead><tr><th scope="col">Fable</th><th scope="col">The moral</th><th scope="col">What it is about</th></tr></thead>
+          <tbody>{FABLES.map(fable => <tr><th scope="row"><a href={fablePath(fable)}>{fable.title}</a></th><td>{fable.moral}</td><td>{fable.theme}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <h3>A moral is not a summary</h3>
+        <p>A summary tells what happened in the story. A moral tells what to learn from it. Here are both for {mouse.title}.</p>
+        <ul>
+          <li><strong>Summary:</strong> {mouse.summary}</li>
+          <li><strong>Moral:</strong> {mouse.moral}</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section prose" id="find-the-moral">
+      <h2>How to find the moral of a fable</h2>
+      <p>Sometimes the moral is written at the end. Sometimes you have to work it out. Ask four questions.</p>
+      <ol>
+        <li><strong>Who are the characters, and what does each one want?</strong></li>
+        <li><strong>What does each character choose to do?</strong></li>
+        <li><strong>How does it end?</strong> Who is better off at the end, and who is worse off?</li>
+        <li><strong>What should a reader learn from that ending?</strong> Say it as a rule for people, not for animals.</li>
+      </ol>
+      <h3>Worked example: {hare.title}</h3>
+      <ol>
+        <li>The characters are {hare.characters.join(' and ')}. Both want to win the race.</li>
+        <li>The hare runs far ahead and then lies down for a rest. The tortoise keeps walking, step by step.</li>
+        <li>The tortoise crosses the finish line first. The hare wakes up too late.</li>
+        <li>The rule is not about racing. It is: “{hare.moral}” In other words: {moralInOtherWords(hare)}</li>
+      </ol>
+      <p class="note">A good test: does your moral still make sense if you take the animals out? “{ant.moral}” says nothing about ants, and it is still true.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>Sayings that come from fables</h2>
+      <p>Some fables are so well known that people use a few words from them as a saying. You may have heard these.</p>
+      <dl class="fb-sayings">
+        {SAYINGS.map(item => (
+          <Fragment>
+            <dt>“{item.saying[0].toUpperCase() + item.saying.slice(1)}”</dt>
+            <dd>{item.meaning} From <a href={fablePath(fableBySlug(item.fable))}>{fableBySlug(item.fable).title}</a>.</dd>
+          </Fragment>
+        ))}
+      </dl>
+    </section>
+
+    <section class="section prose">
+      <h2>Who was Aesop?</h2>
+      <p>Aesop is the name of a storyteller who is said to have lived in ancient Greece about 2,600 years ago. Very little is known about him for certain. He did not write his fables down. They were told aloud, passed from one teller to the next, and collected in books long afterward.</p>
+      <h3>About these retellings</h3>
+      <p>Aesop’s fables were first told in ancient Greek, so every version in English is a translation or a retelling. The ten here were retold for {site.name} in our own words, with short sentences for young readers. Each one keeps the traditional plot and the traditional moral.</p>
+      <p>Two are told more gently than the oldest versions. In older tellings of <a href={fablePath(ant)}>{ant.title}</a>, the ant sends the grasshopper away hungry. In ours she shares her food, and he still learns the lesson. And the goose in <a href={fablePath(fableBySlug('goose-and-golden-eggs'))}>our last fable</a> runs away from the greedy farmer.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>How the read-along works</h2>
+      <ul>
+        <li><strong>Press Play.</strong> The fable is read aloud one sentence at a time, and the sentence being read is highlighted. In browsers that report each word, the word being spoken is marked as well.</li>
+        <li><strong>Tap any sentence</strong> to start reading from it. Back and Next move one sentence at a time, so a hard sentence is easy to hear again.</li>
+        <li><strong>Choose a speed:</strong> {speeds.join(', ')}. If your device has more than one English voice, you can choose the voice too. Both choices are remembered on your device.</li>
+        <li><strong>On a keyboard,</strong> press <kbd>P</kbd> to play or pause, <kbd>S</kbd> to stop, and <kbd>←</kbd> or <kbd>→</kbd> to move one sentence. The keys work once you have pressed Play or clicked a sentence.</li>
+        <li><strong>Then answer the questions.</strong> Each fable has {STORY_QUESTIONS_WORD} questions about the story and one about the moral. You see at once whether an answer is right, and why. Your best score for each fable is kept in your browser and nowhere else.</li>
+      </ul>
+      <h3>What the read-along cannot do</h3>
+      <ul>
+        <li><strong>It is a computer voice, not a person.</strong> The voice is the one built into your device or browser, so it sounds different from one device to the next. It may say a word oddly, and it does not act out the story. For longer stories read by people, try <a href="/listen/">Listen</a>.</li>
+        <li><strong>Some browsers have no voice.</strong> Then the page says so, and the fable is there to read yourself.</li>
+        <li><strong>The word-by-word marking depends on the browser and the voice.</strong> The sentence highlight works wherever reading aloud works.</li>
+        <li><strong>Pausing is not exact everywhere.</strong> On some Android phones, Play after a pause reads the sentence again from its start.</li>
+        <li><strong>It does not listen.</strong> It cannot hear you read or tell you how well you read aloud.</li>
+        <li><strong>Voices marked “online”</strong> are made by the browser’s own speech service over the internet, so the sentence being read is sent to that service. Voices on your device work without a connection.</li>
+      </ul>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/fables/activity/">fable worksheet</a> takes about {activity.minutes} minutes and prints on one page. Every fable page has a Print button too: it prints the fable, its words to know and its questions as a one-page sheet. The answer key on the <a href="/teachers/">For teachers</a> page covers both.</p>
+      <LinkSnippet url={url} name="Fables Read-Along" />
+    </section>
+  </div>
+</Layout>

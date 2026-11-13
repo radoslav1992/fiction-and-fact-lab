@@ -103,12 +103,11 @@ const ALL = [
   },
   {
     slug: 'fables',
-    live: false,
     name: 'Fables Read-Along',
     section: 'Fables',
-    topic: 'Fables',
+    topic: 'Fables and morals',
     kind: 'Aesop’s fables read aloud with highlighted text',
-    blurb: 'TODO',
+    blurb: 'Ten of Aesop’s fables, retold for grades 2–5. The browser reads each one aloud and highlights the sentence it is reading, then five questions check the story and its moral.',
   },
 ];
 
