@@ -49,21 +49,19 @@ const ALL = [
   },
   {
     slug: 'context-clues',
-    live: false,
     name: 'Context Clues Game',
     section: 'Context Clues',
     topic: 'Vocabulary',
     kind: 'Context clues vocabulary practice',
-    blurb: 'TODO',
+    blurb: 'Work out what a hard word means from the words around it. Three levels for grades 2–8 cover definition, synonym, antonym, example and inference clues, with the clue marked after every answer.',
   },
   {
     slug: 'cause-and-effect',
-    live: false,
     name: 'Cause and Effect Game',
     section: 'Cause and Effect',
     topic: 'Comprehension',
     kind: 'Cause and effect sentence practice',
-    blurb: 'TODO',
+    blurb: 'Tap the cause or the effect in a sentence, spot the signal word, match causes to effects and follow a chain of events through a paragraph. Three levels for grades 2–8, with an explanation after every answer.',
   },
   {
     slug: 'figurative-language',

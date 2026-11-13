@@ -1,0 +1,204 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import CauseEffectGame from '../../../components/cause-and-effect/CauseEffectGame.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { DEFINITIONS, LEVELS, SIGNALS, ROUND_LENGTH, ITEMS, MATCH_SETS, itemById, itemsFor, sentenceCase } from '../../../lib/cause-and-effect.mjs';
+import { tagHtml, revealHtml, chainHtml } from '../../../lib/cause-and-effect-view.mjs';
+
+const title = 'Cause and Effect Game: Free Practice for Grades 2–8';
+const description = 'Free cause and effect game for grades 2–8: tap the cause or the effect, spot signal words, match pairs and follow a chain of events. With examples.';
+const url = new URL('/tools/cause-and-effect/', Astro.site).href;
+
+// Everything quoted on this page comes straight from the game's bank.
+const item = (id: string) => itemById(id);
+const quote = (text: string) => text.replace(/\.$/, '');
+// The same cause and effect said the other way around. Used below for two sentences that do not start with a name.
+const lower = (text: string) => text[0].toLowerCase() + text.slice(1);
+const withSo = entry => ({ signal: 'so', cause: sentenceCase(entry.cause), effect: lower(entry.effect), text: `${sentenceCase(entry.cause)}, so ${lower(entry.effect)}.` });
+const withBecause = entry => ({ signal: 'because', cause: lower(entry.cause), effect: sentenceCase(entry.effect), text: `${sentenceCase(entry.effect)} because ${lower(entry.cause)}.` });
+const ice = item('a01'), rain = item('a17'), kettle = item('b06'), freezer = item('c02'), snow = item('c22'), sheep = item('c17');
+const counts = LEVELS.map(level => itemsFor(level.id).length);
+const paragraphs = { chain: itemsFor(3, 'chain').length, fork: itemsFor(3, 'fork').length, plain: itemsFor(3).filter(entry => entry.signals.length === 0).length };
+const labels = (follows: string) => SIGNALS.filter(signal => signal.follows === follows && signal.id !== 'led to').map(signal => `“${signal.label}”`).join(', ');
+
+const faq: [string, string][] = [
+  ['What is cause and effect?', `${DEFINITIONS.cause} ${DEFINITIONS.effect} In “${quote(ice.text)},” the warm room is the cause and the melted ice cube is the effect.`],
+  ['What are some cause and effect examples?', `“${quote(item('a04').text)}.” “${quote(item('a20').text)}.” “${quote(item('b10').text)}.” In each one, the first thing makes the second thing happen. The game has ${ITEMS.length} sentences and paragraphs like these.`],
+  ['What are cause and effect signal words?', `Words that join a cause to its effect. The cause comes right after ${labels('cause')}. The effect comes right after ${labels('effect')}. With “led to”, the cause is before it and the effect after it. With “if … then”, the cause follows “if” and the effect follows “then”.`],
+  ['How do I find the cause and the effect in a sentence?', 'Ask two questions. What happened? That is the effect. Why did it happen? That is the cause. Then look for a signal word and check which side of it each part is on.'],
+  ['Does the cause always come first in a sentence?', `No. “${quote(ice.text)}” puts the effect first. “${quote(withSo(ice).text)}” puts the cause first. Both say the same thing. In time, though, the cause always happens before its effect.`],
+  ['What is a cause and effect chain?', `A chain is a row of events where each effect becomes the cause of the next one. For example: ${freezer.events.map(quote).join(', so ').replace(/, so ([A-Z])/g, (_, letter) => `, so ${letter.toLowerCase()}`)}. Level 3 of the game is built on chains like this.`],
+  ['If one thing happens after another, did the first one cause it?', 'Not always. A rooster crows and then the Sun rises, but the crowing does not make the Sun rise. To check, ask whether the second thing would still have happened without the first. If it would, the first thing is not its cause.'],
+  ['Which grades is the Cause and Effect Game for?', `Grades 2 to 8, which is ages about 7 to 14. ${LEVELS.map(level => `${level.name} is for ${level.grades.toLowerCase()}`).join(', ')}. Older students who are new to the idea can start at Level 1.`],
+  ['Is there a cause and effect worksheet?', 'Yes. The free printable cause and effect worksheet has eight sentences to mark, five causes to match, four sentences to finish and a chain to draw, all on one page. The answer key is on the For teachers page.'],
+  ['Can the whole class play the same round? Are scores saved?', `Yes, the class can share a round. When a round ends, the results screen shows a link with the round number in it, and everyone who opens it gets the same ${ROUND_LENGTH} questions. No sign-in is needed. Your best score for each level is kept in your own browser and is never sent to us.`],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Cause and Effect Game',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Cause and Effect" crumbs={[['Cause and Effect Game']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Sentence game · Comprehension</span>
+      <h1><span class="h1-line">Cause and <span class="hl">Effect</span></span> <span class="h1-line">Game</span></h1>
+      <p class="lede">Read a sentence and find what happened and why. This free game has three levels for grades 2–8: tap the cause or the effect, spot the signal word, match causes to effects, and follow a chain of events through a paragraph.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/cause-and-effect/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <CauseEffectGame />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/cause-and-effect/activity/', name: 'Cause and Effect Worksheet', text: 'One printable page: mark eight sentences, match five pairs and draw a chain.' },
+      { href: '/tools/context-clues/', name: 'Context Clues Game', text: 'Work out what a hard word means from the words around it.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section">
+      <h2>What are cause and effect?</h2>
+      <div class="ce-define">
+        <div class="card">
+          <h3><Fragment set:html={tagHtml('cause')} /></h3>
+          <p><strong>{DEFINITIONS.cause}</strong></p>
+          <p>To find it, ask: <strong>why did it happen?</strong></p>
+        </div>
+        <div class="card">
+          <h3><Fragment set:html={tagHtml('effect')} /></h3>
+          <p><strong>{DEFINITIONS.effect}</strong></p>
+          <p>To find it, ask: <strong>what happened?</strong></p>
+        </div>
+      </div>
+      <div class="prose">
+        <p style="margin-top:1.2em">Here is a sentence from the game, marked the way the game marks it. The cause is underlined, the effect has a ring around it, and the signal word is in bold.</p>
+        <p class="ce-example" set:html={revealHtml(ice)} />
+        <p>What happened? {ice.effect}. Why? Because {ice.cause}. The cause always happens first in time, even when the sentence says it second.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Cause and effect signal words</h2>
+        <p>A signal word joins a cause to its effect and tells you which is which. Learn what comes right after each one.</p>
+      </div>
+      <div class="table-wrap ce-signals" style="max-width:920px">
+        <table>
+          <thead><tr><th scope="col">Signal</th><th scope="col">Where the cause and the effect are</th><th scope="col">Example from the game</th></tr></thead>
+          <tbody>{SIGNALS.map(signal => <tr><th scope="row" class="nowrap">{signal.label}</th><td>{signal.tip}</td><td class="ce-example" set:html={revealHtml(item(signal.example))} /></tr>)}</tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <p style="margin-top:1em">A signal word is a hint, not proof. “Since” can also be about time (“since Monday”), and “so” can mean “very” (“so cold”). Always check with the two questions: what happened, and why?</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>The same idea in two orders</h2>
+        <p>A sentence can put the effect first or the cause first. The signal word changes, but the cause stays the cause.</p>
+      </div>
+      <div class="ce-order">
+        <div class="card">
+          <h3>Effect first, with “because”</h3>
+          <p class="ce-example" set:html={revealHtml(ice)} />
+          <p class="ce-example" set:html={revealHtml(withBecause(rain))} />
+        </div>
+        <div class="card">
+          <h3>Cause first, with “so”</h3>
+          <p class="ce-example" set:html={revealHtml(withSo(ice))} />
+          <p class="ce-example" set:html={revealHtml(rain)} />
+        </div>
+      </div>
+      <div class="prose">
+        <p style="margin-top:1em">“Because” can also start a sentence. Then the cause comes first and a comma separates the two parts:</p>
+        <p class="ce-example" set:html={revealHtml(kettle)} />
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Chains: when an effect becomes a cause</h2>
+        <p>Often one thing leads to another, which leads to another. The middle event is an effect of the first event and the cause of the third. Many paragraphs have no signal words at all, so you have to think about what made each thing happen.</p>
+        <blockquote class="passage"><p>{freezer.text}</p></blockquote>
+      </div>
+      <div class="ce-diagram" set:html={chainHtml(freezer)} />
+      <div class="prose">
+        <h3>One cause, two effects</h3>
+        <p>A single cause can also have more than one effect. Neither effect causes the other.</p>
+        <blockquote class="passage"><p>{snow.text}</p></blockquote>
+      </div>
+      <div class="ce-diagram" set:html={chainHtml(snow)} />
+    </section>
+
+    <section class="section prose">
+      <h2>After does not mean because</h2>
+      <p>Here is the most common mistake: “It happened afterwards, so it must have been caused by it.”</p>
+      <p>A rooster crows, and then the Sun rises. The crowing comes first, but it does not make the Sun rise. If the rooster stayed quiet, the Sun would come up all the same.</p>
+      <p>Look at the last sentence of each paragraph above. {freezer.after.replace(/\.$/, '')} after the ice cream melted, but the melted ice cream did not send her to school. {snow.after.replace(/\.$/, '')} after the snowstorm, but the snow did not cause the concert. And in another paragraph from the game, sheep get out onto a road, and then: “{sheep.text.split('. ').at(-1)}” Sheep do not change the Moon.</p>
+      <h3>How to check</h3>
+      <ol>
+        <li><strong>Take the first event away.</strong> Would the second one still have happened? If yes, the first is not its cause.</li>
+        <li><strong>Look for the link.</strong> Can you say how the first event made the second one happen? An open freezer door lets warm air in, and warm air melts ice cream. There is no such link between ice cream and a bike ride.</li>
+      </ol>
+      <p>Level 3 of the game asks this in every round: which of these only happened afterwards?</p>
+    </section>
+
+    <section class="section prose">
+      <h2>Common mistakes</h2>
+      <ul>
+        <li><strong>Going by the order of the words.</strong> The first part of a sentence is not always the cause. With “because”, the cause often comes second.</li>
+        <li><strong>Calling the signal word the cause.</strong> “Because” is not the cause. It points to the cause.</li>
+        <li><strong>Stopping at the first link.</strong> In a chain, ask “and what did that lead to?” until the chain ends.</li>
+        <li><strong>Waiting for a signal word.</strong> Many causes are stated with no signal at all. Ask what happened and why.</li>
+        <li><strong>Treating “after” as “because”.</strong> Something that comes later is an effect only if the earlier event made it happen.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>What the game leaves out</h2>
+      <p>The game uses clear cases: one cause, one effect, and a link nobody would argue with, such as ice melting in a warm room. Real life is often less tidy.</p>
+      <ul>
+        <li><strong>Many effects have several causes.</strong> A plant grows because of water, light and soil together. The game gives each effect one cause so that there is one right answer.</li>
+        <li><strong>Some causes are hard to prove.</strong> In science, finding the real cause of something can take careful experiments. Two things that happen together are not always cause and effect.</li>
+        <li><strong>Writers can be wrong.</strong> “Because” in a sentence tells you what the writer says the cause is. It is still worth asking whether that makes sense.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>How the game works</h2>
+      <ul>
+        <li><strong>{LEVELS[0].name} ({LEVELS[0].grades.toLowerCase()}, {LEVELS[0].ages}).</strong> {LEVELS[0].about} It has {counts[0]} sentences, half with each signal word.</li>
+        <li><strong>{LEVELS[1].name} ({LEVELS[1].grades.toLowerCase()}, {LEVELS[1].ages}).</strong> {LEVELS[1].about} It has {counts[1]} sentences in {MATCH_SETS.length} matching sets, with the signals {SIGNALS.filter(signal => signal.id !== 'so').map(signal => `“${signal.label}”`).join(', ')}.</li>
+        <li><strong>{LEVELS[2].name} ({LEVELS[2].grades.toLowerCase()}, {LEVELS[2].ages}).</strong> {LEVELS[2].about} It has {counts[2]} paragraphs: {paragraphs.chain} chains and {paragraphs.fork} with one cause and two effects. {paragraphs.plain} of them have no signal word.</li>
+      </ul>
+      <p>Every round has {ROUND_LENGTH} questions, picked at random from the level’s bank. Each right answer is one point, and the streak counts right answers in a row. A matching question is one point for all four pairs, and it ends at the first pair that does not match. At the end you see the ones you missed, with the reason for each.</p>
+      <p class="note">The causes in the game come from everyday life and school science, chosen because the link is real and plain to see. If you think one is wrong, please <a href={`mailto:${site.contactEmail}`}>tell us</a>.</p>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/cause-and-effect/activity/">cause and effect worksheet</a> takes about 20 minutes and prints on one page. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+      <LinkSnippet url={url} name="Cause and Effect Game" />
+    </section>
+  </div>
+</Layout>
