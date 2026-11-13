@@ -1,7 +1,9 @@
 // Every tool on the site, in menu order. `section` is the Layout section its pages pass, which puts them under
 // Tools in the menu and in the breadcrumb trail. `kind` says what sort of tool it is, in the words people search
 // with; the Tools hub shows it above each name. Used by the Tools hub, the home page and the footer.
-export const tools = [
+// `live: false` marks a tool that is registered here but not built yet: it is left out of `tools`, so no page
+// links to it. Set `live: true` (or delete the line) when its pages exist.
+const ALL = [
   {
     slug: 'reading-level',
     name: 'Reading Level Checker',
@@ -18,7 +20,100 @@ export const tools = [
     kind: 'Fact vs opinion sorting game',
     blurb: 'Read a statement and decide: fact or opinion? Three levels for grades 2–8, with the clue words explained after every answer and a results screen that shows what to practice.',
   },
+  {
+    slug: 'plot-diagram',
+    live: false,
+    name: 'Plot Diagram Builder',
+    section: 'Plot Diagram',
+    topic: 'Story structure',
+    kind: 'Story mountain and plot diagram maker',
+    blurb: 'TODO',
+  },
+  {
+    slug: 'fiction-or-nonfiction',
+    live: false,
+    name: 'Fiction or Nonfiction Game',
+    section: 'Fiction or Nonfiction',
+    topic: 'Genres',
+    kind: 'Fiction vs nonfiction sorting game',
+    blurb: 'TODO',
+  },
+  {
+    slug: 'main-idea',
+    live: false,
+    name: 'Main Idea and Details Game',
+    section: 'Main Idea',
+    topic: 'Comprehension',
+    kind: 'Main idea and supporting details practice',
+    blurb: 'TODO',
+  },
+  {
+    slug: 'context-clues',
+    live: false,
+    name: 'Context Clues Game',
+    section: 'Context Clues',
+    topic: 'Vocabulary',
+    kind: 'Context clues vocabulary practice',
+    blurb: 'TODO',
+  },
+  {
+    slug: 'cause-and-effect',
+    live: false,
+    name: 'Cause and Effect Game',
+    section: 'Cause and Effect',
+    topic: 'Comprehension',
+    kind: 'Cause and effect sentence practice',
+    blurb: 'TODO',
+  },
+  {
+    slug: 'figurative-language',
+    live: false,
+    name: 'Figurative Language Game',
+    section: 'Figurative Language',
+    topic: 'Figurative language',
+    kind: 'Simile, metaphor and figurative language practice',
+    blurb: 'TODO',
+  },
+  {
+    slug: 'parts-of-speech',
+    live: false,
+    name: 'Parts of Speech Game',
+    section: 'Parts of Speech',
+    topic: 'Grammar',
+    kind: 'Parts of speech tagging game',
+    blurb: 'TODO',
+  },
+  {
+    slug: 'word-builder',
+    live: false,
+    name: 'Prefix and Suffix Word Builder',
+    section: 'Word Builder',
+    topic: 'Word parts',
+    kind: 'Prefix, root and suffix word builder',
+    blurb: 'TODO',
+  },
+  {
+    slug: 'reading-speed',
+    live: false,
+    name: 'Reading Speed Test',
+    section: 'Reading Speed',
+    topic: 'Fluency',
+    kind: 'Words per minute reading test',
+    blurb: 'TODO',
+  },
+  {
+    slug: 'fables',
+    live: false,
+    name: 'Fables Read-Along',
+    section: 'Fables',
+    topic: 'Fables',
+    kind: 'Aesop’s fables read aloud with highlighted text',
+    blurb: 'TODO',
+  },
 ];
+
+/** The tools that are built and linked. */
+export const tools = ALL.filter(tool => tool.live !== false);
 
 const COUNT_WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
 /** How many tools there are, as a word ("two"), so every page that counts them stays in step with this list. */
