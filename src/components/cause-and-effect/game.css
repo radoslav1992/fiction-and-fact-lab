@@ -1,0 +1,123 @@
+/* Cause and Effect Game. A cause is underlined and an effect has a ring around it, the same marks the
+   worksheet asks for. Each also carries its word, so the answer never depends on color. */
+.ce { background: var(--card); border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; padding: 20px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.ce h2 { font-size: 1.4rem; margin: 0 0 12px; }
+.ce h2:focus-visible { outline-offset: 6px; }
+
+/* Level picker */
+.ce-levels { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.ce-level { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 44px; padding: 16px 18px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; box-shadow: 4px 4px 0 var(--hl); }
+.ce-level:hover { background: var(--hl-soft); }
+.ce-level-name { font: 700 1.4rem/1.2 var(--font-display); }
+.ce-level-grades { font-weight: 700; }
+.ce-level-about { color: var(--muted); font-size: .97rem; }
+.ce-level-best { font-size: .92rem; font-weight: 700; min-height: 1.5em; }
+.ce-sample { margin-top: 20px; padding: 14px 18px 16px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; max-width: 760px; }
+.ce-sample .ce-statement { font-size: clamp(1.15rem, 3.2vw, 1.4rem); }
+.ce-sample-note { margin: 10px 0 0; font-size: .98rem; }
+.ce-help { margin: 18px 0 0; color: var(--muted); font-size: .97rem; max-width: 760px; }
+
+/* Playing */
+.ce-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; font-size: .98rem; }
+.ce-bar b { font: 700 1.2rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.ce-quit { margin-left: auto; min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.ce-quit:hover { background: var(--hl-soft); }
+.ce-dots { display: flex; gap: 6px; list-style: none; margin: 10px 0 14px; padding: 0; }
+.ce-dots li { flex: 1; height: 10px; margin: 0; border: 2px solid var(--ink); border-radius: 5px; background: var(--card); }
+.ce-dots .is-current { background: var(--hl); }
+.ce-dots .is-right { background: var(--ink); }
+.ce-dots .is-wrong { background: repeating-linear-gradient(135deg, var(--ink) 0 2px, var(--card) 2px 5px); }
+/* The sentence or paragraph sits on a ruled library card. */
+.ce-card { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px 20px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; }
+.ce-card:focus-visible { outline-offset: 2px; }
+.ce-prompt { margin: 0; font-size: 1.02rem; font-weight: 700; color: var(--ink-2); }
+.ce-prompt.is-question { font: 700 clamp(1.15rem, 3vw, 1.35rem)/1.4 var(--font-display); color: var(--ink); }
+.ce-statement { margin: 0; font: 600 clamp(1.25rem, 3.4vw, 1.6rem)/1.7 var(--font-display); }
+.ce-statement.is-paragraph { font: 400 clamp(1.08rem, 2.6vw, 1.2rem)/1.65 var(--font-body); max-width: 46rem; }
+
+.ce-picks { display: flex; gap: 10px; margin-top: 14px; }
+.ce-parts, .ce-options { flex-direction: column; }
+.ce-words { flex-wrap: wrap; gap: 8px; }
+.ce-pick { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink); font: 700 1.08rem/1.35 var(--font-body); text-align: left; cursor: pointer; }
+.ce-pick kbd { flex: none; }
+.ce-words .ce-pick { min-width: 44px; justify-content: center; padding: 8px 12px; }
+.ce-pick:hover:not(:disabled) { background: var(--hl-soft); }
+/* After an answer: the right choice gets a tick, the one you pressed a thick outline. */
+.ce-pick:disabled { cursor: default; opacity: .55; }
+.ce-pick.is-answer, .ce-pick.is-chosen, .ce-pick.is-matched { opacity: 1; }
+.ce-pick.is-answer { background: var(--hl); }
+.ce-pick.is-answer::after { content: '✓'; margin-left: auto; padding-left: 4px; font-weight: 700; }
+.ce-pick.is-chosen { outline: 3px solid var(--ink); outline-offset: 3px; }
+.ce-words .ce-pick:disabled:not(.is-answer):not(.is-chosen) { opacity: .45; }
+
+/* Matching: causes in one column, effects in the other. */
+.ce-match { display: grid; gap: 16px 22px; }
+.ce-match-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ce-match-head { margin: 0; font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.ce-match-cause[aria-pressed='true'] { background: var(--hl); box-shadow: inset 0 -4px 0 var(--ink); }
+.ce-match-cause[aria-pressed='true']::before { content: '▶'; font-size: .8rem; }
+.ce-match-effect { border-radius: 24px; }
+.ce-match-badge { flex: none; display: inline-grid; place-items: center; width: 28px; height: 28px; margin-left: auto; border-radius: 50%; background: var(--ink); color: #fff; font: 700 .95rem/1 var(--font-body); }
+.ce-match-badge:empty { display: none; }
+.ce-pick.is-matched { background: var(--card-2); border-style: dashed; }
+@media (min-width: 640px) { .ce-match { grid-template-columns: 1fr 1fr; } }
+
+/* The answer shown on the sentence */
+.ce-seg { padding: 2px 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.ce-seg.cause { background: var(--hl-soft); box-shadow: inset 0 -3px 0 var(--ink); border-radius: 4px 4px 0 0; }
+/* An effect that runs over two lines keeps one ring, open where the line breaks. */
+.ce-seg.effect { padding: 2px 9px; border: 2px solid var(--ink); border-radius: 14px; -webkit-box-decoration-break: slice; box-decoration-break: slice; }
+.ce-seg-label { margin: 0 2px 0 3px; font: 700 .68rem/1 var(--font-body); letter-spacing: .06em; text-transform: uppercase; vertical-align: super; color: var(--ink-2); }
+.ce-signal { font-weight: 700; text-decoration: underline dotted 2px; text-underline-offset: 5px; }
+.ce-tag { display: inline-block; padding: 1px 9px; font-weight: 700; font-size: .92rem; line-height: 1.5; white-space: nowrap; }
+.ce-tag.cause { background: var(--hl-soft); box-shadow: inset 0 -3px 0 var(--ink); border-radius: 4px 4px 0 0; }
+.ce-tag.effect { border-radius: 14px; box-shadow: inset 0 0 0 2px var(--ink); }
+
+.ce-feedback { margin-top: 14px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.ce-verdict { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 700 1.35rem/1.2 var(--font-display); }
+.ce-verdict svg { width: 28px; height: 28px; flex: none; }
+.ce-verdict.is-right span { background: linear-gradient(transparent 55%, var(--hl) 55%); }
+.ce-why { margin: 0 0 12px; font-size: 1.08rem; }
+
+/* A chain of causes, or one cause with two effects, as boxes joined by arrows. */
+.ce-chain { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 30px 12px; }
+.ce-chain li { position: relative; margin: 0; padding: 9px 14px 11px; border: 2px solid var(--ink); border-radius: 10px; background: #fff; }
+.ce-chain li:first-child { background: var(--hl-soft); }
+.ce-chain li + li::before { content: '↓'; position: absolute; top: -29px; left: 50%; transform: translateX(-50%); font: 700 1.4rem/1 var(--font-body); }
+.ce-chain.is-fork { grid-template-columns: 1fr 1fr; }
+.ce-chain.is-fork li:first-child { grid-column: 1 / -1; }
+.ce-chain-label { display: block; font-size: .76rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.ce-after { margin: 0 0 12px; padding: 9px 14px 11px; border: 2px dashed var(--rule-strong); border-radius: 10px; background: #fff; }
+@media (min-width: 760px) {
+  .ce-chain.is-chain { grid-template-columns: repeat(3, 1fr); gap: 12px 36px; }
+  .ce-chain.is-chain li + li::before { content: '→'; top: 50%; left: -29px; transform: translateY(-50%); }
+}
+.ce-pairs { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 12px; }
+.ce-pairs li { margin: 0; line-height: 2; }
+.ce-arrow { font-weight: 700; }
+
+/* Results */
+.ce-final { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin: 0 0 10px; font-size: 1.1rem; }
+.ce-final-score { display: inline-block; padding: 4px 18px 6px; border: 4px solid var(--ink); border-radius: 10px; background: var(--hl); font: 700 clamp(1.7rem, 5vw, 2.4rem)/1.2 var(--font-display); transform: rotate(-2deg); }
+.ce-message { font-size: 1.12rem; max-width: 760px; }
+.ce-results h3 { margin: 18px 0 8px; }
+.ce-missed { padding-left: 1.3em; }
+.ce-missed > li { margin-bottom: 18px; }
+.ce-missed .ce-statement { font-size: 1.15rem; margin-bottom: 4px; }
+.ce-missed p { margin: 0 0 8px; }
+.ce-share { margin: 6px 0 0; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
+
+/* Examples and lesson content on the page */
+.ce-define { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.ce-example { margin: 0; font: 600 1.1rem/2 var(--font-display); }
+.ce-signals td:last-child { min-width: 300px; }
+.ce-order { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.ce-diagram { max-width: 860px; }
+
+@media (max-width: 480px) {
+  .ce { padding: 14px 12px; margin: 0 -6px; }
+  .ce-card, .ce-sample { padding: 14px; }
+  .ce-pick kbd { display: none; }
+  .ce-chain.is-fork { gap: 30px 8px; }
+  .ce-chain li { padding: 8px 10px 10px; }
+}

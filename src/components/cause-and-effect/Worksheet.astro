@@ -1,0 +1,32 @@
+---
+// The Cause and Effect worksheet sections, for ActivitySections.astro: blank for students, filled in for
+// the answer key. Everything printed comes from the bank.
+import './worksheet.css';
+import { pieces, sentenceCase } from '../../lib/cause-and-effect.mjs';
+const { section, answers = false } = Astro.props;
+const LETTERS = 'abcdefgh';
+const CHAIN_LABELS = ['Cause', 'Its effect, and the next cause', 'Final effect'];
+---
+{answers && section.keyNote && <p class="worksheet-meta">{section.keyNote}</p>}
+{section.part === 'mark' && (
+  <ol class:list={['ce-sheet-mark', { 'key-answers': answers }]}>
+    {section.items.map(item => answers
+      ? <li>{pieces(item).map(piece => piece.kind === 'cause' ? <u>{piece.text}</u> : piece.kind === 'effect' ? <span class="ce-sheet-ring">{piece.text}</span> : piece.kind === 'signal' ? <strong>{piece.text}</strong> : piece.text)}</li>
+      : <li>{item.text}</li>)}
+  </ol>
+)}
+{section.part === 'match' && (
+  <div class="ce-sheet-match">
+    <ol>
+      {section.items.map((item, i) => <li>{answers ? <strong class="sort-answer">{LETTERS[section.order.indexOf(i)]}</strong> : <span class="sort-blank" aria-hidden="true"></span>} {sentenceCase(item.cause)}</li>)}
+    </ol>
+    <ol type="a">
+      {section.order.map(i => <li>{sentenceCase(section.items[i].effect)}</li>)}
+    </ol>
+  </div>
+)}
+{section.part === 'chain' && (
+  <ol class:list={['ce-sheet-chain', { 'key-answers': answers }]}>
+    {CHAIN_LABELS.map((label, i) => <li><span class="ce-sheet-chain-label">{label}</span>{answers && section.item.events[i]}</li>)}
+  </ol>
+)}
