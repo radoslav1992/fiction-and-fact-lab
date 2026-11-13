@@ -1,0 +1,24 @@
+/* The Context Clues worksheet and its answer key. */
+.cc-sheet { padding-left: 1.6em; columns: 2 320px; column-gap: 34px; }
+.cc-sheet li { margin-bottom: 14px; break-inside: avoid; }
+.cc-sheet p { margin: 0; }
+.cc-sheet-line { display: flex; align-items: flex-end; gap: 8px; margin-top: 4px; font-size: .95rem; }
+.cc-sheet-line span { flex: 1; min-width: 60px; height: 1.7em; border-bottom: 1px solid var(--rule-strong); }
+.cc-sheet-answer { font-size: .95rem; color: var(--muted); }
+.cc-sheet u { text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.cc-sheet-signal { text-decoration-style: dotted; }
+.cc-sheet-types { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 26px; padding: 0; margin: 6px 0 0; list-style: none; }
+.cc-sheet-types li { display: flex; align-items: flex-end; gap: 8px; margin: 0; }
+.cc-sheet-types span { flex: 1; height: 1.7em; border-bottom: 1px solid var(--rule-strong); }
+
+@media print {
+  .cc-sheet { columns: 2; margin: 2px 0 4px; }
+  .cc-sheet li { margin-bottom: 7px; }
+  .cc-sheet-line { margin-top: 0; font-size: 9pt; }
+  .cc-sheet-line span { height: 6.2mm; border-color: #999; }
+  .cc-sheet-answer { font-size: 8.5pt; color: #222; }
+  .cc-sheet.key-answers li { margin-bottom: 4px; }
+  .cc-sheet u { text-decoration-thickness: 1.2px; text-underline-offset: 2px; }
+  .cc-sheet-types { gap: 2px 20px; grid-template-columns: repeat(4, 1fr); margin-top: 2px; }
+  .cc-sheet-types span { height: 6.2mm; border-color: #999; }
+}

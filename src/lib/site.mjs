@@ -8,5 +8,5 @@ export const site = {
   // no analytics cookies are set and the cookie banner stays hidden.
   analyticsId: 'G-5YF12LL7N3',
   defaultTitle: 'Fiction & Fact Library: Free Reading Tools for Classrooms',
-  defaultDescription: 'Free reading tools for grades 2–8: check the reading level of any text and practice telling fact from opinion, with printable worksheets. No sign-up.',
+  defaultDescription: 'Free reading tools for grades 2–8: plot diagrams, fact or opinion, parts of speech, fables, a reading level checker and more, with worksheets.',
 };

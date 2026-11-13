@@ -5,11 +5,11 @@ import LearningApps from '../components/LearningApps.astro';
 import Faq from '../components/Faq.astro';
 import { site } from '../lib/site.mjs';
 import { flagship } from '../lib/learning-apps.mjs';
-import { tools, toolCount, ToolCount } from '../lib/labs.mjs';
+import { tools, toolGroups, toolCount, ToolCount } from '../lib/labs.mjs';
 
 const faq: [string, string][] = [
   ['What is Fiction & Fact Library?', 'A set of free reading tools for students in grades 2 to 8 (ages about 7 to 14) and their teachers. Each tool is something to do, not just something to read, and each comes with a printable worksheet and a teacher answer key.'],
-  ['What can I do here?', `There are ${toolCount} tools. ${tools.map(tool => `${tool.name}: ${tool.blurb}`).join(' ')}`],
+  ['What can I do here?', `There are ${toolCount} tools. ${toolGroups.map(group => `${group.name}: ${group.tools.map(tool => tool.name).join(', ')}.`).join(' ')} Each one gives feedback as you go and has a printable worksheet.`],
   ['What happened to the audiobooks?', 'They are still here, under Listen. The catalogue, the player and your saved shelf work as before, and books you saved or started on this device are still there.'],
   ['Is it free? Do students need to sign up?', 'Everything is free, with no accounts, logins or downloads. The tools run in the browser on Chromebooks, tablets, laptops and phones.'],
   ['Are there ads?', 'No. The site shows no ads of any kind.'],
@@ -26,10 +26,9 @@ const faq: [string, string][] = [
       <div>
         <span class="eyebrow">{site.name}</span>
         <h1>Free reading tools for <span class="hl">classrooms</span></h1>
-        <p class="lede">Hands-on reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers. Check how hard a text is to read, or practice telling a fact from an opinion. Each tool runs in the browser, needs no sign-up and comes with a printable worksheet.</p>
-        <div class="page-actions">
-          <a class="btn primary" href="/tools/reading-level/">Check a reading level</a>
-          <a class="btn primary" href="/tools/fact-or-opinion/">Play Fact or Opinion</a>
+        <p class="lede">Hands-on reading and English tools for students in grades 2–8 (ages about 7–14) and their teachers. Build a plot diagram, sort facts from opinions, tag the parts of speech or check how hard a text is to read. Each tool runs in the browser, needs no sign-up and comes with a printable worksheet.</p>
+        <div class="page-actions hero-actions">
+          <a class="btn primary" href="/tools/">See all {toolCount} tools</a>
           <a class="btn" href="/teachers/">For teachers</a>
         </div>
         <p class="muted">From the makers of <a href={flagship.url + '/'}>{flagship.name}</a>.</p>
@@ -40,16 +39,22 @@ const faq: [string, string][] = [
     <section class="section" aria-labelledby="tools">
       <span class="eyebrow">{ToolCount} reading tools</span>
       <h2 id="tools">Tools to try</h2>
-      <div class="tool-cards">
-        {tools.map(tool => (
-          <div class="card">
-            <span class="eyebrow">{tool.kind}</span>
-            <h3>{tool.name}</h3>
-            <p>{tool.blurb}</p>
-            <p class="page-actions"><a class="btn primary" href={`/tools/${tool.slug}/`}>Open the tool<span class="visually-hidden">: {tool.name}</span></a> <a class="btn" href={`/tools/${tool.slug}/activity/`}>Worksheet<span class="visually-hidden">: {tool.name}</span></a></p>
-          </div>
-        ))}
-      </div>
+      {toolGroups.map(group => (
+        <div class="tool-group">
+          <h3 class="tool-group-title">{group.name}</h3>
+          <p class="muted tool-group-about">{group.about}</p>
+          <ul class="tool-list">
+            {group.tools.map(tool => (
+              <li class="card">
+                <span class="eyebrow">{tool.topic}</span>
+                <h4><a href={`/tools/${tool.slug}/`}>{tool.name}</a></h4>
+                <p>{tool.blurb}</p>
+                <p class="tool-list-links"><a href={`/tools/${tool.slug}/activity/`}>Worksheet<span class="visually-hidden">: {tool.name}</span></a></p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </section>
 
     <section class="section" aria-labelledby="listen">

@@ -1,0 +1,163 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import FigurativeLanguageGame from '../../../components/figurative-language/FigurativeLanguageGame.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { DEVICES, LEVELS, LEVEL_DEVICES, ROUND_LENGTH, ITEMS, itemById, itemsFor, deviceById } from '../../../lib/figurative-language.mjs';
+import { revealHtml } from '../../../lib/figurative-language-view.mjs';
+
+const title = 'Figurative Language Game: Simile, Metaphor & More';
+const description = 'Free figurative language game for grades 3–8: spot similes, metaphors, personification, hyperbole and idioms. Every answer is explained, with examples.';
+const url = new URL('/tools/figurative-language/', Astro.site).href;
+
+const item = (id: string) => itemById(id);
+const quote = (text: string) => text.replace(/\.$/, '');
+// Everything quoted on this page comes straight from the game's bank.
+const figurative = DEVICES.filter(device => device.id !== 'literal');
+const literal = deviceById('literal');
+const example = (device, n = 0) => item(device.examples[n]);
+const lakeLiteral = item('a26'), lakeSimile = item('a02'), lakeMetaphor = item('a21');
+const moonSimile = item('a04'), sunMetaphor = item('a22');
+const likeTrap = item('a23'), asTrap = item('a24'), isTrap = item('a25');
+const moon = item('b17'), snow = item('a12'), wait = item('b25'), beans = item('c01'), blueMoon = item('c07'), carla = item('c18'), bang = item('c24');
+const names = (ids: string[]) => ids.map(id => deviceById(id).name.toLowerCase());
+const countWord = (n: number) => ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][n] ?? String(n);
+const andList = (words: string[]) => `${words.slice(0, -1).join(', ')} and ${words.at(-1)}`;
+
+const faq: [string, string][] = [
+  ['What is figurative language?', `Figurative language is a way of using words so that they mean more than they say. ${literal.about} Figurative language bends that rule to paint a picture: “${quote(lakeLiteral.text)}” is literal, and “${quote(lakeSimile.text)}” is figurative.`],
+  ['What is the difference between a simile and a metaphor?', `Both compare two different things. ${deviceById('simile').about} ${deviceById('metaphor').about} Simile: “${quote(lakeSimile.text)}.” Metaphor: “${quote(lakeMetaphor.text)}.”`],
+  ['What are some examples of similes and metaphors?', `Similes: “${quote(example(deviceById('simile')).text)}” and “${quote(moonSimile.text)}.” Metaphors: “${quote(snow.text)}” and “${quote(sunMetaphor.text)}.” The game has ${itemsFor(1, 'simile').length + itemsFor(2, 'simile').length + itemsFor(3, 'simile').length} similes and ${itemsFor(1, 'metaphor').length + itemsFor(2, 'metaphor').length + itemsFor(3, 'metaphor').length} metaphors to practice on.`],
+  ['What is personification?', `${deviceById('personification').about} In “${quote(moon.text)},” the moon smiles. ${moon.why}`],
+  ['What is hyperbole?', `${deviceById('hyperbole').about} In “${quote(wait.text)},” ${wait.why[0].toLowerCase()}${wait.why.slice(1)}`],
+  ['What is an idiom?', `${deviceById('idiom').about} In “${quote(beans.text)},” nobody is spilling real beans. ${beans.why} You learn idioms the way you learn new words: by meeting them and finding out what they mean.`],
+  ['Are alliteration and onomatopoeia figurative language?', 'Strictly speaking, they are sound devices: they play with the sounds of words, not with their meanings. Schools usually teach them together with similes and metaphors, and many charts of figurative language include them, so Level 3 of the game does too.'],
+  ['Can a sentence use more than one kind of figurative language?', 'Yes. Writers mix them all the time. “As busy as a bee” is a simile, it repeats the “b” sound, and it is such a well-worn phrase that some people call it an idiom. To keep one right answer for each question, every sentence in the game was written to show a single kind.'],
+  ['Which grades is the Figurative Language Game for?', `Grades 3 to 8, which is ages about 8 to 14. ${LEVELS.map(level => `${level.name} is for ${level.grades.toLowerCase()}`).join(', ')}. Anyone who is new to the idea can start at Level 1.`],
+  ['Can the whole class play the same round? Are scores saved?', `Yes to the first. When a round ends, the results screen shows a link with the round number in it, and everyone who opens it gets the same ${ROUND_LENGTH} questions in the same order. Your best score for each level is kept in your own browser. It is never sent to us, there is no sign-in and there are no ads.`],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Figurative Language Game',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 3–8, ages 8–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Figurative Language" crumbs={[['Figurative Language Game']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Sorting game · Figurative language</span>
+      <h1><span class="h1-line"><span class="hl">Figurative</span></span> <span class="h1-line">Language Game</span></h1>
+      <p class="lede">Read a sentence and name the kind of figurative language in it: simile, metaphor, personification, hyperbole, idiom and more. This free game has three levels for grades 3–8 and shows you the signal words after every answer.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/figurative-language/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <FigurativeLanguageGame />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/figurative-language/activity/', name: 'Figurative Language Worksheet', text: 'One printable page: label ten sentences, write a simile and a metaphor, explain two idioms.' },
+      { href: '/tools/fiction-or-nonfiction/', name: 'Fiction or Nonfiction Game', text: 'Sort passages and book descriptions, then name the genre.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section prose">
+      <h2>What is figurative language?</h2>
+      <p><strong>{literal.about}</strong> “{lakeLiteral.text}” tells you about the lake in plain words.</p>
+      <p><strong>Figurative language uses words in a way that is not exactly true, to put a picture, a feeling or a sound in the reader’s mind.</strong> “{lakeSimile.text}” A lake is not glass, but now you can see how still the water was.</p>
+      <p>Writers use figurative language because it says a lot in a few words. Readers need to spot it so that they do not take it the wrong way: nobody in the game really waits in line for a hundred years.</p>
+    </section>
+
+    <section class="section">
+      <h2>The {countWord(figurative.length)} kinds in the game, with examples</h2>
+      <div class="fl-devices">
+        {figurative.map(device => (
+          <div class="card">
+            <h3>{device.name}</h3>
+            <p>{device.about}</p>
+            <p><strong>Signal:</strong> {device.signal}</p>
+            <ul>{device.examples.map(id => <li set:html={revealHtml(item(id))} />)}</ul>
+          </div>
+        ))}
+      </div>
+      <p class="prose" style="margin-top:18px">The marked words are the signal in each sentence. In the game they are marked the same way after you answer.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>Simile vs metaphor</h2>
+      <p>Similes and metaphors do the same job. Both compare two different things to show how they are alike. The difference is in how they say it.</p>
+      <ul>
+        <li><strong>A simile says one thing is like another.</strong> It uses the word “like” or “as”. <span class="fl-example" set:html={revealHtml(lakeSimile)} /></li>
+        <li><strong>A metaphor says one thing is another.</strong> It leaves out “like” and “as”. <span class="fl-example" set:html={revealHtml(lakeMetaphor)} /></li>
+      </ul>
+      <p>Here is another pair. Simile: <span class="fl-example" set:html={revealHtml(moonSimile)} /> Metaphor: <span class="fl-example" set:html={revealHtml(sunMetaphor)} /></p>
+      <h3>Check that a comparison is there at all</h3>
+      <p>The words “like” and “as” have other jobs too. In “{quote(likeTrap.text)},” the word “like” means “enjoy”. In “{quote(asTrap.text)},” the word “as” names a job. Neither sentence compares two things, so neither is a simile.</p>
+      <p>In the same way, “is a” does not always make a metaphor. “{isTrap.text}” {isTrap.why} A metaphor says something that cannot be literally true: snow is not really a blanket.</p>
+      <p>A simile also needs two different kinds of things. “My sister looks like my mother” compares two people, so it is a plain, literal comparison.</p>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>How to tell them apart</h2>
+        <p>Ask these questions about the sentence. The one you can answer “yes” names the kind of figurative language.</p>
+      </div>
+      <div class="table-wrap fl-tell">
+        <table>
+          <thead><tr><th scope="col">Kind</th><th scope="col">Ask yourself</th><th scope="col">Signal</th><th scope="col">Example from the game</th></tr></thead>
+          <tbody>
+            {figurative.map(device => <tr><th scope="row">{device.name}</th><td>{device.ask}</td><td>{device.signal}</td><td set:html={revealHtml(example(device))} /></tr>)}
+            <tr><th scope="row">{literal.name}</th><td>{literal.ask}</td><td>{literal.signal}</td><td set:html={revealHtml(lakeLiteral)} /></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>Common mistakes</h2>
+      <ul>
+        <li><strong>“It has ‘like’ in it, so it is a simile.”</strong> Check what “like” is doing. “{quote(likeTrap.text)}” has no comparison in it.</li>
+        <li><strong>“It says ‘is’, so it is a metaphor.”</strong> “{quote(isTrap.text)}” is simply true. A metaphor calls a thing something it is not.</li>
+        <li><strong>Mixing up metaphor and personification.</strong> A metaphor calls one thing another thing: “{snow.text}” Personification makes a thing act like a person: “{moon.text}”</li>
+        <li><strong>Calling hyperbole a lie.</strong> A lie is meant to fool someone. Hyperbole fools nobody: “{wait.text}”</li>
+        <li><strong>Reading an idiom word by word.</strong> “{quote(beans.text)}” has nothing to do with beans. {beans.why}</li>
+        <li><strong>Matching letters when alliteration is about sounds.</strong> “City” and “cat” begin with the same letter but not the same sound. In “{quote(carla.text)},” six words begin with the hard “c” sound.</li>
+        <li><strong>Thinking any word about sound is onomatopoeia.</strong> In “{quote(bang.text)},” the word “loud” describes a sound, but only “bang” imitates one.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>How the game works</h2>
+      <ul>
+        {LEVELS.map(level => <li><strong>{level.name} ({level.grades.toLowerCase()}, {level.ages}).</strong> {level.about}</li>)}
+      </ul>
+      <p>Every round has {ROUND_LENGTH} questions, picked at random from the level’s bank. Level 1 mixes {andList(names(LEVEL_DEVICES[1]))} sentences. Level 2 mixes {andList(names(LEVEL_DEVICES[2]))}. A Level 3 round has one sentence for each of the {countWord(LEVEL_DEVICES[3].length)} kinds, plus three “what does it mean?” questions about idioms and hyperbole. Each right answer is one point, and the streak counts right answers in a row.</p>
+      <p>The bank has {ITEMS.length} sentences, all written for this site. The idioms are common English idioms, used the way people use them.</p>
+      <h3>What the game leaves out</h3>
+      <p>Real writing is messier than a game. One sentence can hold two or three kinds of figurative language at once, and readers can fairly disagree about which matters most. A simile can also be an exaggeration, and a metaphor can make a thing act like a person. Every sentence here was written to show one kind clearly, so that there is one right answer. When you meet figurative language in a book, expect it to be mixed, and ask what picture the writer wanted you to see.</p>
+      <p class="note">If you think an answer in the game is wrong, please <a href={`mailto:${site.contactEmail}`}>tell us</a>.</p>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/figurative-language/activity/">figurative language worksheet</a> takes about 15 minutes and prints on one page. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+      <LinkSnippet url={url} name="Figurative Language Game" />
+    </section>
+  </div>
+</Layout>

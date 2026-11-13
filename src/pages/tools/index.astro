@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { tools } from '../../lib/labs.mjs';
+import { tools, toolGroups, toolCount } from '../../lib/labs.mjs';
 import { activities } from '../../lib/activities.mjs';
 
 const title = 'Reading Tools: Free Interactive Practice for Grades 2–8';
@@ -21,23 +21,29 @@ const itemList = {
     <div class="page-intro">
       <span class="eyebrow">All tools</span>
       <h1>Reading tools for grades 2–8</h1>
-      <p class="lede">Free tools for reading and English lessons. Each one is something students do, with feedback as they go, and each comes with a one-page worksheet and an answer key.</p>
+      <p class="lede">{toolCount[0].toUpperCase() + toolCount.slice(1)} free tools for reading and English lessons, in four groups. Each one is something students do, with feedback as they go, and each comes with a one-page worksheet and an answer key.</p>
     </div>
 
-    <section class="section tool-cards" aria-label="Tools">
-      {tools.map(tool => {
-        const act = activityFor(tool.slug);
-        return (
-          <article class="card">
-            <span class="eyebrow">{tool.kind}</span>
-            <h2><a href={`/tools/${tool.slug}/`}>{tool.name}</a></h2>
-            <p>{tool.blurb}</p>
-            {act && <p class="muted tool-meta">{act.grade} · {act.minutes}-minute classroom activity · Common Core {act.standards.join(', ')}</p>}
-            <p class="page-actions"><a class="btn primary" href={`/tools/${tool.slug}/`}>Open the tool<span class="visually-hidden">: {tool.name}</span></a>{act && <a class="btn" href={`/tools/${tool.slug}/activity/`}>Worksheet<span class="visually-hidden">: {act.title}</span></a>}</p>
-          </article>
-        );
-      })}
-    </section>
+    {toolGroups.map(group => (
+      <section class="section tool-group" aria-labelledby={`group-${group.id}`}>
+        <h2 id={`group-${group.id}`}>{group.name}</h2>
+        <p class="muted tool-group-about">{group.about}</p>
+        <div class="tool-cards">
+          {group.tools.map(tool => {
+            const act = activityFor(tool.slug);
+            return (
+              <article class="card">
+                <span class="eyebrow">{tool.kind}</span>
+                <h3><a href={`/tools/${tool.slug}/`}>{tool.name}</a></h3>
+                <p>{tool.blurb}</p>
+                {act && <p class="muted tool-meta">{act.grade} · {act.minutes}-minute classroom activity · Common Core {act.standards.join(', ')}</p>}
+                <p class="page-actions"><a class="btn primary" href={`/tools/${tool.slug}/`}>Open the tool<span class="visually-hidden">: {tool.name}</span></a>{act && <a class="btn" href={`/tools/${tool.slug}/activity/`}>Worksheet<span class="visually-hidden">: {act.title}</span></a>}</p>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    ))}
 
     <section class="section prose">
       <h2>For teachers</h2>

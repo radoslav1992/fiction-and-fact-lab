@@ -1,0 +1,97 @@
+---
+// One page per fable: the full text (rendered on the server), the read-aloud player, the words to know, the
+// questions and a prompt to talk about. The page's own print styles turn it into a one-page sheet.
+import Layout from '../../../layouts/Layout.astro';
+import FableReader from '../../../components/fables/FableReader.astro';
+import FableQuiz from '../../../components/fables/FableQuiz.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import { site } from '../../../lib/site.mjs';
+import { FABLES, SAYINGS, QUIZ_LENGTH_WORD, titleLines, nextFable, fablePath, pageTitle, pageDescription, storyText, wordCount, minutesLabel, minutesIso } from '../../../lib/fables.mjs';
+
+export function getStaticPaths() {
+  return FABLES.map(fable => ({ params: { fable: fable.slug }, props: { fable } }));
+}
+const { fable } = Astro.props;
+const next = nextFable(fable);
+const lines = titleLines(fable.title);
+const url = new URL(fablePath(fable), Astro.site).href;
+const hubUrl = new URL('/tools/fables/', Astro.site).href;
+const host = new URL(site.url).hostname;
+const listOf = (items: string[]) => items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
+const saying = SAYINGS.find(item => item.fable === fable.slug);
+const organization = { '@type': 'Organization', name: site.name, url: site.url + '/' };
+
+// The text is this site's own retelling of a traditional fable, so the site is the author of the wording
+// and Aesop is credited as the source of the story.
+const work = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: fable.title,
+  headline: fable.title,
+  genre: 'Fable',
+  description: fable.summary,
+  text: storyText(fable),
+  url,
+  inLanguage: 'en',
+  isAccessibleForFree: true,
+  author: organization,
+  publisher: organization,
+  creditText: `Retold for ${site.name}. Traditional fable credited to Aesop.`,
+  isBasedOn: { '@type': 'CreativeWork', name: `${fable.title} (traditional fable)`, genre: 'Fable', author: { '@type': 'Person', name: 'Aesop' } },
+  isPartOf: { '@type': 'WebApplication', name: 'Fables Read-Along', url: hubUrl },
+  educationalLevel: 'Elementary school (grades 2–5, ages 7–11)',
+  learningResourceType: 'Read-along story with comprehension questions',
+  timeRequired: minutesIso(fable),
+};
+---
+<Layout title={pageTitle(fable)} description={pageDescription(fable)} section="Fables" crumbs={[['Fables Read-Along', '/tools/fables/'], [fable.title]]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(work)} />
+  <article class="wrap fb-page">
+    <div class="breadcrumb no-print" style="padding-top:22px"><a href="/tools/fables/">Fables Read-Along</a> / Fable {fable.number} of {FABLES.length}</div>
+    <header class="page-intro" style="padding-top:0">
+      <div>
+        <span class="eyebrow">Aesop’s fable · {fable.theme}</span>
+        <h1><span class="h1-line">{lines[0]}</span> <span class="h1-line">{lines[1]}</span></h1>
+      </div>
+      <div class="name-lines fb-print-only" aria-hidden="true"><span>Name</span><span>Class</span><span>Date</span></div>
+      <p class="lede">{fable.summary}</p>
+      <p class="fb-meta">{wordCount(fable)} words · {minutesLabel(fable)} read aloud · {fable.characters.length === 1 ? 'Character' : 'Characters'}: {listOf(fable.characters)}</p>
+      <div class="page-actions no-print">
+        <button class="btn" type="button" data-print>Print this fable</button>
+        <ClassroomShare url={url} />
+      </div>
+    </header>
+
+    <FableReader fable={fable} />
+
+    <section class="fb-block" aria-labelledby="fb-words">
+      <h2 id="fb-words">Words to know</h2>
+      <dl class="fb-vocab">
+        {fable.vocabulary.map(item => <div><dt>{item.word}</dt><dd>{item.meaning}</dd></div>)}
+      </dl>
+    </section>
+
+    <FableQuiz fable={fable} />
+
+    <section class="fb-block fb-talk" aria-labelledby="fb-talk">
+      <h2 id="fb-talk">Talk about it</h2>
+      <p class="fb-prompt">{fable.discussion}</p>
+      <div class="write-lines fb-print-only" aria-hidden="true"><span></span><span></span><span></span></div>
+    </section>
+
+    <NextLabs heading="Keep going" items={[
+      { href: fablePath(next), name: `Next fable: ${next.title}`, text: next.summary },
+      { href: '/tools/fables/', name: 'All ten fables', text: 'Choose another fable, and see what a fable and a moral are.' },
+      { href: '/tools/fables/activity/', name: 'Fable worksheet', text: 'One printable page with a fable, questions and a new ending to write.' },
+    ]} />
+
+    <section class="section prose fb-screen-only">
+      <h2>About this fable</h2>
+      <p>{fable.title} is a traditional fable credited to Aesop, a storyteller who is said to have lived in ancient Greece. This version was retold for {site.name} in our own words. It keeps the traditional story and ends with its moral: “{fable.moral}”</p>
+      {saying && <p>The saying “{saying.saying}” comes from this fable. It means: {saying.meaning}</p>}
+      <p>A good way to use this page: listen once and follow the highlighted sentence with your eyes. Then read the fable aloud yourself, and answer the {QUIZ_LENGTH_WORD} questions. If the moral is hard to put into words, <a href="/tools/fables/#find-the-moral">these four questions</a> help.</p>
+    </section>
+    <p class="fb-foot fb-print-only">Free from {site.name} · {host}{fablePath(fable)} · Retold from the traditional fable credited to Aesop.</p>
+  </article>
+</Layout>

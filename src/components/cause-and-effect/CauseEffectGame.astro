@@ -1,0 +1,71 @@
+---
+// The Cause and Effect Game. The level picker and one worked sentence are rendered here; game.ts runs the
+// rounds in the browser.
+import './game.css';
+import { LEVELS, ROUND_LENGTH, itemById, explain } from '../../lib/cause-and-effect.mjs';
+import { revealHtml } from '../../lib/cause-and-effect-view.mjs';
+
+// The sentence shown on the start screen, with its answer, so the page explains itself before a round starts.
+const sample = itemById('a01');
+---
+<section class="ce" data-ce-game aria-label="Cause and Effect Game">
+  <div class="ce-start" data-screen="start">
+    <h2 id="ce-choose">Choose a level to start</h2>
+    <div class="ce-levels" role="group" aria-labelledby="ce-choose">
+      {LEVELS.map(level => (
+        <button type="button" class="ce-level" data-level={level.id}>
+          <span class="ce-level-name">{level.name}</span>
+          <span class="ce-level-grades">{level.grades} · {level.ages}</span>
+          <span class="ce-level-about">{level.about}</span>
+          <span class="ce-level-best" data-best={level.id}></span>
+        </button>
+      ))}
+    </div>
+    <div class="ce-sample">
+      <p class="ce-prompt">How a sentence looks once you have answered</p>
+      <p class="ce-statement" set:html={revealHtml(sample)} />
+      <p class="ce-sample-note">{explain({ item: sample, mode: 'cause' })}</p>
+    </div>
+    <p class="ce-help">Each round has {ROUND_LENGTH} questions. You get an explanation after every answer. On a keyboard, press <kbd>1</kbd> to <kbd>4</kbd> to choose an answer, then <kbd>Enter</kbd> for the next question. Your score stays in this browser.</p>
+    <noscript><p class="note">The game needs JavaScript. Turn it on in your browser to play, or use the examples and the printable worksheet below.</p></noscript>
+  </div>
+
+  <div class="ce-play" data-screen="play" hidden>
+    <div class="ce-bar">
+      <strong data-level-name></strong>
+      <span>Question <b data-number>1</b> of {ROUND_LENGTH}</span>
+      <span>Score <b data-score>0</b></span>
+      <span>Streak <b data-streak>0</b></span>
+      <button type="button" class="ce-quit" data-quit>Change level</button>
+    </div>
+    <ol class="ce-dots" data-dots aria-hidden="true">{Array.from({ length: ROUND_LENGTH }, () => <li />)}</ol>
+    <div class="ce-card" data-card tabindex="-1">
+      <p class="ce-prompt" data-prompt></p>
+      <p class="ce-statement" data-statement></p>
+    </div>
+    <div class="ce-picks" data-answers hidden></div>
+    <div class="ce-feedback" data-feedback hidden>
+      <p class="ce-verdict" data-verdict></p>
+      <p class="ce-why" data-why></p>
+      <div data-diagram></div>
+      <button type="button" class="btn primary" data-next>Next question</button>
+    </div>
+    <p class="visually-hidden" role="status" data-live></p>
+  </div>
+
+  <div class="ce-results" data-screen="results" hidden>
+    <h2 data-results-title tabindex="-1">Your results</h2>
+    <p class="ce-final"><strong class="ce-final-score"><span data-final>0</span> out of {ROUND_LENGTH}</strong> <span>Best streak: <b data-best-streak>0</b> in a row</span></p>
+    <p class="ce-message" data-message></p>
+    <div data-missed></div>
+    <div class="page-actions">
+      <button type="button" class="btn primary" data-again>Play a new round</button>
+      <button type="button" class="btn" data-same>Play this round again</button>
+      <button type="button" class="btn" data-levels>Choose another level</button>
+    </div>
+    <p class="ce-share">For teachers: this was round <b data-round-number></b>. Everyone who opens this link gets the same {ROUND_LENGTH} questions: <a data-round-link href="/tools/cause-and-effect/"></a></p>
+  </div>
+</section>
+<script>
+  import './game.ts';
+</script>

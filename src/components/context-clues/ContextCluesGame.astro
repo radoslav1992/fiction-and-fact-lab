@@ -1,0 +1,73 @@
+---
+// The Context Clues Game. The level picker and one worked sentence are rendered here; game.ts runs the
+// rounds in the browser.
+import './game.css';
+import { LEVELS, ROUND_LENGTH, itemById, meaningSentence, clueNote } from '../../lib/context-clues.mjs';
+import { revealHtml, typeTagHtml } from '../../lib/context-clues-view.mjs';
+
+// The sentence shown on the start screen, with its answer, so the page explains itself before a round starts.
+const sample = itemById('a01');
+---
+<section class="cc" data-cc-game aria-label="Context Clues Game">
+  <div class="cc-start" data-screen="start">
+    <h2 id="cc-choose">Choose a level to start</h2>
+    <div class="cc-levels" role="group" aria-labelledby="cc-choose">
+      {LEVELS.map(level => (
+        <button type="button" class="cc-level" data-level={level.id}>
+          <span class="cc-level-name">{level.name}</span>
+          <span class="cc-level-grades">{level.grades} · {level.ages}</span>
+          <span class="cc-level-about">{level.about}</span>
+          <span class="cc-level-best" data-best={level.id}></span>
+        </button>
+      ))}
+    </div>
+    <div class="cc-sample">
+      <p class="cc-prompt">How a sentence looks once you have answered</p>
+      <p class="cc-sentence" set:html={revealHtml(sample)} />
+      <p class="cc-sample-note">The word on yellow is the one to work out. The underlined words are the clue. {meaningSentence(sample)} <Fragment set:html={typeTagHtml(sample.type)} /> {clueNote(sample)}</p>
+    </div>
+    <p class="cc-help">Each round has {ROUND_LENGTH} sentences. You get the meaning, the clue and one more sentence after every answer. On a keyboard, press <kbd>1</kbd> to <kbd>5</kbd> to choose an answer, then <kbd>Enter</kbd> for the next sentence. Your score stays in this browser.</p>
+    <noscript><p class="note">The game needs JavaScript. Turn it on in your browser to play, or use the examples and the printable worksheet below.</p></noscript>
+  </div>
+
+  <div class="cc-play" data-screen="play" hidden>
+    <div class="cc-bar">
+      <strong data-level-name></strong>
+      <span>Sentence <b data-number>1</b> of {ROUND_LENGTH}</span>
+      <span>Score <b data-score>0</b></span>
+      <span>Streak <b data-streak>0</b></span>
+      <button type="button" class="cc-quit" data-quit>Change level</button>
+    </div>
+    <ol class="cc-dots" data-dots aria-hidden="true">{Array.from({ length: ROUND_LENGTH }, () => <li />)}</ol>
+    <div class="cc-card" data-card tabindex="-1">
+      <p class="cc-prompt" data-prompt></p>
+      <p class="cc-sentence" data-sentence></p>
+    </div>
+    <div class="cc-options" data-answers="options" hidden></div>
+    <div class="cc-words" data-answers="words" hidden></div>
+    <div class="cc-feedback" data-feedback hidden>
+      <p class="cc-verdict" data-verdict></p>
+      <p class="cc-meaning" data-meaning></p>
+      <p class="cc-note"><span data-type-tag></span> <span data-note></span></p>
+      <p class="cc-again"><span class="cc-again-label">One more sentence</span> <span data-again></span></p>
+      <button type="button" class="btn primary" data-next>Next sentence</button>
+    </div>
+    <p class="visually-hidden" role="status" data-live></p>
+  </div>
+
+  <div class="cc-results" data-screen="results" hidden>
+    <h2 data-results-title tabindex="-1">Your results</h2>
+    <p class="cc-final"><strong class="cc-final-score"><span data-final>0</span> out of {ROUND_LENGTH}</strong> <span>Best streak: <b data-best-streak>0</b> in a row</span></p>
+    <p class="cc-message" data-message></p>
+    <div data-missed></div>
+    <div class="page-actions">
+      <button type="button" class="btn primary" data-again-round>Play a new round</button>
+      <button type="button" class="btn" data-same>Play this round again</button>
+      <button type="button" class="btn" data-levels>Choose another level</button>
+    </div>
+    <p class="cc-share">For teachers: this was round <b data-round-number></b>. Everyone who opens this link gets the same {ROUND_LENGTH} sentences: <a data-round-link href="/tools/context-clues/"></a></p>
+  </div>
+</section>
+<script>
+  import './game.ts';
+</script>

@@ -1,0 +1,168 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PartsOfSpeechGame from '../../../components/parts-of-speech/PartsOfSpeechGame.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { PARTS, LEVELS, CONVENTIONS, SHIFTERS, SENTENCES, partById, sentenceById, sentencesFor, examplesOf } from '../../../lib/parts-of-speech.mjs';
+import { taggedHtml, chipHtml, whyListHtml } from '../../../lib/parts-of-speech-view.mjs';
+
+const title = 'Parts of Speech Game: Free Grammar Practice, Grades 2–8';
+const description = 'Free parts of speech game for grades 2–8: tap the nouns and verbs, name the highlighted word, or color a whole sentence. Every word is explained.';
+const url = new URL('/tools/parts-of-speech/', Astro.site).href;
+
+const sentence = (id: string) => sentenceById(id);
+// Worked examples, straight from the game's sentence bank.
+const deer = sentence('b28'), bell = sentence('c13'), birds = sentence('b21'), dolphin = sentence('c20'), soup = sentence('b04');
+// A sentence quoted inside another sentence loses its full stop.
+const quote = s => s.text.replace(/\.$/, '');
+const word = (s, text: string) => s.words.find(w => w.text.toLowerCase() === text);
+const names = (ids: string[]) => ids.map(id => partById(id).plural);
+const listOf = (items: string[]) => `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
+const examples = (id: string) => examplesOf(id, 5).map(example => example.word).join(', ');
+
+const faq: [string, string][] = [
+  ['What are the 8 parts of speech?', 'Most grammar books list noun, pronoun, verb, adjective, adverb, preposition, conjunction and interjection. Many school books also teach articles (a, an, the) as a group of their own. This game uses eight labels: noun, verb, adjective, adverb, pronoun, preposition, conjunction and article. It leaves out interjections, such as “wow”, because they stand apart from the rest of a sentence.'],
+  ['How do I tell what part of speech a word is?', 'Look at the job the word does in its sentence, not at the word alone. Ask what it does: does it name something (noun), tell what happens (verb), describe a noun (adjective), tell how or how often (adverb), stand in for a noun (pronoun), link a noun to the sentence (preposition) or join two parts (conjunction)? The table of tests on this page gives one quick check for each.'],
+  ['Can a word be more than one part of speech?', `Yes, many can. “${SHIFTERS[0].uses[0][1]}” uses “${SHIFTERS[0].word}” as a noun, and “${SHIFTERS[0].uses[1][1]}” uses it as a verb. That is why you have to read the whole sentence. The game leaves these words out so that every word in it has one clear answer.`],
+  ['Is “the” an adjective or an article?', 'The words a, an and the are called articles. Some grammar books count articles as a kind of adjective, and newer ones call them determiners. In this game they always get the label “article”, and they never count as adjectives.'],
+  ['Are “is” and “are” verbs?', `Yes. They are linking verbs: they link a noun to a word that tells about it, as in “${soup.text}” They can also be helping verbs. In “${quote(birds)}”, the helping verb “are” works with the main verb “singing”, and the game tags both words as verbs.`],
+  ['What is the difference between an adjective and an adverb?', `An adjective describes a noun, and an adverb tells more about a verb, an adjective or another adverb. In “${quote(deer)}”, the adjective “shy” describes the deer, and the adverb “quickly” tells how it ran. Many adverbs end in -ly, but not every -ly word is an adverb: “friendly” is an adjective.`],
+  ['Is “my” a pronoun or an adjective?', 'Grammar books do not agree. Words such as my, your, his and her before a noun are called possessive adjectives, possessive pronouns or possessive determiners, depending on the book. Because there is no single answer, the game does not use them. Follow the name your own class uses.'],
+  ['Which grades is the Parts of Speech Game for?', `Grades 2 to 8, which is ages about 7 to 14. ${LEVELS.map(level => `${level.name} is for ${level.grades.toLowerCase()}`).join(', ')}. Older students who are new to grammar can start at Level 1.`],
+  ['Is there a parts of speech worksheet?', 'Yes. The free printable parts of speech worksheet has eight sentences to mark, twelve words to sort into a table and two sentences to write to a pattern, all on one page. The answer key is on the For teachers page.'],
+  ['Can the whole class play the same round? Are scores saved?', 'When a round ends, the results screen shows a link with the round number in it. Everyone who opens that link gets the same sentences in the same order. No sign-in is needed. Your best score for each level is kept in your own browser and is never sent to us.'],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Parts of Speech Game',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Parts of Speech" crumbs={[['Parts of Speech Game']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Grammar game · Parts of speech</span>
+      <h1><span class="h1-line">Parts of <span class="hl">Speech</span></span> <span class="h1-line">Game</span></h1>
+      <p class="lede">Tap the words in a sentence and say what job each one does: noun, verb, adjective, adverb and more. This free game has three levels for grades 2–8 and gives the reason for every word after you check.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/parts-of-speech/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <PartsOfSpeechGame />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/parts-of-speech/activity/', name: 'Parts of Speech Worksheet', text: 'One printable page: mark eight sentences, sort twelve words and write two sentences.' },
+      { href: '/tools/word-builder/', name: 'Prefix and Suffix Word Builder', text: 'Build words from parts and see how a suffix can change a word’s part of speech.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section">
+      <div class="prose">
+        <h2>The eight parts of speech</h2>
+        <p>Every word in a sentence has a job. A part of speech is the name of that job. Grammar books usually list eight: noun, pronoun, verb, adjective, adverb, preposition, conjunction and interjection. This game has eight labels as well. Seven come from that list. The eighth is <strong>article</strong>, for the words a, an and the. Interjections, such as “wow” and “ouch”, are not in the game because they stand apart from the rest of a sentence.</p>
+      </div>
+      <div class="table-wrap pos-parts">
+        <table>
+          <thead><tr><th scope="col">Part of speech</th><th scope="col">What it does</th><th scope="col">Examples from the game</th></tr></thead>
+          <tbody>{PARTS.map(part => <tr><th scope="row"><Fragment set:html={chipHtml(part.id)} /></th><td>{part.definition}</td><td>{examples(part.id)}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>How to test a word</h2>
+        <p>You cannot tell a word’s part of speech by looking at the word alone. Read the whole sentence, then try a quick test.</p>
+      </div>
+      <div class="table-wrap" style="max-width:860px">
+        <table>
+          <thead><tr><th scope="col">Is it …</th><th scope="col">Try this test</th></tr></thead>
+          <tbody>{PARTS.map(part => <tr><th scope="row"><Fragment set:html={chipHtml(part.id)} /></th><td>{part.test}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <h3>A worked example</h3>
+        <p>Here is a sentence from Level 2, shown the way the game shows it after you press Check.</p>
+        <p class="pos-sentence" set:html={taggedHtml(deer)} />
+        <ul class="pos-why" style="margin-top:14px" set:html={whyListHtml({ sentence: deer, mode: 'color' })} />
+        <p>Try the tests on it. “The deer” works, so <strong>deer</strong> is a noun. “The deer ran yesterday; the deer runs today” works, so <strong>ran</strong> is a verb. “Quickly” answers “how did it run?”, so it is an adverb. After “into” comes a noun that it places, “the forest”, so <strong>into</strong> is a preposition.</p>
+        <h3>A sentence with two halves</h3>
+        <p class="pos-sentence" set:html={taggedHtml(bell)} />
+        <p style="margin-top:14px">The word “{word(bell, 'if').text}” is a conjunction: it {word(bell, 'if').why}. One half is “the bell rings” and the other is “we quietly leave the room”. Each half has its own verb.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Words that can be more than one part of speech</h2>
+        <p>Many English words change jobs from one sentence to the next. The word stays the same, but its part of speech does not. This is the main reason the question “what part of speech is this word?” can only be answered inside a sentence.</p>
+      </div>
+      <div class="table-wrap pos-shift" style="max-width:860px">
+        <table>
+          <thead><tr><th scope="col">Word</th><th scope="col">In this sentence …</th><th scope="col">it is …</th></tr></thead>
+          <tbody>
+            {SHIFTERS.flatMap(item => item.uses.map(([tag, text], i) => <tr>{i === 0 && <th scope="rowgroup" rowspan={item.uses.length}>{item.word}</th>}<td>{text}</td><td><Fragment set:html={chipHtml(tag)} /></td></tr>))}
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <h3>Words ending in -ing and -ed</h3>
+        <p>In “{quote(birds)}”, the word “singing” is a verb, working with the helping verb “are”. But in “Singing is fun”, the same word does the job of a noun, and in “the singing birds” it describes a noun. Words ending in -ed do this too: “She closed the door” has a verb, and “the closed door” has a describing word.</p>
+        <h3>Why the game leaves these out</h3>
+        <p>A game has to mark each tap right or wrong. That is only fair when every word has one answer that any teacher would give. So none of the sentences in the game uses a word in an unusual job, and none of the examples in the table above is in the game. When you meet words like these in your own reading, use the tests and read the whole sentence.</p>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>The choices this game makes</h2>
+      <p>Grammar books do not agree on everything. Where they differ, the game picks one answer and keeps to it. If your class uses different names, follow your class.</p>
+      <ul>{CONVENTIONS.map(line => <li>{line}</li>)}</ul>
+      <p>The game also leaves out “to” before a verb (“to run”), nouns that describe other nouns (“apple pie”), verbs made of two words (“give up”) and short forms such as “don’t”.</p>
+    </section>
+
+    <section class="section prose">
+      <h2>Common mistakes</h2>
+      <ul>
+        <li><strong>“It ends in -ly, so it is an adverb.”</strong> Usually, but not always. In “{quote(dolphin)}”, the word “friendly” describes the dolphin, so it is an adjective.</li>
+        <li><strong>“Nothing is happening, so there is no verb.”</strong> In “{quote(soup)}”, nobody does anything, but “was” is still the verb. It links the soup to “hot”.</li>
+        <li><strong>Calling “very” an adjective.</strong> “Very” does not describe the soup. It tells how hot, so it is an adverb.</li>
+        <li><strong>Missing the helping verb.</strong> In “{quote(birds)}”, there are two verbs, “are” and “singing”. Tap both.</li>
+        <li><strong>Mixing up pronouns and nouns.</strong> “{word(deer, 'deer').text}” names an animal, so it is a noun. “It” would stand in for that name, so “it” is a pronoun.</li>
+        <li><strong>Deciding from the word alone.</strong> Many words have more than one job. Always read the sentence first.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>How the game works</h2>
+      <ul>
+        {LEVELS.map(level => <li><strong>{level.name} ({level.grades.toLowerCase()}, {level.ages}).</strong> {level.about} A round has {level.length} sentences.</li>)}
+      </ul>
+      <p>The game has {SENTENCES.length} sentences: {LEVELS.map(level => `${sentencesFor(level.id).length} at ${level.name.toLowerCase()}`).join(', ')}. Level 1 asks about {listOf(names(LEVELS[0].asks))}. Level 2 asks about {listOf(names(LEVELS[1].asks))}. Level 3 asks about all eight labels.</p>
+      <p>A sentence counts as right when every tap or label in it is right. After each one you see the whole sentence with every word labelled, and the reason for each label. The results screen adds up how you did on each part of speech and tells you which one to practice next.</p>
+      <p class="note">Every word in the game was tagged by hand and checked. If you think a label is wrong, please <a href={`mailto:${site.contactEmail}`}>tell us</a>.</p>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/parts-of-speech/activity/">parts of speech worksheet</a> takes about 20 minutes and prints on one page. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+      <LinkSnippet url={url} name="Parts of Speech Game" />
+    </section>
+  </div>
+</Layout>

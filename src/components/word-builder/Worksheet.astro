@@ -1,0 +1,38 @@
+---
+// The Word Builder worksheet's own section types, used by ActivitySections.astro for both the student
+// worksheet and the answer key:
+//   wb-break: words to write as their parts.   wb-build: a part bank and meanings to build words for.
+//   wb-match: prefixes to match to lettered meanings.
+import './worksheet.css';
+import { partsLine, changeLine } from '../../lib/word-builder.mjs';
+const { section, answers = false } = Astro.props;
+---
+{section.type === 'wb-break' && (
+  <ol class:list={['wb-ws-list', { 'key-answers': answers }]}>
+    {section.items.map(word => answers
+      ? <li><strong>{word.word}</strong> = {partsLine(word)} <span class="sort-why">{word.definition[0].toUpperCase() + word.definition.slice(1)}. {word.changes.map(changeLine).join(' ')}</span></li>
+      : <li><span class="wb-ws-row"><span><strong>{word.word}</strong> =</span><span class="wb-ws-blank" aria-hidden="true"></span></span></li>)}
+  </ol>
+)}
+{section.type === 'wb-build' && (
+  <Fragment>
+    <p class="wb-ws-bank">{section.bank.map(([name, parts]) => <span><strong>{name}:</strong>{` ${parts.join(', ')}`}</span>)}</p>
+    <ol class:list={['wb-ws-list', { 'key-answers': answers }]}>
+      {section.items.map(word => answers
+        ? <li>{word.definition}: <strong>{word.word}</strong> <span class="sort-why">{partsLine(word)}</span></li>
+        : <li><span class="wb-ws-row"><span>{word.definition}:</span><span class="wb-ws-blank" aria-hidden="true"></span></span></li>)}
+    </ol>
+  </Fragment>
+)}
+{section.type === 'wb-match' && (
+  <div class="wb-ws-match">
+    <ol class:list={['wb-ws-prefixes', { 'key-answers': answers }]}>
+      {section.items.map(item => answers
+        ? <li><strong class="sort-answer">{item.letter}</strong> <strong>{item.part.label}</strong> <span class="sort-why">{item.part.meaning} ({item.examples.join(', ')})</span></li>
+        : <li><span class="sort-blank" aria-hidden="true"></span> <strong>{item.part.label}</strong></li>)}
+    </ol>
+    <ul class="wb-ws-meanings">
+      {section.meanings.map(item => <li><strong>{item.letter}</strong> {item.meaning}</li>)}
+    </ul>
+  </div>
+)}
