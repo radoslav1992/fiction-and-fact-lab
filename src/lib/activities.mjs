@@ -1,12 +1,24 @@
 // Classroom activities: one printable student worksheet per tool, plus a teacher answer key.
 // Each activity lives in ./activities/<tool>.mjs and is built from that tool's model, so a printed
 // number or answer cannot drift from what the tool shows (tests/activities.test.mjs).
-import { activity as readingLevel, standards as readingStandards } from './activities/reading-level.mjs';
-import { activity as factOrOpinion, standards as factStandards } from './activities/fact-or-opinion.mjs';
-import { activity as contextClues, standards as contextCluesStandards } from './activities/context-clues.mjs';
-import { activity as causeAndEffect, standards as causeAndEffectStandards } from './activities/cause-and-effect.mjs';
+// To add one: import its module here and add it to MODULES. The order shown is the order of the tools in labs.mjs.
+import { tools } from './labs.mjs';
+import * as readingLevel from './activities/reading-level.mjs';
+import * as factOrOpinion from './activities/fact-or-opinion.mjs';
+import * as contextClues from './activities/context-clues.mjs';
+import * as causeAndEffect from './activities/cause-and-effect.mjs';
+import * as plotDiagram from './activities/plot-diagram.mjs';
+
+const MODULES = [
+  readingLevel,
+  factOrOpinion,
+  contextClues,
+  causeAndEffect,
+  plotDiagram,
+];
 
 // Common Core ELA standards referenced by the activities, paraphrased.
-export const standards = { ...readingStandards, ...factStandards, ...contextCluesStandards, ...causeAndEffectStandards };
+export const standards = Object.assign({}, ...MODULES.map(module => module.standards));
 
-export const activities = [readingLevel, factOrOpinion, contextClues, causeAndEffect];
+const order = slug => { const at = tools.findIndex(tool => tool.slug === slug); return at < 0 ? tools.length : at; };
+export const activities = MODULES.map(module => module.activity).sort((a, b) => order(a.tool) - order(b.tool));

@@ -22,12 +22,11 @@ const ALL = [
   },
   {
     slug: 'plot-diagram',
-    live: false,
     name: 'Plot Diagram Builder',
     section: 'Plot Diagram',
     topic: 'Story structure',
     kind: 'Story mountain and plot diagram maker',
-    blurb: 'TODO',
+    blurb: 'Build the plot diagram of any story on a story mountain, from exposition to resolution, then print it or share it by link. Or practice by sorting the events of six well-known tales onto the mountain.',
   },
   {
     slug: 'fiction-or-nonfiction',

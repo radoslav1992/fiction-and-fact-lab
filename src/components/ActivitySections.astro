@@ -4,6 +4,7 @@
 import { parts, withClues, explain } from '../lib/fact-opinion.mjs';
 import ContextCluesSheet from './context-clues/Worksheet.astro';
 import CauseEffectSheet from './cause-and-effect/Worksheet.astro';
+import PlotWorksheet from './plot-diagram/PlotWorksheet.astro';
 const { act, answers = false } = Astro.props;
 ---
 {act.sections.map(section => (
@@ -50,5 +51,6 @@ const { act, answers = false } = Astro.props;
     )}
     {section.type === 'context-clues' && <ContextCluesSheet section={section} answers={answers} />}
     {section.type === 'cause-and-effect' && <CauseEffectSheet section={section} answers={answers} />}
+    {section.type === 'plot-diagram' && <PlotWorksheet section={section} answers={answers} />}
   </Fragment>
 ))}
