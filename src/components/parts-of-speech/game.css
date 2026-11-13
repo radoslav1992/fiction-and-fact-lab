@@ -1,0 +1,133 @@
+/* Parts of Speech Game. Each part of speech has one color everywhere, always shown with its written label.
+   The colors keep clear of the site's teal (fact) and pink (opinion). */
+:root {
+  --pos-noun: #1a4f9c; --pos-noun-bg: #dce8ff;
+  --pos-verb: #a11d2b; --pos-verb-bg: #ffe1e1;
+  --pos-adjective: #1d6629; --pos-adjective-bg: #d9f2d6;
+  --pos-adverb: #874600; --pos-adverb-bg: #ffe8c7;
+  --pos-pronoun: #6b2a9a; --pos-pronoun-bg: #efdfff;
+  --pos-preposition: #6b4423; --pos-preposition-bg: #f1e2d3;
+  --pos-conjunction: #3d4654; --pos-conjunction-bg: #e4e8ee;
+  --pos-article: #535800; --pos-article-bg: #edf0c0;
+}
+.pos-noun { --c: var(--pos-noun); --bg: var(--pos-noun-bg); }
+.pos-verb { --c: var(--pos-verb); --bg: var(--pos-verb-bg); }
+.pos-adjective { --c: var(--pos-adjective); --bg: var(--pos-adjective-bg); }
+.pos-adverb { --c: var(--pos-adverb); --bg: var(--pos-adverb-bg); }
+.pos-pronoun { --c: var(--pos-pronoun); --bg: var(--pos-pronoun-bg); }
+.pos-preposition { --c: var(--pos-preposition); --bg: var(--pos-preposition-bg); }
+.pos-conjunction { --c: var(--pos-conjunction); --bg: var(--pos-conjunction-bg); }
+.pos-article { --c: var(--pos-article); --bg: var(--pos-article-bg); }
+
+.pos { background: var(--card); border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; padding: 20px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.pos h2 { font-size: 1.4rem; margin: 0 0 12px; }
+.pos h2:focus-visible { outline-offset: 6px; }
+.pos h3 { margin: 18px 0 8px; }
+
+/* A label: color plus the name of the part of speech */
+.pos-chip { display: inline-block; padding: 1px 9px; border-radius: 6px; background: var(--bg); color: var(--c); box-shadow: inset 0 0 0 1.5px var(--c); font: 700 .9rem/1.5 var(--font-body); white-space: nowrap; }
+
+/* A sentence, word by word. Each word sits in a box with its label underneath. */
+.pos-sentence { display: flex; flex-wrap: wrap; gap: 10px 5px; margin: 0; font: 600 clamp(1.12rem, 3.3vw, 1.45rem)/1.3 var(--font-display); }
+.pos-slot { display: inline-flex; align-items: flex-start; }
+.pos-w { position: relative; display: inline-flex; flex-direction: column; align-items: center; gap: 1px; margin: 0; padding: 5px 7px 3px; border: 2px solid var(--c, var(--rule-strong)); border-radius: 8px; background: var(--bg, #fff); color: var(--ink); font: inherit; }
+.pos-w-tag { min-height: 1.25em; color: var(--c, var(--muted)); font: 700 .74rem/1.25 var(--font-body); letter-spacing: .02em; }
+.pos-punct { padding: 7px 0 0 1px; }
+.pos-w.is-plain { border-color: transparent; background: none; padding-left: 3px; padding-right: 3px; }
+.pos-w.is-target { border-color: var(--ink); background: var(--hl); box-shadow: 0 0 0 2px var(--ink); }
+button.pos-pick { min-width: 46px; min-height: 52px; cursor: pointer; }
+button.pos-pick:hover { background: var(--bg, var(--hl-soft)); box-shadow: 0 0 0 2px var(--hl); }
+[data-mode='tap'] .pos-pick[aria-pressed='true'] { border-color: var(--ink); background: var(--hl); box-shadow: 0 0 0 2px var(--ink); }
+[data-mode='tap'] .pos-pick[aria-pressed='true'] .pos-w-tag::before { content: 'tapped'; color: var(--ink); }
+.pos-w-mark { position: absolute; top: -9px; right: -7px; width: 20px; height: 20px; border: 2px solid var(--ink); border-radius: 50%; background: var(--ink); color: #fff; font: 700 .78rem/16px var(--font-body); text-align: center; }
+.pos-w.is-wrong .pos-w-mark { background: #fff; color: var(--ink); }
+.pos-w.is-missed .pos-w-mark { background: var(--hl); color: var(--ink); }
+.pos-w.is-wrong, .pos-w.is-missed { border-style: dashed; }
+
+/* Level picker */
+.pos-levels { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.pos-level { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-height: 44px; padding: 16px 18px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; box-shadow: 4px 4px 0 var(--hl); }
+.pos-level:hover { background: var(--hl-soft); }
+.pos-level-name { font: 700 1.4rem/1.2 var(--font-display); }
+.pos-level-grades { font-weight: 700; }
+.pos-level-about { color: var(--muted); font-size: .97rem; }
+.pos-level-best { font-size: .92rem; font-weight: 700; min-height: 1.5em; }
+.pos-example { margin-top: 20px; padding: 14px 16px 16px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; }
+.pos-example h3 { margin: 0 0 10px; font-size: 1.05rem; }
+.pos-legend { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 0; }
+.pos-help { margin: 16px 0 0; color: var(--muted); font-size: .97rem; max-width: 760px; }
+
+/* Playing */
+.pos-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; font-size: .98rem; }
+.pos-bar b { font: 700 1.2rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.pos-quit { margin-left: auto; min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.pos-quit:hover { background: var(--hl-soft); }
+.pos-dots { display: flex; gap: 6px; list-style: none; margin: 10px 0 14px; padding: 0; }
+.pos-dots li { flex: 1; height: 10px; margin: 0; border: 2px solid var(--ink); border-radius: 5px; background: var(--card); }
+.pos-dots .is-current { background: var(--hl); }
+.pos-dots .is-right { background: var(--ink); }
+.pos-dots .is-wrong { background: repeating-linear-gradient(135deg, var(--ink) 0 2px, var(--card) 2px 5px); }
+.pos-card { padding: 16px 18px 20px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; }
+.pos-card:focus-visible { outline-offset: 2px; }
+.pos-prompt { margin: 0 0 2px; font: 700 1.3rem/1.3 var(--font-display); }
+.pos-hint { margin: 0 0 14px; color: var(--muted); font-size: .97rem; }
+.pos-palette, .pos-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.pos-palette { margin: 0 0 16px; }
+.pos-choices { margin-top: 14px; }
+.pos-paint { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 6px 13px 6px 9px; border: 2px solid var(--c); border-radius: 10px; background: var(--bg); color: var(--c); font: 700 1rem/1.2 var(--font-body); cursor: pointer; }
+.pos-choices .pos-paint { flex: 1 1 130px; min-height: 54px; font-size: 1.08rem; }
+.pos-paint kbd { color: var(--ink); font-size: .78rem; }
+.pos-paint:hover:not(:disabled) { box-shadow: 0 0 0 3px var(--hl); }
+.pos-paint[aria-pressed='true'] { background: var(--c); color: #fff; box-shadow: 0 0 0 3px var(--hl), 0 0 0 5px var(--ink); }
+.pos-paint[aria-pressed='true']::after { content: '✓'; }
+.pos-paint:disabled { cursor: default; opacity: .5; }
+.pos-paint.is-answer, .pos-paint.is-chosen { opacity: 1; }
+.pos-paint.is-answer::after { content: '✓'; }
+.pos-paint.is-chosen { outline: 3px solid var(--ink); outline-offset: 3px; }
+.pos-check { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 14px; }
+.pos-check .btn { min-width: 130px; min-height: 48px; font-size: 1.1rem; }
+.pos-left { color: var(--muted); font-size: .97rem; }
+
+/* After checking */
+.pos-feedback { margin-top: 14px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.pos-verdict { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; font: 700 1.35rem/1.2 var(--font-display); }
+.pos-verdict svg { width: 28px; height: 28px; flex: none; }
+.pos-verdict.is-right span { background: linear-gradient(transparent 55%, var(--hl) 55%); }
+.pos-answer { margin: 0 0 10px; font-size: 1.05rem; }
+.pos-why { list-style: none; display: grid; gap: 5px; margin: 0 0 14px; padding: 0; }
+.pos-why li { display: flex; align-items: baseline; gap: 10px; margin: 0; padding: 3px 8px; border-radius: 8px; }
+.pos-why .pos-chip { flex: none; min-width: 6.6em; text-align: center; }
+.pos-why .is-off { background: var(--hl-soft); box-shadow: inset 4px 0 0 var(--ink); }
+.pos-note { display: block; }
+
+/* Results */
+.pos-final { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0 0 10px; font-size: 1.1rem; }
+.pos-final-score { display: inline-block; padding: 4px 18px 6px; border: 4px solid var(--ink); border-radius: 10px; background: var(--hl); font: 700 clamp(1.7rem, 5vw, 2.4rem)/1.2 var(--font-display); transform: rotate(-2deg); }
+.pos-message { font-size: 1.12rem; max-width: 760px; }
+.pos-practice { max-width: 760px; padding: 2px 16px 14px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.pos-practice p { margin: 0 0 10px; }
+.pos-tally { width: auto; }
+.pos-tally th, .pos-tally td { padding: 4px 14px 4px 0; border: 0; vertical-align: middle; }
+.pos-tally .is-practice td { font-weight: 700; }
+.pos-tally .is-practice td::after { content: ' ← practice'; }
+.pos-missed { padding-left: 1.3em; }
+.pos-missed > li { margin-bottom: 18px; }
+.pos-missed .pos-sentence { font-size: 1.1rem; margin-bottom: 6px; }
+.pos-missed p { margin: 0 0 6px; }
+.pos-missed .pos-why { margin-bottom: 0; }
+.pos-share { margin: 6px 0 0; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
+
+/* Lesson content on the page */
+.pos-parts td:first-child, .pos-parts th:first-child { white-space: nowrap; }
+.pos-table-sentence { font-size: 1rem; gap: 8px 4px; }
+.pos-shift tbody th { border-bottom: 1px solid var(--rule); }
+
+@media (max-width: 480px) {
+  .pos { padding: 14px 12px; margin: 0 -6px; }
+  .pos-card { padding: 12px 12px 16px; }
+  .pos-paint kbd { display: none; }
+  .pos-paint { padding-left: 12px; }
+  .pos-palette .pos-paint { min-height: 44px; padding: 5px 10px; font-size: .95rem; }
+  .pos-why li { flex-direction: column; gap: 2px; padding: 5px 8px; }
+  .pos-why .pos-chip { min-width: 0; }
+}

@@ -1,0 +1,78 @@
+---
+// The Parts of Speech Game. The level picker and one checked sentence are rendered here; game.ts runs the
+// rounds in the browser.
+import './game.css';
+import { LEVELS, PARTS, sentenceById } from '../../lib/parts-of-speech.mjs';
+import { taggedHtml, chipHtml, paletteHtml } from '../../lib/parts-of-speech-view.mjs';
+
+// The sentence shown before a round starts: it uses seven of the eight labels.
+const example = sentenceById('c17');
+const level2 = LEVELS[1].asks, level3 = LEVELS[2].asks;
+---
+<section class="pos" data-pos-game aria-label="Parts of Speech Game">
+  <div class="pos-start" data-screen="start">
+    <h2 id="pos-choose">Choose a level to start</h2>
+    <div class="pos-levels" role="group" aria-labelledby="pos-choose">
+      {LEVELS.map(level => (
+        <button type="button" class="pos-level" data-level={level.id}>
+          <span class="pos-level-name">{level.name}</span>
+          <span class="pos-level-grades">{level.grades} · {level.ages}</span>
+          <span class="pos-level-about">{level.about}</span>
+          <span class="pos-level-best" data-best={level.id}></span>
+        </button>
+      ))}
+    </div>
+    <div class="pos-example">
+      <h3>Every word has a job</h3>
+      <p class="pos-sentence" set:html={taggedHtml(example)} />
+      <p class="pos-legend">{PARTS.map(part => <Fragment set:html={chipHtml(part.id)} />)}</p>
+    </div>
+    <p class="pos-help">Each part of speech has its own color and its own label. After you check a sentence, the game gives the reason for every word. On a keyboard, move with <kbd>Tab</kbd>, press <kbd>Space</kbd> to tap a word and use the number keys to pick a part of speech. Your best score stays in this browser.</p>
+    <noscript><p class="note">The game needs JavaScript. Turn it on in your browser to play, or use the examples and the printable worksheet below.</p></noscript>
+  </div>
+
+  <div class="pos-play" data-screen="play" hidden>
+    <div class="pos-bar">
+      <strong data-level-name></strong>
+      <span>Sentence <b data-number>1</b> of <b data-length>10</b></span>
+      <span>Score <b data-score>0</b></span>
+      <button type="button" class="pos-quit" data-quit>Change level</button>
+    </div>
+    <ol class="pos-dots" data-dots aria-hidden="true"></ol>
+    <div class="pos-card" data-card tabindex="-1">
+      <p class="pos-prompt" data-prompt></p>
+      <p class="pos-hint" data-hint></p>
+      <div class="pos-palette" data-palette role="group" aria-label="Pick a part of speech" hidden set:html={paletteHtml(level3, 'data-paint')} />
+      <p class="pos-sentence" data-sentence></p>
+    </div>
+    <div class="pos-choices" data-choices role="group" aria-label="Choose the part of speech" hidden set:html={paletteHtml(level2, 'data-choice')} />
+    <div class="pos-check" data-check-row>
+      <button type="button" class="btn primary" data-check>Check</button>
+      <span class="pos-left" data-left></span>
+    </div>
+    <div class="pos-feedback" data-feedback hidden>
+      <p class="pos-verdict" data-verdict></p>
+      <p class="pos-answer" data-answer></p>
+      <ul class="pos-why" data-why></ul>
+      <button type="button" class="btn primary" data-next>Next sentence</button>
+    </div>
+    <p class="visually-hidden" role="status" data-live></p>
+  </div>
+
+  <div class="pos-results" data-screen="results" hidden>
+    <h2 data-results-title tabindex="-1">Your results</h2>
+    <p class="pos-final"><strong class="pos-final-score"><span data-final>0</span> out of <span data-final-total>10</span></strong> <span>sentences right</span></p>
+    <p class="pos-message" data-message></p>
+    <div class="pos-practice" data-practice></div>
+    <div data-missed></div>
+    <div class="page-actions">
+      <button type="button" class="btn primary" data-again>Play a new round</button>
+      <button type="button" class="btn" data-same>Play this round again</button>
+      <button type="button" class="btn" data-levels>Choose another level</button>
+    </div>
+    <p class="pos-share">For teachers: this was round <b data-round-number></b>. Everyone who opens this link gets the same sentences in the same order: <a data-round-link href="/tools/parts-of-speech/"></a></p>
+  </div>
+</section>
+<script>
+  import './game.ts';
+</script>
