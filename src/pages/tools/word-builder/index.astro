@@ -1,0 +1,206 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import WordBuilder from '../../../components/word-builder/WordBuilder.astro';
+import ClassroomShare from '../../../components/ClassroomShare.astro';
+import NextLabs from '../../../components/NextLabs.astro';
+import LinkSnippet from '../../../components/LinkSnippet.astro';
+import Faq from '../../../components/Faq.astro';
+import { site } from '../../../lib/site.mjs';
+import { PREFIXES, SUFFIXES, ROOTS, LEVELS, RULES, WORDS, ROUND_LENGTH, wordsFor, buildableFor, wordByText, partsLine, partLabel, changeLine, examplesOfPart, examplesOfRule } from '../../../lib/word-builder.mjs';
+import { splitHtml, partHtml } from '../../../lib/word-builder-view.mjs';
+
+const title = 'Prefix and Suffix Word Builder: Free Tool for Grades 2–8';
+const description = 'Free prefix and suffix word builder for grades 2–8: add parts to a base word, see the spelling change and learn what prefixes, suffixes and roots mean.';
+const url = new URL('/tools/word-builder/', Astro.site).href;
+
+const word = (text: string) => wordByText(text);
+// Worked examples, straight from the tool's word list.
+const unbreakable = word('unbreakable'), happiness = word('happiness'), hoping = word('hoping'), runner = word('runner');
+const transport = word('transport'), description_ = word('description'), telescope = word('telescope'), action = word('action'), respect = word('respect');
+const examples = part => examplesOfPart(part, 3).map(item => item.word).join(', ');
+const ion = SUFFIXES.find(part => part.id === 'ion');
+const meaningOf = (list, id) => list.find(part => part.id === id).meaning;
+const sum = item => `${partsLine(item)} = ${item.word}`;
+
+const faq: [string, string][] = [
+  ['What is a prefix?', `A prefix is a word part added to the front of a word to change its meaning. In “${word('unhappy').word}”, the prefix un- means “${meaningOf(PREFIXES, 'un')}”, so the word means “${word('unhappy').definition}”. Common prefixes are un-, re-, dis-, mis- and pre-.`],
+  ['What is a suffix?', `A suffix is a word part added to the end of a word. It can change the meaning, as -less does in “${word('careless').word}” (${word('careless').definition}). It can also change the kind of word: “${word('kindness').parts[0].text}” is an adjective, and “${word('kindness').word}” is a noun.`],
+  ['What is the difference between a base word and a root?', `A base word is a word that can stand on its own, such as “${unbreakable.parts[1].text}” in “${unbreakable.word}”. A root is a word part that carries the main meaning but often cannot stand alone. In “${word('erupt').word}”, the root rupt means “${meaningOf(ROOTS, 'rupt')}”, and “rupt” is not an English word by itself. Many roots come from Latin and Greek.`],
+  ['What do un-, re-, dis- and mis- mean?', `Un- means “${meaningOf(PREFIXES, 'un')}”, as in ${examples(PREFIXES[0])}. Re- means “${meaningOf(PREFIXES, 're')}”, as in ${examples(PREFIXES[1])}. Dis- means “${meaningOf(PREFIXES, 'dis')}”, as in ${examples(PREFIXES[2])}. Mis- means “${meaningOf(PREFIXES, 'mis')}”, as in ${examples(PREFIXES[3])}.`],
+  ['Why does the spelling change when you add a suffix?', `Three rules cover most changes. Drop a silent e before a suffix that starts with a vowel: ${sum(hoping)}. Double the last consonant of a short word: ${sum(runner)}. Change y to i: ${sum(happiness)}. The rules keep the word sounding right. “Hoping” with one p keeps the long o of “hope”, and “hopping” with two keeps the short o of “hop”.`],
+  ['Is -tion a suffix?', `The suffix is really -ion, which means “${ion.meaning}”. It very often follows a t, so many word lists teach it as -tion. In this tool, ${sum(action)} and ${sum(word('education'))}.`],
+  ['Why does the tool say “Not a word we know”?', `The Word Builder only knows the ${WORDS.length} words in its own list. If the parts you chose do not make one of them, it says so. That does not prove the word is not English. If you think you have built a real word, look it up in a dictionary.`],
+  ['What are Greek and Latin roots?', `They are word parts that English took from Greek and Latin long ago. Each one keeps its meaning in many words. The Latin root port means “${meaningOf(ROOTS, 'port')}”, as in ${examples(ROOTS[0])}. The Greek root tele means “${meaningOf(ROOTS, 'tele')}”, as in ${examples(ROOTS.find(part => part.id === 'tele'))}. Level 3 has ${ROOTS.length} roots.`],
+  ['Which grades is the Word Builder for?', `Grades 2 to 8, which is ages about 7 to 14. ${LEVELS.map(level => `${level.name} is for ${level.grades.toLowerCase()}`).join(', ')}. Older students who are new to word parts can start at Level 1.`],
+  ['Is there a prefix and suffix worksheet? Are scores saved?', `Yes, there is a free printable prefix and suffix worksheet, with an answer key on the For teachers page. No sign-in is needed. Your best Challenge score and the words you have built are kept in your own browser and are never sent to us. A link on the results screen gives a whole class the same ${ROUND_LENGTH} questions.`],
+];
+
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Prefix and Suffix Word Builder',
+  url,
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any (web browser)',
+  isAccessibleForFree: true,
+  inLanguage: 'en',
+  educationalLevel: 'Elementary and middle school (grades 2–8, ages 7–14)',
+  publisher: { '@type': 'Organization', name: site.name, url: site.url + '/' },
+};
+---
+<Layout title={title} description={description} section="Word Builder" crumbs={[['Prefix and Suffix Word Builder']]}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(app)} />
+  <div class="wrap">
+    <div class="page-intro">
+      <span class="eyebrow">Word building · Prefixes, suffixes and roots</span>
+      <h1><span class="h1-line">Prefix and Suffix</span> <span class="h1-line"><span class="hl">Word Builder</span></span></h1>
+      <p class="lede">Add a prefix or a suffix to a base word and see what you make. This free word builder shows the finished word, how its spelling changes, what each part means and what the whole word means. It has three levels for grades 2–8.</p>
+      <div class="page-actions">
+        <a class="btn" href="/tools/word-builder/activity/">Printable worksheet</a>
+        <ClassroomShare url={url} />
+      </div>
+    </div>
+
+    <WordBuilder />
+
+    <NextLabs heading="Keep going" items={[
+      { href: '/tools/word-builder/activity/', name: 'Prefix and Suffix Worksheet', text: 'One printable page: break eight words into parts, build six words and match six prefixes.' },
+      { href: '/tools/parts-of-speech/', name: 'Parts of Speech Game', text: 'A suffix can turn an adjective into a noun. Practice telling them apart.' },
+      { href: '/teachers/', name: 'For teachers', text: 'The answer key, a short lesson plan and the standards.' },
+    ]} />
+
+    <section class="section">
+      <h2>Prefixes, suffixes, base words and roots</h2>
+      <p class="prose">Many long words are short words with parts added. Here is one from the tool’s list: <span class="wb-line" style="display:inline-flex" set:html={splitHtml(unbreakable)} /> makes <strong>{unbreakable.word}</strong>, which means “{unbreakable.definition}”.</p>
+      <div class="compare">
+        <div class="card">
+          <h3><Fragment set:html={partHtml('Prefix', 'prefix')} /></h3>
+          <p><strong>A prefix is a word part added to the front of a word.</strong> It changes the meaning. In {unbreakable.word}, the prefix is “{unbreakable.parts[0].label}”, which means “{unbreakable.parts[0].meaning}”.</p>
+        </div>
+        <div class="card">
+          <h3><Fragment set:html={partHtml('Base word', 'base')} /></h3>
+          <p><strong>A base word is a word that can stand on its own.</strong> Prefixes and suffixes are added to it. In {unbreakable.word}, the base word is “{unbreakable.parts[1].text}”.</p>
+        </div>
+        <div class="card">
+          <h3><Fragment set:html={partHtml('Suffix', 'suffix')} /></h3>
+          <p><strong>A suffix is a word part added to the end of a word.</strong> It can change the meaning and the kind of word. In {unbreakable.word}, the suffix is <span class="nowrap">“{unbreakable.parts[2].label}”</span>, which means “{unbreakable.parts[2].meaning}”.</p>
+        </div>
+        <div class="card">
+          <h3><Fragment set:html={partHtml('Root', 'root')} /></h3>
+          <p><strong>A root is a word part that carries the main meaning but often cannot stand alone.</strong> In {transport.word}, the root “{transport.parts[1].text}” means “{transport.parts[1].meaning}”. Prefixes and suffixes together are called affixes.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Prefixes and what they mean</h2>
+        <p>These are the prefixes in the tool. The examples come from its word list.</p>
+      </div>
+      <div class="table-wrap wb-parts-table">
+        <table>
+          <thead><tr><th scope="col">Prefix</th><th scope="col">Meaning</th><th scope="col">Examples from the list</th><th scope="col">Level</th></tr></thead>
+          <tbody>{PREFIXES.map(part => <tr><th scope="row"><Fragment set:html={partHtml(part.label, 'prefix')} /></th><td>{part.meaning}{part.note && <><br /><span class="muted">{part.note}</span></>}</td><td>{examples(part)}</td><td>{part.level}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Suffixes and what they mean</h2>
+        <p>A suffix often changes what kind of word you have. Add -ness to the adjective “{happiness.parts[0].text}” and you get the noun “{happiness.word}”. The spelling -er is two different suffixes: one compares, as in “{word('taller').word}”, and one names a person or thing that does something, as in “{word('teacher').word}”.</p>
+      </div>
+      <div class="table-wrap wb-parts-table">
+        <table>
+          <thead><tr><th scope="col">Suffix</th><th scope="col">Meaning</th><th scope="col">It makes</th><th scope="col">Examples from the list</th><th scope="col">Level</th></tr></thead>
+          <tbody>{SUFFIXES.map(part => <tr><th scope="row"><Fragment set:html={partHtml(part.label, 'suffix')} /></th><td>{part.meaning}{part.note && <><br /><span class="muted">{part.note}</span></>}</td><td>{part.makes}</td><td>{examples(part)}</td><td>{part.level}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Latin and Greek roots</h2>
+        <p>Level 3 is built on {ROOTS.length} roots that English took from Latin and Greek. Learn one root and you have a clue to a whole family of words. A root can come at the start of a word, in the middle or at the end, and two roots can join: <span class="wb-line" style="display:inline-flex" set:html={splitHtml(telescope)} /> makes “{telescope.word}”, {telescope.definition}.</p>
+      </div>
+      <div class="table-wrap wb-parts-table">
+        <table>
+          <thead><tr><th scope="col">Root</th><th scope="col">From</th><th scope="col">Meaning</th><th scope="col">Words from the list</th></tr></thead>
+          <tbody>{ROOTS.map(part => <tr><th scope="row"><Fragment set:html={partHtml(part.label, 'root')} /></th><td>{part.origin}</td><td>{part.meaning}</td><td>{examplesOfPart(part, 4).map(item => item.word).join(', ')}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <p class="prose" style="margin-top:14px">Some roots change their spelling a little. The root that means “write” is “scribe” in {word('describe').word} and “script” in {description_.word}. The root that means “measure” is “meter” in {word('perimeter').word} and “metr” in {word('geometry').word}.</p>
+    </section>
+
+    <section class="section">
+      <div class="prose">
+        <h2>Spelling changes when you add a suffix</h2>
+        <p>Prefixes never change the spelling of the base word: mis- + spell is {word('misspell').word}, with both letters s. Suffixes sometimes do. The tool applies three rules, and it shows a note each time one is used.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">Rule</th><th scope="col">When</th><th scope="col">Examples from the list</th><th scope="col">But</th></tr></thead>
+          <tbody>
+            {RULES.map(rule => <tr><th scope="row">{rule.name}</th><td>{rule.rule}</td><td>{examplesOfRule(rule.id, 4).map(item => <span class="wb-sum">{sum(item)}<br /></span>)}</td><td>{rule.keeps}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+      <div class="prose">
+        <p>Why double the consonant? Compare two words in the list. The word “{hoping.word}” is {partsLine(hoping)}: the e is dropped. The word “{word('hopping').word}” is {partsLine(word('hopping'))}: the p is doubled. The double letter tells you the o is short.</p>
+        <p class="note">English has exceptions to all three rules. For example, true + -ly is “truly” and argue + -ment is “argument”, where an e is dropped before a consonant. Longer words such as “begin” double their last letter too (“beginning”). The tool’s list keeps to words that follow the three rules.</p>
+      </div>
+    </section>
+
+    <section class="section prose">
+      <h2>How to work out a word you do not know</h2>
+      <h3>1. “{unbreakable.word}”</h3>
+      <ul>
+        <li>Look for a word you know inside it: “{unbreakable.parts[1].text}”. That is the base word.</li>
+        <li>What is in front? “{unbreakable.parts[0].label}” means “{unbreakable.parts[0].meaning}”.</li>
+        <li>What is at the end? <span class="nowrap">“{unbreakable.parts[2].label}”</span> means “{unbreakable.parts[2].meaning}”.</li>
+        <li>Put the meanings together: {unbreakable.definition}.</li>
+      </ul>
+      <h3>2. “{happiness.word}”</h3>
+      <ul>
+        <li>The end is <span class="nowrap">“{happiness.parts[1].label}”</span>, which means “{happiness.parts[1].meaning}”.</li>
+        <li>Take it off and you have “happi”. That is not a word, so think about the spelling rules. {changeLine(happiness.changes[0])}</li>
+        <li>So the word is {partsLine(happiness)}: {happiness.definition}.</li>
+      </ul>
+      <h3>3. “{description_.word}”</h3>
+      <ul>
+        {description_.parts.map(part => <li><span class="nowrap">“{partLabel(part)}”</span> is a {part.kind} that means “{part.meaning}”.</li>)}
+        <li>Together: the act of writing something down. In everyday use, a {description_.word} is {description_.definition}.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>What this tool cannot do</h2>
+      <ul>
+        <li><strong>It is not a dictionary.</strong> The list has {WORDS.length} words, chosen by hand. “Not a word we know” means only that the word is not in the list.</li>
+        <li><strong>Letters that look like a prefix are not always one.</strong> “Uncle” does not start with the prefix un-, “read” does not start with re-, and “pretty” does not start with pre-. If taking the letters away does not leave a word or a root with a fitting meaning, they are not a prefix.</li>
+        <li><strong>The parts give a clue, not always the whole meaning.</strong> The parts of “{respect.word}” say “look back”. Today the word means “{respect.definition}”. Words drift over hundreds of years, so check the meaning in the sentence you are reading.</li>
+        <li><strong>It knows three spelling rules.</strong> Words that break the rules are left out of the list instead of being shown wrongly.</li>
+        <li><strong>Definitions are short.</strong> Each word gets one plain meaning. Many words have more than one.</li>
+      </ul>
+    </section>
+
+    <section class="section prose">
+      <h2>How the Word Builder works</h2>
+      <ul>
+        {LEVELS.map(level => <li><strong>{level.name} ({level.grades.toLowerCase()}, {level.ages}).</strong> {level.about} {wordsFor(level.id).length} words, {buildableFor(level.id).length} of them to build.</li>)}
+      </ul>
+      <p><strong>Build mode.</strong> Choose a base word, or a root at Level 3. Tap a part to add it to the front, a part to add it to the end, or both. If the parts make a word in the list, you see the word, its meaning, the meaning of each part and any spelling change. Tap a part again to take it off. The tool counts the words you have built. A few words in the list have two prefixes or two suffixes, such as “{word('carefully').word}” ({partsLine(word('carefully'))}). Those cannot be made in Build mode, but they turn up in Challenge mode.</p>
+      <p><strong>Challenge mode.</strong> A round has {ROUND_LENGTH} questions of three kinds: choose the missing part, break a word into its parts, and say what a part means. You see the answer and the reason after each one, and the ones you missed are listed at the end.</p>
+      <p class="note">Every word, meaning and breakdown in the list was written and checked by hand. If you think one is wrong, please <a href={`mailto:${site.contactEmail}`}>tell us</a>.</p>
+    </section>
+
+    <Faq items={faq} />
+
+    <section class="section">
+      <h2>Use it in your class</h2>
+      <p class="prose">The <a href="/tools/word-builder/activity/">prefix and suffix worksheet</a> takes about 20 minutes and prints on one page. The answer key is on the <a href="/teachers/">For teachers</a> page.</p>
+      <LinkSnippet url={url} name="Prefix and Suffix Word Builder" />
+    </section>
+  </div>
+</Layout>
