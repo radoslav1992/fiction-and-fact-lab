@@ -1,0 +1,139 @@
+---
+// The Reading Speed Test. The set-up screen is rendered here; test.ts runs the timer, the questions and the
+// results in the browser. A passage is not in the page until Start is pressed, so it cannot be read early.
+import './speed.css';
+import { LEVELS, MODES, KINDS, QUESTIONS_PER_PASSAGE, passagesFor, wordCount } from '../../lib/reading-speed.mjs';
+---
+<section class="rs" data-speed aria-label="Reading Speed Test">
+  <div class="rs-setup" data-screen="setup">
+    <h2>Set up your test</h2>
+    <form data-setup>
+      <fieldset class="rs-field">
+        <legend>1. Choose a level</legend>
+        <div class="rs-cards">
+          {LEVELS.map(level => (
+            <label class="rs-card">
+              <input type="radio" name="rs-level" value={level.id} checked={level.id === 1} />
+              <span class="rs-card-face">
+                <b class="rs-card-name">{level.name}</b>
+                <span class="rs-card-grades">{level.grades} · {level.ages}</span>
+                <span class="rs-card-about">{level.about} {level.words[0]} to {level.words[1]} words.</span>
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="rs-field">
+        <legend>2. Choose a passage</legend>
+        <div class="rs-stack">
+        {LEVELS.map(level => (
+          <div class="rs-picks" data-passages={level.id} data-active={level.id === 1 ? '' : undefined}>
+            {passagesFor(level.id).map((passage, i) => (
+              <label class="rs-pick">
+                <input type="radio" name={`rs-passage-${level.id}`} value={passage.id} checked={i === 0} />
+                <span class="rs-pick-face">
+                  <b>{passage.title}</b>
+                  <small>{KINDS[passage.kind]} · {wordCount(passage)} words</small>
+                  <small class="rs-pick-read" data-read-mark={passage.id} hidden>Read before</small>
+                </span>
+              </label>
+            ))}
+          </div>
+        ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="rs-field">
+        <legend>3. How will you read?</legend>
+        <div class="rs-picks">
+          {MODES.map(mode => (
+            <label class="rs-pick">
+              <input type="radio" name="rs-mode" value={mode.id} checked={mode.id === 'silent'} />
+              <span class="rs-pick-face"><b>{mode.name}</b><small>{mode.about}</small></span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <div class="rs-go">
+        <button type="submit" class="btn primary rs-start" data-start>Start reading</button>
+        <p class="rs-help">The passage appears when you press Start, and the timer starts with it. Read the whole passage at your normal speed, then press Done. There are {QUESTIONS_PER_PASSAGE} questions afterward, so read to understand.</p>
+      </div>
+    </form>
+
+    <div class="rs-history" data-history hidden>
+      <h3>Your last results</h3>
+      <ol data-history-list></ol>
+      <p class="rs-small">Kept in this browser only, so you can see your progress. <button type="button" class="rs-link" data-clear-history>Clear the list</button></p>
+    </div>
+    <noscript><p class="note">The test needs JavaScript for its timer. Turn it on in your browser to take the test, or print the fluency record sheet and time yourself with a clock.</p></noscript>
+  </div>
+
+  <div class="rs-read" data-screen="read" hidden>
+    <div class="rs-bar">
+      <span class="rs-running"><span class="rs-dot" aria-hidden="true"></span><span data-running>Timer running</span></span>
+      <button type="button" class="rs-quit" data-cancel>Stop without a result</button>
+    </div>
+    <article class="rs-passage" data-passage tabindex="-1" aria-labelledby="rs-passage-title">
+      <h3 id="rs-passage-title" data-passage-title></h3>
+      <div data-passage-body></div>
+    </article>
+    <div class="rs-done">
+      <button type="button" class="btn primary" data-done>Done reading</button>
+      <span class="rs-small">Press Done as soon as you finish the last word.</span>
+    </div>
+  </div>
+
+  <div class="rs-quiz" data-screen="quiz" hidden>
+    <h2 data-quiz-title tabindex="-1">Your reading speed</h2>
+    <p class="rs-speed"><strong class="rs-stamp" data-wpm>0</strong> <span class="rs-speed-unit">words a minute<small data-speed-detail></small></span></p>
+    <p class="note" data-paused-note hidden></p>
+    <h3>Now check what you understood</h3>
+    <p class="rs-quiz-intro">Speed only counts if you understood what you read. Answer these {QUESTIONS_PER_PASSAGE} questions about “<span data-quiz-passage></span>”. The passage is put away, so answer from memory.</p>
+    <form data-quiz novalidate>
+      <ol class="rs-questions" data-questions></ol>
+      <p class="rs-error" role="alert" data-quiz-error></p>
+      <button type="submit" class="btn primary">Check my answers</button>
+    </form>
+  </div>
+
+  <div class="rs-results" data-screen="results" hidden>
+    <h2 data-results-title tabindex="-1">Your result</h2>
+    <div class="rs-numbers">
+      <p class="rs-speed"><strong class="rs-stamp" data-final-wpm>0</strong> <span class="rs-speed-unit">words a minute<small data-final-detail></small></span></p>
+      <p class="rs-score"><strong data-final-score>0 of {QUESTIONS_PER_PASSAGE}</strong> <span>questions right</span></p>
+    </div>
+    <div class="rs-meaning">
+      <h3 data-meaning-title></h3>
+      <p data-meaning-text></p>
+      <p data-compare hidden></p>
+      <p class="rs-small" data-paused-result hidden></p>
+    </div>
+    <h3>The questions</h3>
+    <ol class="rs-review" data-review></ol>
+    <details class="rs-again">
+      <summary>Read the passage again</summary>
+      <div class="rs-passage" data-passage-again></div>
+    </details>
+    <div class="page-actions">
+      <button type="button" class="btn primary" data-another>Try another passage</button>
+      <button type="button" class="btn" data-back>Back to the set-up</button>
+    </div>
+    <p class="rs-small">This result is saved in this browser only. It is not sent anywhere.</p>
+  </div>
+
+  <div class="rs-void" data-screen="void" hidden>
+    <h2 data-void-title tabindex="-1">This result does not count</h2>
+    <p class="rs-void-text" data-void-text></p>
+    <div class="page-actions">
+      <button type="button" class="btn primary" data-retry>Start this passage again</button>
+      <button type="button" class="btn" data-back>Back to the set-up</button>
+    </div>
+  </div>
+
+  <p class="visually-hidden" role="status" data-live></p>
+</section>
+<script>
+  import './test.ts';
+</script>
