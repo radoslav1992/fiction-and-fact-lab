@@ -5,6 +5,8 @@ import { parts, withClues, explain } from '../lib/fact-opinion.mjs';
 import ContextCluesSheet from './context-clues/Worksheet.astro';
 import CauseEffectSheet from './cause-and-effect/Worksheet.astro';
 import PlotWorksheet from './plot-diagram/PlotWorksheet.astro';
+import PartsOfSpeechWorksheet from './parts-of-speech/Worksheet.astro';
+import WordBuilderWorksheet from './word-builder/Worksheet.astro';
 const { act, answers = false } = Astro.props;
 ---
 {act.sections.map(section => (
@@ -52,5 +54,9 @@ const { act, answers = false } = Astro.props;
     {section.type === 'context-clues' && <ContextCluesSheet section={section} answers={answers} />}
     {section.type === 'cause-and-effect' && <CauseEffectSheet section={section} answers={answers} />}
     {section.type === 'plot-diagram' && <PlotWorksheet section={section} answers={answers} />}
+    {/* Parts of Speech Game: sentences to mark, and words to sort into a table. */}
+    {section.type.startsWith('pos-') && <PartsOfSpeechWorksheet section={section} answers={answers} />}
+    {/* Prefix and Suffix Word Builder: words to break up, words to build, prefixes to match. */}
+    {section.type.startsWith('wb-') && <WordBuilderWorksheet section={section} answers={answers} />}
   </Fragment>
 ))}

@@ -1,0 +1,102 @@
+---
+// The Prefix and Suffix Word Builder. Build mode at level 1 is rendered here with one word already made, so
+// the page is useful before any JavaScript runs; builder.ts then runs both modes in the browser.
+import './builder.css';
+import { LEVELS, ROUND_LENGTH, tilesFor, buildableFor, middlesFor } from '../../lib/word-builder.mjs';
+import { tilesHtml, resultHtml } from '../../lib/word-builder-view.mjs';
+
+const start = { level: 1, before: 'un-', middle: 'happy', after: null };
+const tiles = tilesFor(start.level, start.middle);
+---
+<section class="wb" data-word-builder aria-label="Prefix and Suffix Word Builder">
+  <div class="wb-top">
+    <div class="wb-switch" role="group" aria-label="Level">
+      {LEVELS.map(level => (
+        <button type="button" class="wb-level" data-level={level.id} aria-pressed={level.id === start.level ? 'true' : 'false'}>
+          <span class="wb-level-name">{level.name}</span>
+          <span class="wb-level-grades">{level.grades}</span>
+        </button>
+      ))}
+    </div>
+    <div class="wb-switch wb-modes" role="group" aria-label="What to do">
+      <button type="button" class="wb-mode" data-mode="build" aria-pressed="true">Build words</button>
+      <button type="button" class="wb-mode" data-mode="challenge" aria-pressed="false">Challenge</button>
+    </div>
+  </div>
+  <p class="wb-about" data-level-about>{LEVELS[0].about} <span class="wb-count">{buildableFor(1).length} words to build.</span></p>
+
+  <div class="wb-build" data-panel="build">
+    <div class="wb-board">
+      <div class="wb-col">
+        <span class="wb-col-name" id="wb-before-name">1. Add to the front</span>
+        <div class="wb-tiles" role="group" aria-labelledby="wb-before-name" data-tiles="before" set:html={tilesHtml(tiles.before, 'before', start.before)} />
+      </div>
+      <div class="wb-col wb-col-middle">
+        <label class="wb-col-name" for="wb-middle" data-middle-label>Base word</label>
+        <select id="wb-middle" class="wb-middle" data-middle>
+          {middlesFor(start.level).map(middle => <option value={middle.text} selected={middle.text === start.middle}>{middle.text}</option>)}
+        </select>
+        <button type="button" class="wb-another" data-another>Another one</button>
+      </div>
+      <div class="wb-col">
+        <span class="wb-col-name" id="wb-after-name">2. Add to the end</span>
+        <div class="wb-tiles" role="group" aria-labelledby="wb-after-name" data-tiles="after" set:html={tilesHtml(tiles.after, 'after', start.after)} />
+      </div>
+    </div>
+    <div class="wb-result" data-result role="status" set:html={resultHtml(start.level, start.before, start.middle, start.after)} />
+    <p class="wb-found" data-found-line></p>
+    <noscript><p class="note">The word builder needs JavaScript. Turn it on in your browser to build words, or use the tables and the printable worksheet below.</p></noscript>
+  </div>
+
+  <div class="wb-challenge" data-panel="challenge" hidden>
+    <div class="wb-start" data-screen="start">
+      <h2>Challenge: a round of {ROUND_LENGTH}</h2>
+      <p>Choose the missing part, break a word into its parts, and say what a part means. You get the answer and the reason after every question. On a keyboard, press <kbd>1</kbd> to <kbd>4</kbd> to choose an answer.</p>
+      <p class="page-actions"><button type="button" class="btn primary" data-start>Start the round</button> <span class="wb-best" data-best></span></p>
+    </div>
+
+    <div class="wb-play" data-screen="play" hidden>
+      <div class="wb-bar">
+        <strong data-level-name></strong>
+        <span>Question <b data-number>1</b> of {ROUND_LENGTH}</span>
+        <span>Score <b data-score>0</b></span>
+        <button type="button" class="wb-quit" data-quit>Stop the round</button>
+      </div>
+      <ol class="wb-dots" data-dots aria-hidden="true">{Array.from({ length: ROUND_LENGTH }, () => <li />)}</ol>
+      <div class="wb-card" data-card tabindex="-1">
+        <p class="wb-prompt" data-prompt></p>
+        <p class="wb-shown" data-shown hidden></p>
+        <div class="wb-cutter" data-cutter hidden></div>
+        <p class="wb-hint" data-hint></p>
+      </div>
+      <div class="wb-options" data-options role="group" aria-label="Choose an answer"></div>
+      <div class="wb-check" data-check-row hidden>
+        <button type="button" class="btn primary" data-check>Check</button>
+        <button type="button" class="btn" data-clear>Clear the cuts</button>
+      </div>
+      <div class="wb-feedback" data-feedback hidden>
+        <p class="wb-verdict" data-verdict></p>
+        <p class="wb-line" data-split></p>
+        <p class="wb-why" data-why></p>
+        <button type="button" class="btn primary" data-next>Next question</button>
+      </div>
+      <p class="visually-hidden" role="status" data-live></p>
+    </div>
+
+    <div class="wb-results" data-screen="results" hidden>
+      <h2 data-results-title tabindex="-1">Your results</h2>
+      <p class="wb-final"><strong class="wb-final-score"><span data-final>0</span> out of {ROUND_LENGTH}</strong></p>
+      <p class="wb-message" data-message></p>
+      <div data-missed></div>
+      <div class="page-actions">
+        <button type="button" class="btn primary" data-again>Play a new round</button>
+        <button type="button" class="btn" data-same>Play this round again</button>
+        <button type="button" class="btn" data-mode="build">Back to building</button>
+      </div>
+      <p class="wb-share">For teachers: this was round <b data-round-number></b>. Everyone who opens this link gets the same {ROUND_LENGTH} questions in the same order: <a data-round-link href="/tools/word-builder/"></a></p>
+    </div>
+  </div>
+</section>
+<script>
+  import './builder.ts';
+</script>

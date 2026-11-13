@@ -8,6 +8,8 @@ import * as factOrOpinion from './activities/fact-or-opinion.mjs';
 import * as contextClues from './activities/context-clues.mjs';
 import * as causeAndEffect from './activities/cause-and-effect.mjs';
 import * as plotDiagram from './activities/plot-diagram.mjs';
+import * as partsOfSpeech from './activities/parts-of-speech.mjs';
+import * as wordBuilder from './activities/word-builder.mjs';
 
 const MODULES = [
   readingLevel,
@@ -15,6 +17,8 @@ const MODULES = [
   contextClues,
   causeAndEffect,
   plotDiagram,
+  partsOfSpeech,
+  wordBuilder,
 ];
 
 // Common Core ELA standards referenced by the activities, paraphrased.

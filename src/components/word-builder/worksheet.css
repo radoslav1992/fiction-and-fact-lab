@@ -1,0 +1,27 @@
+/* The Word Builder worksheet and its answer key (see Worksheet.astro). */
+.wb-ws-list { padding-left: 1.6em; columns: 2 300px; column-gap: 34px; margin: 0 0 6px; }
+.wb-ws-list li { break-inside: avoid; margin-bottom: 16px; }
+.wb-ws-row { display: flex; align-items: flex-end; gap: 8px; }
+.wb-ws-blank { flex: 1; min-width: 96px; height: 1.6em; border-bottom: 1.5px solid var(--ink); }
+.wb-ws-bank { display: flex; flex-wrap: wrap; gap: 4px 28px; margin: 0 0 12px; padding: 10px 16px; border: 2px dashed var(--rule-strong); border-radius: 10px; background: var(--card); }
+/* In the key, the note for an answer follows it on the same line. */
+.key-answers.wb-ws-list .sort-why, .key-answers.wb-ws-prefixes .sort-why { display: inline; margin-left: 6px; }
+.wb-ws-match { display: grid; gap: 6px 40px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.wb-ws-prefixes { padding-left: 1.6em; margin: 0; }
+.wb-ws-prefixes li { margin-bottom: 12px; }
+.wb-ws-meanings { list-style: none; margin: 0; padding: 10px 16px; border: 1px solid var(--rule); border-radius: 10px; background: var(--card); align-self: start; }
+.wb-ws-meanings li { margin-bottom: 6px; }
+.wb-ws-meanings strong { display: inline-block; min-width: 1.4em; }
+
+@media print {
+  .wb-ws-list { columns: 2; margin: 0 0 2px; }
+  .wb-ws-list li { margin-bottom: 5px; }
+  .key-answers.wb-ws-list li { margin-bottom: 3px; }
+  .wb-ws-blank { height: 6.5mm; border-color: #000; }
+  .wb-ws-bank { margin-bottom: 6px; padding: 4px 10px; border-color: #777; background: none; }
+  .wb-ws-match { grid-template-columns: 1fr 1fr; }
+  .wb-ws-prefixes li { margin-bottom: 6px; }
+  .key-answers.wb-ws-prefixes li { margin-bottom: 3px; }
+  .wb-ws-meanings { padding: 4px 10px; border-color: #999; background: none; }
+  .wb-ws-meanings li { margin-bottom: 2px; }
+}

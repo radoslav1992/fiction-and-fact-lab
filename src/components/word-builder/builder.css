@@ -1,0 +1,129 @@
+/* Prefix and Suffix Word Builder. Prefixes are blue, base words and roots are highlighter yellow and suffixes
+   are orange, and each is always named in words too. The colors keep clear of the site's teal and pink. */
+:root {
+  --wb-prefix: #1a4f9c; --wb-prefix-bg: #dce8ff;
+  --wb-suffix: #874600; --wb-suffix-bg: #ffe8c7;
+  --wb-root: #5a2a8a; --wb-root-bg: #efdfff;
+}
+.wb { background: var(--card); border: 1px solid var(--rule); border-top: 5px solid var(--ink); border-radius: 4px 4px 16px 16px; padding: 20px; box-shadow: var(--shadow); scroll-margin-top: 12px; }
+.wb h2 { font-size: 1.4rem; margin: 0 0 10px; }
+.wb h2:focus-visible { outline-offset: 6px; }
+.wb h3 { margin: 18px 0 8px; }
+
+/* Level and mode switches */
+.wb-top { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+.wb-switch { display: flex; flex-wrap: wrap; gap: 8px; }
+.wb-level, .wb-mode { display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: 48px; padding: 6px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink); font: 700 1rem/1.2 var(--font-body); text-align: left; cursor: pointer; }
+.wb-level-grades { font-size: .82rem; font-weight: 400; color: var(--muted); }
+.wb-level:hover, .wb-mode:hover { background: var(--hl-soft); }
+.wb-level[aria-pressed='true'], .wb-mode[aria-pressed='true'] { background: var(--ink); color: #fff; box-shadow: 3px 3px 0 var(--hl); }
+.wb-level[aria-pressed='true'] .wb-level-grades { color: #dfe0f3; }
+.wb-about { margin: 12px 0 14px; color: var(--muted); font-size: .97rem; }
+.wb-count { white-space: nowrap; }
+
+/* A word part: a prefix, a base word, a root or a suffix */
+.wb-part { display: inline-block; padding: 1px 9px; border: 2px solid var(--ink); border-radius: 8px; background: var(--hl); color: var(--ink); font-weight: 700; white-space: nowrap; }
+.wb-part.is-prefix { border-color: var(--wb-prefix); background: var(--wb-prefix-bg); color: var(--wb-prefix); border-radius: 8px 2px 2px 8px; }
+.wb-part.is-suffix { border-color: var(--wb-suffix); background: var(--wb-suffix-bg); color: var(--wb-suffix); border-radius: 2px 8px 8px 2px; }
+.wb-part.is-root { border-color: var(--wb-root); background: var(--wb-root-bg); color: var(--wb-root); }
+.wb-plus { margin: 0 6px; font-weight: 700; }
+
+/* Build mode: tiles in front, the base word in the middle, tiles behind */
+.wb-board { display: grid; gap: 14px; grid-template-columns: 1fr; padding: 14px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; }
+@media (min-width: 820px) { .wb-board { grid-template-columns: 1fr minmax(200px, .7fr) 1fr; align-items: start; } }
+.wb-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.wb-col-name { font-size: .85rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); }
+.wb-tiles { display: flex; flex-wrap: wrap; gap: 8px; }
+.wb-tile { min-width: 58px; min-height: 46px; padding: 6px 12px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink); font: 700 1.1rem/1.2 var(--font-body); cursor: pointer; }
+.wb-tile.is-prefix { border-color: var(--wb-prefix); background: var(--wb-prefix-bg); color: var(--wb-prefix); }
+.wb-tile.is-suffix { border-color: var(--wb-suffix); background: var(--wb-suffix-bg); color: var(--wb-suffix); }
+.wb-tile.is-root { border-color: var(--wb-root); background: var(--wb-root-bg); color: var(--wb-root); }
+.wb-tile:hover { box-shadow: 0 0 0 3px var(--hl); }
+.wb-tile[aria-pressed='true'] { border-color: var(--ink); background: var(--ink); color: #fff; box-shadow: 0 0 0 3px var(--hl); }
+.wb-tile[aria-pressed='true']::after { content: ' ✓'; }
+.wb-none { margin: 0; color: var(--muted); font-size: .95rem; }
+.wb-middle { width: 100%; min-height: 52px; padding: 8px 12px; border: 3px solid var(--ink); border-radius: 10px; background: var(--hl); color: var(--ink); font: 700 1.3rem/1.2 var(--font-display); cursor: pointer; }
+.wb-another { align-self: flex-start; min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.wb-another:hover { background: var(--hl-soft); }
+
+/* What the board has made */
+.wb-result { min-height: 232px; margin-top: 14px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.wb-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 0; margin: 0 0 8px; font-size: 1.1rem; }
+.wb-word { margin: 0 0 6px; font: 700 clamp(1.8rem, 6vw, 2.6rem)/1.15 var(--font-display); overflow-wrap: anywhere; }
+.wb-word.is-found { display: inline-block; background: linear-gradient(transparent 58%, var(--hl) 58%); }
+.wb-word.is-miss { font-size: clamp(1.3rem, 4.4vw, 1.7rem); }
+.wb-word.is-waiting { color: var(--muted); }
+.wb-def { margin: 0 0 8px; font-size: 1.08rem; max-width: 760px; }
+.wb-spelling { margin: 0 0 8px; padding: 6px 12px; border-left: 5px solid var(--ink); border-radius: 4px 10px 10px 4px; background: var(--hl-soft); max-width: 760px; }
+.wb-meanings { list-style: none; display: grid; gap: 6px; margin: 0; padding: 0; }
+.wb-meanings li { display: flex; align-items: baseline; gap: 10px; margin: 0; }
+.wb-meanings .wb-part { flex: none; }
+.wb-found { margin: 10px 0 0; color: var(--muted); font-size: .95rem; }
+
+/* Challenge mode */
+.wb-start p { max-width: 760px; }
+.wb-best { font-weight: 700; }
+.wb-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; font-size: .98rem; }
+.wb-bar b { font: 700 1.2rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.wb-quit { margin-left: auto; min-height: 44px; padding: 6px 14px; border: 2px dashed var(--ink); border-radius: 8px; background: none; font-weight: 700; cursor: pointer; }
+.wb-quit:hover { background: var(--hl-soft); }
+.wb-dots { display: flex; gap: 6px; list-style: none; margin: 10px 0 14px; padding: 0; }
+.wb-dots li { flex: 1; height: 10px; margin: 0; border: 2px solid var(--ink); border-radius: 5px; background: var(--card); }
+.wb-dots .is-current { background: var(--hl); }
+.wb-dots .is-right { background: var(--ink); }
+.wb-dots .is-wrong { background: repeating-linear-gradient(135deg, var(--ink) 0 2px, var(--card) 2px 5px); }
+.wb-card { padding: 16px 18px 18px; border: 1px solid var(--rule-strong); border-top: 3px solid var(--ink); border-radius: 4px 4px 12px 12px; background: #fff; }
+.wb-card:focus-visible { outline-offset: 2px; }
+.wb-prompt { margin: 0; font: 600 clamp(1.2rem, 3.4vw, 1.5rem)/1.4 var(--font-display); }
+.wb-shown { margin: 12px 0 0; font: 700 clamp(1.4rem, 5vw, 2rem)/1.2 var(--font-display); letter-spacing: .02em; }
+.wb-hint { margin: 10px 0 0; color: var(--muted); font-size: .97rem; }
+.wb-options { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); margin-top: 14px; }
+.wb-option { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 10px; background: var(--paper); color: var(--ink); font: 700 1.1rem/1.3 var(--font-body); text-align: left; cursor: pointer; }
+.wb-option:hover:not(:disabled) { background: var(--hl-soft); }
+.wb-option kbd { flex: none; }
+.wb-option:disabled { cursor: default; opacity: .55; }
+.wb-option.is-answer, .wb-option.is-chosen { opacity: 1; }
+.wb-option.is-answer { background: var(--hl); }
+.wb-option.is-answer::after { content: '✓'; margin-left: auto; font-weight: 700; }
+.wb-option.is-chosen { outline: 3px solid var(--ink); outline-offset: 3px; }
+/* Cutting a word into parts: letters with a button in every gap */
+.wb-cutter { display: flex; flex-wrap: wrap; align-items: stretch; row-gap: 10px; margin-top: 14px; }
+.wb-cut { display: inline-flex; align-items: stretch; }
+.wb-letter { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 52px; font: 700 clamp(1.5rem, 5.4vw, 2.1rem)/1 var(--font-display); }
+.wb-gap { position: relative; width: 28px; height: 52px; margin: 0; padding: 0; border: 0; border-radius: 6px; background: none; cursor: pointer; }
+.wb-gap::before { content: ''; position: absolute; left: 50%; top: 6px; bottom: 6px; border-left: 2px dotted var(--rule-strong); }
+.wb-gap:hover:not(:disabled) { background: var(--hl-soft); }
+.wb-gap[aria-pressed='true'] { background: var(--hl); }
+.wb-gap[aria-pressed='true']::before { top: 0; bottom: 0; margin-left: -2px; border-left: 4px solid var(--ink); }
+.wb-gap:disabled { cursor: default; }
+.wb-gap.is-answer::after { content: '✓'; position: absolute; left: 0; right: 0; bottom: -14px; font: 700 .8rem/1 var(--font-body); text-align: center; }
+.wb-gap.is-answer:not([aria-pressed='true'])::before { top: 0; bottom: 0; margin-left: -2px; border-left: 4px dashed var(--ink); }
+.wb-check { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.wb-check .btn { min-height: 48px; }
+.wb-feedback { margin-top: 18px; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--paper); }
+.wb-verdict { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 700 1.35rem/1.2 var(--font-display); }
+.wb-verdict svg { width: 28px; height: 28px; flex: none; }
+.wb-verdict.is-right span { background: linear-gradient(transparent 55%, var(--hl) 55%); }
+.wb-why { margin: 0 0 12px; font-size: 1.05rem; }
+
+/* Results */
+.wb-final { margin: 0 0 10px; }
+.wb-final-score { display: inline-block; padding: 4px 18px 6px; border: 4px solid var(--ink); border-radius: 10px; background: var(--hl); font: 700 clamp(1.7rem, 5vw, 2.4rem)/1.2 var(--font-display); transform: rotate(-2deg); }
+.wb-message { font-size: 1.12rem; max-width: 760px; }
+.wb-missed { padding-left: 1.3em; }
+.wb-missed li { margin-bottom: 16px; }
+.wb-missed p { margin: 0 0 4px; }
+.wb-share { margin: 6px 0 0; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
+
+/* Lesson content on the page */
+.wb-parts-table td:first-child, .wb-parts-table th:first-child { white-space: nowrap; }
+.wb-sum { white-space: nowrap; }
+
+@media (max-width: 480px) {
+  .wb { padding: 14px 12px; margin: 0 -6px; }
+  .wb-board, .wb-card { padding: 12px; }
+  .wb-level, .wb-mode { padding: 6px 11px; }
+  .wb-option kbd { display: none; }
+  .wb-tile { min-width: 52px; padding: 6px 10px; }
+  .wb-result { min-height: 280px; }
+}
